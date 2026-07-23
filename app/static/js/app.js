@@ -372,6 +372,21 @@
       notice(error.message, true);
     }
   });
+  $("#fullscreen-toggle").addEventListener("click", async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch {
+      notice("瀏覽器未允許網頁切換全螢幕，請直接按 F11");
+    }
+  });
+  document.addEventListener("fullscreenchange", () => {
+    const button = $("#fullscreen-toggle");
+    button.lastChild.textContent = document.fullscreenElement ? " 離開全螢幕" : " 全螢幕";
+  });
 
   init();
 })();

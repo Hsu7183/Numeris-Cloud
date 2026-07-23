@@ -79,6 +79,15 @@ def test_simple_recommendation_ui_flow() -> None:
             page.locator("#wheel-core").wait_for(state="visible", timeout=30000)
             assert page.locator(".ticket").count() == 7
             assert page.locator(".sidebar").count() == 0
+            page.set_viewport_size({"width": 1920, "height": 1080})
+            intro_layout = page.locator(".intro").evaluate(
+                "element => getComputedStyle(element).display"
+            )
+            title_box = page.locator(".intro h1").bounding_box()
+            picker_box = page.locator(".game-picker").bounding_box()
+            assert intro_layout == "grid"
+            assert title_box is not None and picker_box is not None
+            assert picker_box["x"] > title_box["x"]
             assert not page_errors
             browser.close()
     finally:

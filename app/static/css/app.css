@@ -70,6 +70,20 @@ nav a {
   font-weight: 650;
 }
 nav a:hover { background: #edf1ea; color: var(--green); }
+.fullscreen-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 11px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+}
+.fullscreen-button:hover { border-color: #b9c6b4; color: var(--green); }
+.fullscreen-button span { font-size: 14px; line-height: 1; }
 .health {
   display: inline-flex;
   align-items: center;
@@ -496,9 +510,45 @@ footer {
 }
 footer strong { color: var(--ink); white-space: nowrap; }
 
+@media (min-width: 1200px) and (min-aspect-ratio: 16/10) {
+  .site-header {
+    height: 64px;
+    padding-inline: max(30px, calc((100vw - 1540px) / 2));
+  }
+  main { max-width: 1540px; padding-inline: 30px; }
+  .intro {
+    min-height: 315px;
+    display: grid;
+    grid-template-columns: minmax(520px, 1.05fr) minmax(500px, .95fr);
+    grid-template-rows: auto auto auto auto;
+    column-gap: clamp(50px, 7vw, 120px);
+    align-content: center;
+    padding: 34px 0 28px;
+  }
+  .intro > .kicker, .intro h1, .intro-copy { grid-column: 1; }
+  .intro > .kicker { align-self: end; }
+  .intro h1 { font-size: clamp(48px, 4.2vw, 68px); }
+  .intro-copy { margin-bottom: 0; }
+  .game-picker {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    align-self: center;
+    width: 100%;
+  }
+  .quick-games {
+    grid-column: 2;
+    grid-row: 4;
+    align-self: start;
+  }
+  .recommendation-layout { grid-template-columns: .78fr 1.22fr; }
+  .choice-card, .summary-card { min-height: 330px; }
+  .summary-card { padding-inline: 38px; }
+}
+
 @media (max-width: 860px) {
   .site-header { height: 68px; padding: 0 18px; }
   nav { display: none; }
+  .fullscreen-button { margin-left: auto; }
   .health { margin-left: auto; }
   main { padding: 0 16px 50px; }
   .intro { min-height: 390px; padding-top: 45px; }
@@ -513,6 +563,8 @@ footer strong { color: var(--ink); white-space: nowrap; }
 
 @media (max-width: 560px) {
   .health { display: none; }
+  .fullscreen-button { padding: 7px 9px; }
+  .fullscreen-button span + * { display: none; }
   .brand { margin-right: 0; }
   .intro { min-height: 430px; }
   .intro-copy { font-size: 14px; }
