@@ -1,0 +1,20 @@
+{
+  "taiwan": {
+    "official_domains": [
+      "taiwanlottery.com",
+      "www.taiwanlottery.com",
+      "api.taiwanlottery.com",
+      "cdn.taiwanlottery.com.tw"
+    ],
+    "annual_download_page": "https://www.taiwanlottery.com/lotto/history/result_download/",
+    "annual_download_api": "https://api.taiwanlottery.com/TLCAPIWeB/Lottery/ResultDownload",
+    "annual_years_back": 0,
+    "history_page": "https://www.taiwanlottery.com/lotto/history/history_result/",
+    "request_interval_seconds": 1.5
+  },
+  "hong_kong": {
+    "official_domains": ["bet.hkjc.com", "special.hkjc.com", "hkjc.com"],
+    "results_page": "https://bet.hkjc.com/marksix/index.aspx?lang=ch",
+    "request_interval_seconds": 2.0
+  }
+}

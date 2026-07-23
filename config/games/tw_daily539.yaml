@@ -1,0 +1,19 @@
+{
+  "game_code": "TW_DAILY539",
+  "market_code": "TW",
+  "display_name_zh_tw": "今彩539",
+  "display_name_en": "Daily Cash 539",
+  "game_type": "unordered_unique_numbers",
+  "supports_ac": true,
+  "supports_special_ball": false,
+  "supports_multiple_pools": false,
+  "verified": true,
+  "source_reference": "https://www.taiwanlottery.com/lotto/game_rules/daily539/",
+  "pools": [
+    {"code": "main", "label": "主要獎號", "min": 1, "max": 39, "draw_count": 5, "pick_count": 5, "unique": true, "ordered": false, "high_boundary": 20, "zones": [[1,10],[11,20],[21,30],[31,39]]}
+  ],
+  "currency": "TWD",
+  "display_format": "02d",
+  "verified_scope": "基本選號"
+}
+

@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Numeris 彩球分析與選號系統</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">N</div>
+        <div><strong>Numeris</strong><span>Number Analytics</span></div>
+      </div>
+      <nav id="main-nav" aria-label="主選單">
+        <button class="nav-item active" data-page="overview"><span>01</span>首頁總覽</button>
+        <button class="nav-item" data-page="data"><span>02</span>資料中心</button>
+        <button class="nav-item" data-page="rules"><span>03</span>彩種與規則</button>
+        <button class="nav-item" data-page="draws"><span>04</span>歷史開獎</button>
+        <button class="nav-item" data-page="frequency"><span>05</span>冷熱號分析</button>
+        <button class="nav-item" data-page="omission"><span>06</span>遺漏值分析</button>
+        <button class="nav-item" data-page="structure"><span>07</span>號碼結構分析</button>
+        <button class="nav-item" data-page="ac"><span>08</span>AC值分析</button>
+        <button class="nav-item" data-page="wizard"><span>09</span>影片五步選號</button>
+        <button class="nav-item" data-page="advanced"><span>10</span>進階自訂選號</button>
+        <button class="nav-item" data-page="records"><span>11</span>推薦紀錄</button>
+        <button class="nav-item" data-page="evaluation"><span>12</span>開獎結果核對</button>
+        <button class="nav-item" data-page="replay"><span>13</span>歷史逐期模擬</button>
+        <button class="nav-item" data-page="jobs"><span>14</span>系統工作</button>
+        <button class="nav-item" data-page="settings"><span>15</span>系統設定</button>
+      </nav>
+      <div class="sidebar-foot">本機離線核心 · v{{ app_version }}</div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <button id="menu-toggle" class="icon-button" aria-label="開啟選單">☰</button>
+        <div>
+          <p class="eyebrow">數序計畫</p>
+          <h1 id="page-title">首頁總覽</h1>
+        </div>
+        <div class="system-chip"><i></i><span id="health-label">連線檢查中</span></div>
+      </header>
+
+      <div id="notice" class="notice hidden" role="status"></div>
+
+      <section class="page active" id="page-overview">
+        <div class="hero">
+          <div>
+            <p class="eyebrow">LOCAL-FIRST ANALYTICS</p>
+            <h2>把歷史資料、條件與每一次選擇，<br>變成可重現的完整紀錄。</h2>
+            <p>分析結果是描述統計；每一組號碼都由公開條件與 random seed 產生，沒有黑盒預測。</p>
+            <button class="primary" data-open-page="wizard">開始五步選號 <span>→</span></button>
+          </div>
+          <div class="hero-orbit" aria-label="資料流程示意">
+            <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+            <div class="orbit-core">N<small>1.0</small></div>
+            <span class="orbit-label label-a">資料</span>
+            <span class="orbit-label label-b">分析</span>
+            <span class="orbit-label label-c">重現</span>
+          </div>
+        </div>
+        <div class="metric-grid" id="overview-metrics"></div>
+        <div class="panel">
+          <div class="panel-head"><div><p class="eyebrow">DATA COVERAGE</p><h3>彩種資料狀態</h3></div><button class="ghost" data-open-page="data">管理資料</button></div>
+          <div class="table-wrap"><table><thead><tr><th>市場</th><th>彩種</th><th>資料筆數</th><th>最新期別</th><th>最新日期</th><th>狀態</th></tr></thead><tbody id="overview-games"></tbody></table></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-data">
+        <div class="section-intro"><div><p class="eyebrow">DATA CENTER</p><h2>資料中心</h2><p>正式資料只接受官方來源；無法取得時，不會以推測內容填補。</p></div></div>
+        <div class="action-grid">
+          <button class="action-card" data-update="all"><b>全部官方資料</b><span>檢查台灣與香港官方來源</span></button>
+          <button class="action-card" data-update="taiwan"><b>只更新台灣</b><span>年度檔探索與增量來源</span></button>
+          <button class="action-card" data-update="hongkong"><b>只更新香港</b><span>香港賽馬會官方結果頁</span></button>
+          <button class="action-card" data-update="reconcile"><b>重新對帳</b><span>重新檢查兩地來源狀態</span></button>
+        </div>
+        <div class="two-column">
+          <div class="panel">
+            <div class="panel-head"><div><p class="eyebrow">MANUAL IMPORT</p><h3>匯入官方檔案</h3></div></div>
+            <label class="drop-zone" for="import-file"><strong>選擇 CSV／Excel 檔案</strong><span>欄位需符合 Numeris 匯入範本</span><input id="import-file" type="file" accept=".csv,.xlsx,.xls"></label>
+            <button id="import-submit" class="primary full">開始匯入</button>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><p class="eyebrow">QUALITY POLICY</p><h3>資料驗證原則</h3></div></div>
+            <ul class="check-list"><li>號碼範圍、數量與重複檢查</li><li>同一期冪等匯入，不重複新增</li><li>來源衝突只標記，不靜默覆蓋</li><li>原始檔保存並計算 SHA-256</li></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-rules">
+        <div class="section-intro"><div><p class="eyebrow">VERSIONED RULESETS</p><h2>彩種與規則</h2><p>號碼池、大小分界、區間與驗證範圍集中在版本化 ruleset。</p></div></div>
+        <div id="rules-grid" class="card-grid"></div>
+      </section>
+
+      <section class="page" id="page-draws">
+        <div class="section-intro"><div><p class="eyebrow">DRAW HISTORY</p><h2>歷史開獎</h2></div></div>
+        <div class="toolbar">
+          <label>彩種<select id="draw-game" class="game-select"></select></label>
+          <label>每頁<select id="draw-page-size"><option>50</option><option>100</option><option>200</option></select></label>
+          <button id="draw-refresh" class="secondary">重新整理</button>
+        </div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>期別</th><th>日期</th><th>主要號碼</th><th>其他號碼池／特別號</th><th>來源</th><th>驗證</th></tr></thead><tbody id="draw-table"></tbody></table></div><div id="draw-pagination" class="pagination"></div></div>
+      </section>
+
+      <section class="page analysis-page" id="page-frequency">
+        <div class="section-intro"><div><p class="eyebrow">TEMPERATURE MAP</p><h2>冷熱號分析</h2><p>分類只描述選定歷史區間內的相對頻率。</p></div></div>
+        <div class="toolbar analysis-toolbar"><label>彩種<select class="game-select analysis-game"></select></label><label>最近期數<input class="analysis-lookback" type="number" value="20" min="1"></label><button class="secondary run-analysis" data-kind="frequency">執行分析</button></div>
+        <div class="analysis-summary"></div><div class="ball-grid analysis-balls"></div>
+      </section>
+
+      <section class="page analysis-page" id="page-omission">
+        <div class="section-intro"><div><p class="eyebrow">OMISSION</p><h2>遺漏值分析</h2><p>最近一期出現為 0；從未出現者以實際可用期數顯示。</p></div></div>
+        <div class="toolbar analysis-toolbar"><label>彩種<select class="game-select analysis-game"></select></label><label>最近期數<input class="analysis-lookback" type="number" value="20" min="1"></label><button class="secondary run-analysis" data-kind="omission">執行分析</button></div>
+        <div class="analysis-summary"></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>號碼</th><th>目前遺漏</th><th>出現次數</th><th>平均間隔</th><th>最大間隔</th><th>最後期別</th><th>分類</th></tr></thead><tbody class="omission-table"></tbody></table></div></div>
+      </section>
+
+      <section class="page analysis-page" id="page-structure">
+        <div class="section-intro"><div><p class="eyebrow">STRUCTURE</p><h2>號碼結構分析</h2><p>奇偶、大小、和值、跨度、區間、連號及更多組合結構。</p></div></div>
+        <div class="toolbar analysis-toolbar"><label>彩種<select class="game-select analysis-game"></select></label><label>最近期數<input class="analysis-lookback" type="number" value="100" min="1"></label><button class="secondary run-analysis" data-kind="structure">執行分析</button></div>
+        <div class="chart-grid structure-charts"></div>
+      </section>
+
+      <section class="page analysis-page" id="page-ac">
+        <div class="section-intro"><div><p class="eyebrow">AC DISTRIBUTION</p><h2>AC值分析</h2><p>AC值是組合差值多樣性，不是中獎機率。</p></div></div>
+        <div class="toolbar analysis-toolbar"><label>彩種<select class="game-select analysis-game"></select></label><label>最近期數<input class="analysis-lookback" type="number" value="100" min="1"></label><button class="secondary run-analysis" data-kind="ac">執行分析</button></div>
+        <div class="analysis-summary"></div><div class="chart-grid structure-charts"></div>
+      </section>
+
+      <section class="page" id="page-wizard">
+        <div class="section-intro"><div><p class="eyebrow">VIDEO FIVE-STEP V1</p><h2>影片五步選號</h2><p>每一項條件都可查看與修改；相同資料、參數、版本與 seed 可重現。</p></div></div>
+        <div class="wizard-shell">
+          <div class="wizard-progress" id="wizard-progress">
+            <button class="active" data-step="1"><b>1</b><span>資料範圍</span></button>
+            <button data-step="2"><b>2</b><span>冷熱遺漏</span></button>
+            <button data-step="3"><b>3</b><span>比例結構</span></button>
+            <button data-step="4"><b>4</b><span>AC／數字結構</span></button>
+            <button data-step="5"><b>5</b><span>差異化生成</span></button>
+          </div>
+          <div class="wizard-content">
+            <div class="wizard-step active" data-step-panel="1">
+              <p class="step-kicker">STEP 01</p><h3>選擇資料範圍</h3>
+              <div class="form-grid">
+                <label>遊戲<select id="wizard-game" class="game-select"></select></label>
+                <label>目標期別<input id="wizard-target" placeholder="留空自動接續下一期"></label>
+                <label>最近多少期<input id="wizard-lookback" type="number" value="20" min="1" max="5000"></label>
+                <label>選號模式<select id="wizard-preset"><option value="VIDEO_FIVE_STEP_V1">影片五步選號法 V1</option><option value="BALANCED">均衡模式</option><option value="HOT_BIASED">熱號偏重</option><option value="COLD_BIASED">冷號偏重</option><option value="UNIFORM_RANDOM">條件內均勻隨機</option></select></label>
+              </div>
+              <div id="wizard-data-summary" class="info-strip">按「下一步」後載入目前資料截止期與驗證狀態。</div>
+            </div>
+            <div class="wizard-step" data-step-panel="2">
+              <p class="step-kicker">STEP 02</p><h3>冷熱號與遺漏</h3>
+              <div id="wizard-balls" class="ball-grid compact"></div>
+              <div class="form-grid">
+                <label>強制包含號碼<input id="wizard-include" placeholder="例如 3, 12"></label>
+                <label>排除號碼<input id="wizard-exclude" placeholder="例如 7, 28"></label>
+              </div>
+            </div>
+            <div class="wizard-step" data-step-panel="3">
+              <p class="step-kicker">STEP 03</p><h3>奇偶、大小與區間</h3>
+              <div class="form-grid">
+                <label>允許奇數個數<input id="wizard-odd" value="2,3,4"></label>
+                <label>允許大號個數<input id="wizard-high" value="2,3,4"></label>
+              </div>
+              <div class="info-strip">預設排除全數集中在單一區間的組合；實際大小分界與區間依各彩種 ruleset。</div>
+            </div>
+            <div class="wizard-step" data-step-panel="4">
+              <p class="step-kicker">STEP 04</p><h3>AC值／數字結構篩選</h3>
+              <div class="form-grid"><label>AC最小值<input id="wizard-ac-min" type="number" placeholder="留空使用歷史第20百分位"></label><label>AC最大值<input id="wizard-ac-max" type="number" placeholder="留空使用歷史第80百分位"></label></div>
+              <div id="wizard-ac-note" class="info-strip">3星彩與4星彩不使用AC值，會改採位置、和值及重複型態等數字結構。</div>
+            </div>
+            <div class="wizard-step" data-step-panel="5">
+              <p class="step-kicker">STEP 05</p><h3>差異化生成</h3>
+              <div class="form-grid">
+                <label>產生組數<input id="wizard-count" type="number" value="10" min="1" max="100"></label>
+                <label>random seed<input id="wizard-seed" type="number" value="20260723" min="0"></label>
+                <label>任兩組最大重疊<input id="wizard-overlap" type="number" value="3" min="0"></label>
+                <label id="star-label" class="hidden">BINGO星數<input id="wizard-star" type="number" value="6" min="1" max="10"></label>
+              </div>
+              <button id="generate-button" class="primary large">產生條件式組合 <span>→</span></button>
+            </div>
+            <div class="wizard-nav"><button id="wizard-prev" class="ghost" disabled>上一步</button><button id="wizard-next" class="secondary">下一步</button></div>
+          </div>
+        </div>
+        <div id="generation-results" class="results hidden">
+          <div class="results-head"><div><p class="eyebrow">GENERATED SET</p><h2>推薦組合</h2><p id="run-meta"></p></div><div class="button-row"><button id="lock-run" class="secondary">鎖定本次推薦</button><a id="export-csv" class="ghost button-link">CSV</a><a id="export-json" class="ghost button-link">JSON</a><a id="export-txt" class="ghost button-link">TXT</a></div></div>
+          <div class="score-notice">偏好分數只代表組合符合目前設定條件的程度，不代表實際開獎機率。</div>
+          <div id="ticket-grid" class="ticket-grid"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-advanced">
+        <div class="section-intro"><div><p class="eyebrow">ADVANCED MODE</p><h2>進階自訂選號</h2><p>進階模式與五步精靈共用同一套可重現核心；先在五步精靈調整包含、排除、奇偶、大小、AC、重疊、組數與 seed。</p></div><button class="primary" data-open-page="wizard">開啟條件編輯器</button></div>
+        <div class="panel"><div class="feature-list"><span>冷熱分類</span><span>遺漏範圍</span><span>奇偶／大小</span><span>區間</span><span>和值／跨度</span><span>AC值</span><span>包含／排除</span><span>差異化限制</span><span>random seed</span></div></div>
+      </section>
+
+      <section class="page" id="page-records">
+        <div class="section-intro"><div><p class="eyebrow">AUDITABLE RUNS</p><h2>推薦紀錄</h2></div><button id="records-refresh" class="secondary">重新整理</button></div>
+        <div id="records-list" class="record-list"></div>
+      </section>
+
+      <section class="page" id="page-evaluation">
+        <div class="section-intro"><div><p class="eyebrow">RESULT CHECK</p><h2>開獎結果核對</h2><p>核對命中內容；只有獎等與獎金資料完整且規則已驗證時才顯示正式結果。</p></div></div>
+        <div class="panel form-panel"><div class="form-grid"><label>推薦run UUID<input id="evaluation-run" placeholder="從推薦紀錄複製"></label><label>實際開獎期別<input id="evaluation-draw" placeholder="留空使用推薦目標期"></label></div><button id="evaluation-submit" class="primary">執行核對</button><pre id="evaluation-output" class="json-output"></pre></div>
+      </section>
+
+      <section class="page" id="page-replay">
+        <div class="section-intro"><div><p class="eyebrow">WALK-FORWARD SIMULATION</p><h2>歷史逐期模擬</h2><p>每個目標期只使用更早的資料，並與均勻隨機及相同結構限制基準比較。</p></div></div>
+        <div class="panel form-panel">
+          <div class="form-grid">
+            <label>遊戲<select id="replay-game" class="game-select"></select></label>
+            <label>開始索引<input id="replay-start" type="number" value="20" min="2"></label>
+            <label>結束索引<input id="replay-end" type="number" value="39" min="3"></label>
+            <label>lookback<input id="replay-lookback" type="number" value="20" min="2"></label>
+            <label>每期組數<input id="replay-tickets" type="number" value="5" min="1"></label>
+            <label>random seed<input id="replay-seed" type="number" value="20260723" min="0"></label>
+          </div>
+          <button id="replay-submit" class="primary">開始歷史逐期模擬</button>
+          <div id="replay-progress" class="job-progress hidden"><div><span></span></div><p></p></div>
+          <pre id="replay-output" class="json-output"></pre>
+        </div>
+      </section>
+
+      <section class="page" id="page-jobs">
+        <div class="section-intro"><div><p class="eyebrow">BACKGROUND JOBS</p><h2>系統工作</h2></div><button id="jobs-refresh" class="secondary">重新整理</button></div>
+        <div id="jobs-list" class="record-list"></div>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="section-intro"><div><p class="eyebrow">LOCAL SETTINGS</p><h2>系統設定</h2><p>所有持久化資料均位於專案根目錄內。</p></div></div>
+        <div class="two-column"><div class="panel"><h3>執行環境</h3><dl class="detail-list"><div><dt>本機網址</dt><dd>http://127.0.0.1:8767/</dd></div><div><dt>時區</dt><dd>Asia/Taipei</dd></div><div><dt>資料庫</dt><dd>data/database/numeris.sqlite3</dd></div><div><dt>版本</dt><dd>{{ app_version }}</dd></div></dl></div><div class="panel"><h3>核心原則</h3><ul class="check-list"><li>不使用付費AI服務</li><li>不提供購買、投注或金流功能</li><li>相同 seed 與設定可重現</li><li>無法取得官方資料時不編造</li></ul></div></div>
+      </section>
+
+      <footer>
+        本系統提供歷史開獎資料整理、描述統計及條件式號碼組合功能。歷史開獎結果不代表未來結果，產生的號碼不構成中獎保證。未滿18歲不得購買或兌領彩券，請量力而為。
+      </footer>
+    </main>
+  </div>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
+

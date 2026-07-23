@@ -1,0 +1,20 @@
+{
+  "game_code": "HK_MARKSIX",
+  "market_code": "HK",
+  "display_name_zh_tw": "香港六合彩",
+  "display_name_en": "Mark Six",
+  "game_type": "unordered_unique_numbers",
+  "supports_ac": true,
+  "supports_special_ball": true,
+  "supports_multiple_pools": false,
+  "verified": true,
+  "source_reference": "https://special.hkjc.com/infomenu/ch/marksix/",
+  "pools": [
+    {"code": "main", "label": "正碼", "min": 1, "max": 49, "draw_count": 6, "pick_count": 6, "unique": true, "ordered": false, "high_boundary": 25, "zones": [[1,10],[11,20],[21,30],[31,40],[41,49]]}
+  ],
+  "special_ball": {"pool_code": "special", "draw_count": 1, "user_pick": false},
+  "currency": "HKD",
+  "display_format": "02d",
+  "verified_scope": "單式6號、正碼與特別號定義；複式與膽拖未實作"
+}
+

@@ -1,0 +1,628 @@
+{
+  "run_uuid": "ba67e021-cafb-4d18-95da-0167624e9d7e",
+  "game_code": "TW_LOTTO649",
+  "game_name": "大樂透",
+  "target_draw_no": "115000067",
+  "cutoff_draw_no": "115000066",
+  "cutoff_draw_date": "2026-06-30",
+  "preset_code": "VIDEO_FIVE_STEP_V1",
+  "preset_name": "影片五步選號法 V1",
+  "random_seed": 6492026,
+  "requested_ticket_count": 10,
+  "generated_ticket_count": 10,
+  "locked": false,
+  "locked_at": null,
+  "status": "completed",
+  "config": {
+    "game_code": "TW_LOTTO649",
+    "ticket_count": 10,
+    "lookback_count": 20,
+    "random_seed": 6492026,
+    "preset_code": "VIDEO_FIVE_STEP_V1",
+    "target_draw_no": null,
+    "max_overlap": 3,
+    "star_count": 6,
+    "include_numbers": [],
+    "exclude_numbers": [],
+    "allowed_odd_counts": null,
+    "allowed_high_counts": null,
+    "ac_min": null,
+    "ac_max": null,
+    "max_attempts": 50000,
+    "effective_ac_min": 7,
+    "effective_ac_max": 10,
+    "actual_lookback": 20
+  },
+  "config_hash": "814011790ee7159a7a1d2d112dbabb1203c13f0e175742d50180186b0d833532",
+  "diagnostics": {
+    "attempts": 198,
+    "candidate_count": 120,
+    "requested_count": 10,
+    "generated_count": 10,
+    "max_overlap": 3,
+    "constraints_relaxed": false
+  },
+  "generated_at": "2026-07-23T08:18:32.334415",
+  "tickets": [
+    {
+      "ticket_index": 1,
+      "pools": {
+        "main": [
+          5,
+          14,
+          17,
+          36,
+          37,
+          48
+        ]
+      },
+      "preference_score": 0.700868,
+      "diversity_score": 0.0,
+      "explanation": {
+        "temperature_counts": {
+          "冷": 2,
+          "溫": 2,
+          "熱": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為3：3，和值為157，AC值為8。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 157,
+          "span": 43,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 3,
+          "low_count": 3,
+          "zone_counts": [
+            1,
+            2,
+            0,
+            2,
+            1
+          ],
+          "consecutive_pairs": 1,
+          "consecutive_groups": 1,
+          "last_draw_overlap": 1,
+          "last_draw_adjacent": 3,
+          "same_tail_groups": 1,
+          "distinct_tail_count": 5,
+          "prime_count": 3,
+          "minimum_gap": 1,
+          "maximum_gap": 19,
+          "average_gap": 8.6,
+          "standard_deviation": 15.11529762268088,
+          "ac": 8
+        }
+      }
+    },
+    {
+      "ticket_index": 2,
+      "pools": {
+        "main": [
+          3,
+          12,
+          21,
+          28,
+          32,
+          49
+        ]
+      },
+      "preference_score": 0.680903,
+      "diversity_score": 1.0,
+      "explanation": {
+        "temperature_counts": {
+          "冷": 2,
+          "熱": 2,
+          "溫": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為3：3，和值為145，AC值為9。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 145,
+          "span": 46,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 3,
+          "low_count": 3,
+          "zone_counts": [
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "consecutive_pairs": 0,
+          "consecutive_groups": 0,
+          "last_draw_overlap": 0,
+          "last_draw_adjacent": 2,
+          "same_tail_groups": 1,
+          "distinct_tail_count": 5,
+          "prime_count": 1,
+          "minimum_gap": 4,
+          "maximum_gap": 17,
+          "average_gap": 9.2,
+          "standard_deviation": 14.712995011968916,
+          "ac": 9
+        }
+      }
+    },
+    {
+      "ticket_index": 3,
+      "pools": {
+        "main": [
+          4,
+          15,
+          16,
+          25,
+          27,
+          44
+        ]
+      },
+      "preference_score": 0.677951,
+      "diversity_score": 1.0,
+      "explanation": {
+        "temperature_counts": {
+          "熱": 2,
+          "冷": 2,
+          "溫": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為3：3，和值為131，AC值為8。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 131,
+          "span": 40,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 3,
+          "low_count": 3,
+          "zone_counts": [
+            1,
+            2,
+            2,
+            0,
+            1
+          ],
+          "consecutive_pairs": 1,
+          "consecutive_groups": 1,
+          "last_draw_overlap": 2,
+          "last_draw_adjacent": 2,
+          "same_tail_groups": 2,
+          "distinct_tail_count": 4,
+          "prime_count": 0,
+          "minimum_gap": 1,
+          "maximum_gap": 17,
+          "average_gap": 8.0,
+          "standard_deviation": 12.428685458334773,
+          "ac": 8
+        }
+      }
+    },
+    {
+      "ticket_index": 4,
+      "pools": {
+        "main": [
+          5,
+          10,
+          20,
+          39,
+          42,
+          43
+        ]
+      },
+      "preference_score": 0.691493,
+      "diversity_score": 0.909091,
+      "explanation": {
+        "temperature_counts": {
+          "冷": 2,
+          "溫": 2,
+          "熱": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為3：3，和值為159，AC值為10。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 159,
+          "span": 38,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 3,
+          "low_count": 3,
+          "zone_counts": [
+            2,
+            1,
+            0,
+            1,
+            2
+          ],
+          "consecutive_pairs": 1,
+          "consecutive_groups": 1,
+          "last_draw_overlap": 1,
+          "last_draw_adjacent": 1,
+          "same_tail_groups": 1,
+          "distinct_tail_count": 5,
+          "prime_count": 2,
+          "minimum_gap": 1,
+          "maximum_gap": 19,
+          "average_gap": 7.6,
+          "standard_deviation": 15.521490478258416,
+          "ac": 10
+        }
+      }
+    },
+    {
+      "ticket_index": 5,
+      "pools": {
+        "main": [
+          1,
+          4,
+          5,
+          29,
+          32,
+          38
+        ]
+      },
+      "preference_score": 0.67066,
+      "diversity_score": 0.909091,
+      "explanation": {
+        "temperature_counts": {
+          "溫": 2,
+          "熱": 2,
+          "冷": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為3：3，和值為109，AC值為8。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 109,
+          "span": 37,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 3,
+          "low_count": 3,
+          "zone_counts": [
+            3,
+            0,
+            1,
+            2,
+            0
+          ],
+          "consecutive_pairs": 1,
+          "consecutive_groups": 1,
+          "last_draw_overlap": 2,
+          "last_draw_adjacent": 1,
+          "same_tail_groups": 0,
+          "distinct_tail_count": 6,
+          "prime_count": 2,
+          "minimum_gap": 1,
+          "maximum_gap": 24,
+          "average_gap": 7.4,
+          "standard_deviation": 15.11529762268088,
+          "ac": 8
+        }
+      }
+    },
+    {
+      "ticket_index": 6,
+      "pools": {
+        "main": [
+          15,
+          17,
+          18,
+          32,
+          39,
+          46
+        ]
+      },
+      "preference_score": 0.663542,
+      "diversity_score": 0.909091,
+      "explanation": {
+        "temperature_counts": {
+          "冷": 2,
+          "熱": 2,
+          "溫": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為3：3，和值為167，AC值為8。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 167,
+          "span": 31,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 3,
+          "low_count": 3,
+          "zone_counts": [
+            0,
+            3,
+            0,
+            2,
+            1
+          ],
+          "consecutive_pairs": 1,
+          "consecutive_groups": 1,
+          "last_draw_overlap": 0,
+          "last_draw_adjacent": 3,
+          "same_tail_groups": 0,
+          "distinct_tail_count": 6,
+          "prime_count": 1,
+          "minimum_gap": 1,
+          "maximum_gap": 14,
+          "average_gap": 6.2,
+          "standard_deviation": 11.908213785264168,
+          "ac": 8
+        }
+      }
+    },
+    {
+      "ticket_index": 7,
+      "pools": {
+        "main": [
+          4,
+          17,
+          26,
+          28,
+          31,
+          35
+        ]
+      },
+      "preference_score": 0.646875,
+      "diversity_score": 0.909091,
+      "explanation": {
+        "temperature_counts": {
+          "熱": 2,
+          "冷": 2,
+          "溫": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為4：2，和值為141，AC值為9。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 141,
+          "span": 31,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 4,
+          "low_count": 2,
+          "zone_counts": [
+            1,
+            1,
+            2,
+            2,
+            0
+          ],
+          "consecutive_pairs": 0,
+          "consecutive_groups": 0,
+          "last_draw_overlap": 1,
+          "last_draw_adjacent": 3,
+          "same_tail_groups": 0,
+          "distinct_tail_count": 6,
+          "prime_count": 2,
+          "minimum_gap": 2,
+          "maximum_gap": 13,
+          "average_gap": 6.2,
+          "standard_deviation": 10.307764064044152,
+          "ac": 9
+        }
+      }
+    },
+    {
+      "ticket_index": 8,
+      "pools": {
+        "main": [
+          2,
+          3,
+          18,
+          31,
+          43,
+          48
+        ]
+      },
+      "preference_score": 0.649479,
+      "diversity_score": 0.909091,
+      "explanation": {
+        "temperature_counts": {
+          "溫": 2,
+          "冷": 2,
+          "熱": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為3：3，和值為145，AC值為10。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 145,
+          "span": 46,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 3,
+          "low_count": 3,
+          "zone_counts": [
+            2,
+            1,
+            0,
+            1,
+            2
+          ],
+          "consecutive_pairs": 1,
+          "consecutive_groups": 1,
+          "last_draw_overlap": 0,
+          "last_draw_adjacent": 1,
+          "same_tail_groups": 2,
+          "distinct_tail_count": 4,
+          "prime_count": 4,
+          "minimum_gap": 1,
+          "maximum_gap": 15,
+          "average_gap": 9.2,
+          "standard_deviation": 18.013112507898857,
+          "ac": 10
+        }
+      }
+    },
+    {
+      "ticket_index": 9,
+      "pools": {
+        "main": [
+          9,
+          15,
+          20,
+          33,
+          37,
+          38
+        ]
+      },
+      "preference_score": 0.633333,
+      "diversity_score": 0.909091,
+      "explanation": {
+        "temperature_counts": {
+          "溫": 2,
+          "冷": 2,
+          "熱": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為4：2，大小比為3：3，和值為152，AC值為8。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 152,
+          "span": 29,
+          "odd_count": 4,
+          "even_count": 2,
+          "high_count": 3,
+          "low_count": 3,
+          "zone_counts": [
+            1,
+            2,
+            0,
+            3,
+            0
+          ],
+          "consecutive_pairs": 1,
+          "consecutive_groups": 1,
+          "last_draw_overlap": 0,
+          "last_draw_adjacent": 3,
+          "same_tail_groups": 0,
+          "distinct_tail_count": 6,
+          "prime_count": 1,
+          "minimum_gap": 1,
+          "maximum_gap": 13,
+          "average_gap": 5.8,
+          "standard_deviation": 11.234866364235145,
+          "ac": 8
+        }
+      }
+    },
+    {
+      "ticket_index": 10,
+      "pools": {
+        "main": [
+          3,
+          8,
+          34,
+          37,
+          39,
+          40
+        ]
+      },
+      "preference_score": 0.603299,
+      "diversity_score": 0.909091,
+      "explanation": {
+        "temperature_counts": {
+          "冷": 2,
+          "溫": 2,
+          "熱": 2
+        },
+        "message": "本組使用2個熱號、2個溫號及2個冷號；奇偶比為3：3，大小比為4：2，和值為161，AC值為7。",
+        "batch_metrics": {
+          "total_coverage": 37,
+          "coverage_rate": 0.755102,
+          "average_overlap": 0.688889,
+          "maximum_overlap": 1,
+          "average_jaccard": 0.062626,
+          "duplicate_count": 0
+        },
+        "structure": {
+          "sum": 161,
+          "span": 37,
+          "odd_count": 3,
+          "even_count": 3,
+          "high_count": 4,
+          "low_count": 2,
+          "zone_counts": [
+            2,
+            0,
+            0,
+            4,
+            0
+          ],
+          "consecutive_pairs": 1,
+          "consecutive_groups": 1,
+          "last_draw_overlap": 0,
+          "last_draw_adjacent": 2,
+          "same_tail_groups": 0,
+          "distinct_tail_count": 6,
+          "prime_count": 2,
+          "minimum_gap": 1,
+          "maximum_gap": 26,
+          "average_gap": 7.4,
+          "standard_deviation": 15.268886301524708,
+          "ac": 7
+        }
+      }
+    }
+  ]
+}

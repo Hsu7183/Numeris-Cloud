@@ -1,0 +1,19 @@
+{
+  "game_code": "TW_BINGO",
+  "market_code": "TW",
+  "display_name_zh_tw": "BINGO BINGO賓果賓果",
+  "display_name_en": "BINGO BINGO",
+  "game_type": "high_frequency",
+  "supports_ac": false,
+  "supports_special_ball": false,
+  "supports_multiple_pools": false,
+  "verified": true,
+  "source_reference": "https://www.taiwanlottery.com/lotto/game_rules/bingo/",
+  "pools": [
+    {"code": "main", "label": "開獎號碼", "min": 1, "max": 80, "draw_count": 20, "pick_count": 10, "pick_count_min": 1, "pick_count_max": 10, "unique": true, "ordered": false, "high_boundary": 41, "zones": [[1,10],[11,20],[21,30],[31,40],[41,50],[51,60],[61,70],[71,80]]}
+  ],
+  "currency": "TWD",
+  "display_format": "02d",
+  "verified_scope": "20個開獎號碼及1至10星選號；其他玩法獎等未驗證"
+}
+

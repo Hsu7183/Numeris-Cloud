@@ -1,0 +1,20 @@
+{
+  "game_code": "TW_49MATCH",
+  "market_code": "TW",
+  "display_name_zh_tw": "49樂合彩",
+  "display_name_en": "49 Match",
+  "game_type": "derived_game",
+  "parent_game_code": "TW_LOTTO649",
+  "supports_ac": true,
+  "supports_special_ball": false,
+  "supports_multiple_pools": false,
+  "verified": false,
+  "source_reference": "待由台灣彩券官方規則人工確認",
+  "pools": [
+    {"code": "main", "label": "底層主要獎號", "min": 1, "max": 49, "draw_count": 6, "pick_count": 6, "unique": true, "ordered": false, "high_boundary": 25, "zones": [[1,10],[11,20],[21,30],[31,40],[41,49]]}
+  ],
+  "currency": "TWD",
+  "display_format": "02d",
+  "verified_scope": "僅底層大樂透主要獎號分析；不判定衍生獎等"
+}
+

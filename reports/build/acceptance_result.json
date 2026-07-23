@@ -1,0 +1,85 @@
+{
+  "health": {
+    "status": "ok",
+    "service": "Numeris 彩球分析與選號系統",
+    "version": "1.0.0",
+    "database": {
+      "sqlite_version": "3.50.4",
+      "integrity": "ok"
+    },
+    "timezone": "Asia/Taipei"
+  },
+  "lotto": {
+    "run_uuid": "ba67e021-cafb-4d18-95da-0167624e9d7e",
+    "tickets": 10,
+    "valid": true,
+    "has_extra_special_pick": false,
+    "same_seed_reproduced": true
+  },
+  "super_lotto": {
+    "run_uuid": "52d7fb86-6ec0-464a-a434-55b97f50ccd7",
+    "tickets": 10,
+    "valid_6_plus_1": true
+  },
+  "pick3": {
+    "run_uuid": "cedb40db-c9d2-47e4-b0b0-342375542695",
+    "leading_zero": true
+  },
+  "daily539": {
+    "run_uuid": "87f0a513-6f00-4e6e-a52c-63fc720a5e90",
+    "valid": true
+  },
+  "marksix": {
+    "run_uuid": "a351d752-ae57-4f2c-acbd-238b76d70812",
+    "valid": true
+  },
+  "pick4": {
+    "run_uuid": "c00ac11f-bac6-4b89-8520-e53e7313ae9b",
+    "leading_zero": true,
+    "ordered_digits": true
+  },
+  "bingo": {
+    "run_uuid": "c96433c9-8c92-4cb3-b681-c3ba1702d49c",
+    "valid_10_star": true
+  },
+  "replay": {
+    "run_uuid": "ed936e4b-df75-4ce8-ab14-c1933b712b10",
+    "status": "completed",
+    "progress_current": 20,
+    "progress_total": 20,
+    "summary": {
+      "game_code": "TW_LOTTO649",
+      "simulated_draws": 20,
+      "tickets_per_draw": 5,
+      "total_tickets": 100,
+      "hit_distribution": {
+        "0": 41,
+        "1": 43,
+        "2": 15,
+        "4": 1
+      },
+      "uniform_baseline_distribution": {
+        "0": 48,
+        "1": 36,
+        "2": 15,
+        "3": 1
+      },
+      "structured_baseline_distribution": {
+        "0": 45,
+        "1": 42,
+        "2": 12,
+        "3": 1
+      },
+      "highest_single_ticket_hit": 4,
+      "average_hits": 0.77,
+      "future_data_used": false,
+      "roi_calculated": false,
+      "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+    },
+    "report_path": "C:\\Users\\user\\Documents\\Project Numeris\\reports\\replay\\replay_ed936e4b-df75-4ce8-ab14-c1933b712b10.html"
+  },
+  "exports": [
+    "acceptance_lotto.csv",
+    "acceptance_lotto.json"
+  ]
+}

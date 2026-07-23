@@ -1,0 +1,19 @@
+{
+  "game_code": "TW_PICK3",
+  "market_code": "TW",
+  "display_name_zh_tw": "3星彩",
+  "display_name_en": "Pick 3",
+  "game_type": "ordered_digits",
+  "supports_ac": false,
+  "supports_special_ball": false,
+  "supports_multiple_pools": false,
+  "verified": true,
+  "source_reference": "https://www.taiwanlottery.com/lotto/game_rules/3d/",
+  "pools": [
+    {"code": "digits", "label": "三位數", "min": 0, "max": 9, "draw_count": 3, "pick_count": 3, "unique": false, "ordered": true, "high_boundary": 5, "zones": [[0,4],[5,9]]}
+  ],
+  "currency": "TWD",
+  "display_format": "digit",
+  "verified_scope": "位置、數字範圍與前導零"
+}
+

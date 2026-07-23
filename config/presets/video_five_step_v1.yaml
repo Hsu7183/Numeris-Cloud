@@ -1,0 +1,22 @@
+{
+  "preset_code": "VIDEO_FIVE_STEP_V1",
+  "display_name": "影片五步選號法 V1",
+  "version": "1.0.0",
+  "lookback_count": 20,
+  "classification": "percentile_three",
+  "hot_ratio": 0.2,
+  "warm_ratio": 0.6,
+  "cold_ratio": 0.2,
+  "allowed_odd_counts_6": [2,3,4],
+  "allowed_high_counts_6": [2,3,4],
+  "allowed_odd_counts_5": [2,3],
+  "allowed_high_counts_5": [2,3],
+  "ac_percentiles": [0.2,0.8],
+  "ticket_count": 10,
+  "maximize_coverage": true,
+  "forbid_duplicates": true,
+  "preference_weight": 0.5,
+  "diversity_weight": 0.3,
+  "coverage_weight": 0.2
+}
+
