@@ -15,6 +15,8 @@ FastAPI提供JSON API與Jinja2單頁介面；SQLAlchemy 2使用SQLite；Alembic�
 - `app/services/importers/draw_importer.py`：檔案解析、規則驗證與冪等匯入。
 - `app/services/replay/service.py`：歷史逐期模擬與基準。
 - `app/services/data_sources/official.py`：官方來源探索及原始檔保存。
+- `app/services/simple_dashboard.py`：簡易首頁、包牌、同期別核對及每週歷史指標。
+- `app/api/simple.py`：簡易首頁資料與下期組合API。
 - `tests`：單元、整合與Playwright E2E。
 
 ## 資料庫schema

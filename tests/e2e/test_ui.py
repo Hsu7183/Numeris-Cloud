@@ -18,7 +18,7 @@ def _free_port() -> int:
         return int(sock.getsockname()[1])
 
 
-def test_five_step_ui_flow() -> None:
+def test_simple_recommendation_ui_flow() -> None:
     port = _free_port()
     source_db = Path("data/database/numeris.sqlite3").resolve()
     e2e_db = Path(f"data/cache/numeris_e2e_{port}.sqlite3").resolve()
@@ -60,22 +60,26 @@ def test_five_step_ui_flow() -> None:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
             page = browser.new_page(viewport={"width": 1440, "height": 1000})
+            page_errors: list[str] = []
+            page.on("pageerror", lambda error: page_errors.append(str(error)))
             page.goto(base_url)
-            page.get_by_role("button", name="影片五步選號").click()
-            page.locator("#wizard-game").select_option("TW_LOTTO649")
-            page.locator("#wizard-next").click()
-            page.locator("[data-step-panel='2']").wait_for(state="visible")
-            page.locator("[data-step='5']").click()
-            page.locator("#wizard-count").fill("10")
-            page.locator("#wizard-seed").fill("24680")
-            page.locator("#generate-button").click()
-            page.locator(".ticket-card").first.wait_for(state="visible", timeout=30000)
-            assert page.locator(".ticket-card").count() == 10
-            page.locator("#lock-run").click()
-            page.get_by_text("已鎖定", exact=True).wait_for(timeout=10000)
-            page.get_by_role("button", name="推薦紀錄").click()
-            page.locator(".record").first.wait_for(state="visible")
-            assert page.locator(".record").count() >= 1
+            page.get_by_role("heading", name="選一個彩種， 直接看下期組合。").wait_for()
+            page.locator("#game-select").select_option("TW_LOTTO649")
+            page.locator("#result-title").filter(has_text="大樂透").wait_for(timeout=30000)
+            page.locator(".ticket").first.wait_for(state="visible")
+            assert page.locator(".ticket").count() == 10
+            assert "/api/exports/generation/" in (
+                page.locator("#export-csv").get_attribute("href") or ""
+            )
+
+            page.locator("#game-select").select_option("HK_MARKSIX")
+            page.locator("[data-mode='wheel7']").wait_for(state="visible")
+            page.locator("[data-mode='wheel7']").click()
+            page.locator("#generate").click()
+            page.locator("#wheel-core").wait_for(state="visible", timeout=30000)
+            assert page.locator(".ticket").count() == 7
+            assert page.locator(".sidebar").count() == 0
+            assert not page_errors
             browser.close()
     finally:
         process.terminate()

@@ -23,6 +23,7 @@ data/backups/*
 data/imports/*
 !data/imports/.gitkeep
 reports/build/coverage/
+reports/build/*.png
 *.zip
 *.xlsx
 *.xls

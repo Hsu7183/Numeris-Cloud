@@ -24,6 +24,7 @@ from app.api import (
     health,
     replay,
     settings,
+    simple,
 )
 from app.core.database import Base, SessionLocal, engine
 from app.core.exceptions import NumerisError
@@ -123,6 +124,7 @@ for router in (
     evaluations.router,
     replay.router,
     settings.router,
+    simple.router,
 ):
     app.include_router(router)
 

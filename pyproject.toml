@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "numeris"
-version = "1.0.0"
+version = "1.1.0"
 description = "Numeris 彩球分析與選號系統"
 readme = "README_繁體中文.md"
 requires-python = ">=3.12"

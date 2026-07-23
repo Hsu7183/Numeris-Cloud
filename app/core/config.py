@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     )
 
     app_name: str = "Numeris 彩球分析與選號系統"
-    app_version: str = "1.0.0"
+    app_version: str = "1.1.0"
     host: str = "127.0.0.1"
     port: int = 8767
     timezone: str = "Asia/Taipei"

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -38,6 +38,15 @@ class ReplayRequest(BaseModel):
     tickets_per_draw: int = Field(default=5, ge=1, le=50)
     random_seed: int = Field(default=20260723, ge=0)
     baseline_repetitions: int = Field(default=20, ge=1, le=500)
+
+
+class SimpleGenerationRequest(BaseModel):
+    game_code: str = "HK_MARKSIX"
+    mode: Literal["single", "wheel7", "wheel8", "wheel9"] = "single"
+    ticket_count: int = Field(default=10, ge=1, le=100)
+    star_count: int = Field(default=6, ge=1, le=10)
+    random_seed: int | None = Field(default=None, ge=0)
+    refresh: bool = False
 
 
 class ImportRow(BaseModel):

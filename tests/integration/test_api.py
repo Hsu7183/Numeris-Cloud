@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
+from app.core.database import SessionLocal
 from app.main import app
+from app.models.database_models import GenerationRun
 
 
 def test_health_games_draws_and_analytics() -> None:
@@ -78,6 +81,64 @@ def test_multi_pool_ordered_and_bingo_generation() -> None:
             for ticket in response.json()["tickets"]:
                 for pool_code, count in expected.items():
                     assert len(ticket["pools"][pool_code]) == count
+
+
+def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
+    with TestClient(app) as client:
+        single = client.post(
+            "/api/simple/generate",
+            json={
+                "game_code": "HK_MARKSIX",
+                "mode": "single",
+                "ticket_count": 10,
+                "random_seed": 88001,
+                "refresh": True,
+            },
+        )
+        assert single.status_code == 200, single.text
+        assert single.json()["locked"] is True
+        assert single.json()["generated_ticket_count"] == 10
+
+        wheel = client.post(
+            "/api/simple/generate",
+            json={
+                "game_code": "HK_MARKSIX",
+                "mode": "wheel7",
+                "random_seed": 88002,
+                "refresh": True,
+            },
+        )
+        assert wheel.status_code == 200, wheel.text
+        wheel_payload = wheel.json()
+        assert wheel_payload["generated_ticket_count"] == 7
+        wheel_numbers = set(wheel_payload["config"]["wheel_numbers"])
+        assert len(wheel_numbers) == 7
+        assert all(
+            set(ticket["pools"]["main"]).issubset(wheel_numbers)
+            for ticket in wheel_payload["tickets"]
+        )
+
+        with SessionLocal() as db:
+            run = db.scalar(
+                select(GenerationRun).where(
+                    GenerationRun.run_uuid == single.json()["run_uuid"]
+                )
+            )
+            assert run is not None
+            run.target_draw_no = "F0060"
+            db.commit()
+        evaluated = client.post(
+            f"/api/generation/runs/{single.json()['run_uuid']}/evaluate",
+            params={"actual_draw_no": "F0060"},
+        )
+        assert evaluated.status_code == 200, evaluated.text
+        dashboard = client.get("/api/simple/dashboard/HK_MARKSIX")
+        assert dashboard.status_code == 200
+        payload = dashboard.json()
+        assert payload["game"]["wheel_modes"] == [7, 8, 9]
+        assert payload["records"]
+        assert payload["weekly_performance"]
+        assert "不是未來中獎機率" in payload["metric_note"]
 
 
 def test_consistent_error_shape() -> None:
