@@ -141,6 +141,19 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
         assert "不是未來中獎機率" in payload["metric_note"]
 
 
+def test_simple_dashboard_hides_fixture_history_when_official_data_exists() -> None:
+    with TestClient(app) as client:
+        dashboard = client.get("/api/simple/dashboard/TW_LOTTO649")
+        assert dashboard.status_code == 200
+        payload = dashboard.json()
+        assert payload["data"]["official_count"] > 0
+        assert payload["records"]
+        assert all(
+            not record["cutoff_draw_no"].startswith("F")
+            for record in payload["records"]
+        )
+
+
 def test_consistent_error_shape() -> None:
     with TestClient(app) as client:
         response = client.get("/api/games/NOT_A_GAME")

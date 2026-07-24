@@ -44,7 +44,7 @@ def omission(
 
 def _structure_payload(db: Session, game_code: str, lookback_count: int) -> dict[str, Any]:
     game, ruleset = get_game_and_ruleset(db, game_code)
-    draws = _draws_for_game(db, game)[-lookback_count:]
+    draws = _draws_for_game(db, game, lookback_count)
     pool = ruleset.config_json["pools"][0]
     samples, draw_nos = _pool_draws(draws, str(pool["code"]))
     structures = [

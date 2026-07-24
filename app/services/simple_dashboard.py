@@ -418,17 +418,19 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
         )
         or 0
     )
-    runs = list(
-        db.scalars(
-            select(GenerationRun)
-            .where(
-                GenerationRun.game_id == game.id,
-                GenerationRun.locked.is_(True),
-            )
-            .order_by(GenerationRun.id.desc())
-            .limit(8)
+    runs_statement = (
+        select(GenerationRun)
+        .join(Draw, GenerationRun.cutoff_draw_id == Draw.id)
+        .where(
+            GenerationRun.game_id == game.id,
+            GenerationRun.locked.is_(True),
         )
+        .order_by(GenerationRun.id.desc())
+        .limit(8)
     )
+    if official_count:
+        runs_statement = runs_statement.where(Draw.source_status == "official")
+    runs = list(db.scalars(runs_statement))
     records: list[dict[str, Any]] = []
     for run in runs:
         payload = serialize_generation_run(db, run.run_uuid)
