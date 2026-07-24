@@ -372,6 +372,7 @@ def _execute_replay(db: Session, replay: ReplayRun, job: Job) -> None:
                 previous_numbers=previous,
                 max_attempts=30000,
                 temperature_constraint=False,
+                use_temperature_preference=False,
             )
             structured_hits.extend(
                 len(set(candidate.primary_numbers) & target_numbers)

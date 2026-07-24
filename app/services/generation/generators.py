@@ -63,17 +63,28 @@ def _score_candidate(
     structure: dict[str, Any],
     ideal_odd: float,
     ideal_high: float,
+    use_temperature_preference: bool = True,
 ) -> float:
+    odd_balance = 1 - abs(float(structure["odd_count"]) - ideal_odd) / len(numbers)
+    high_balance = 1 - abs(float(structure["high_count"]) - ideal_high) / len(numbers)
+    if not use_temperature_preference:
+        return round(max(0.0, min(1.0, odd_balance * 0.5 + high_balance * 0.5)), 6)
     frequency_score = sum(
         float(metrics_by_number[number]["percentile_rank"]) for number in numbers
     ) / len(numbers)
-    omission_values = [float(metrics_by_number[number]["current_omission"]) for number in numbers]
+    omission_values = [
+        float(metrics_by_number[number]["current_omission"]) for number in numbers
+    ]
     omission_max = max(
-        1.0, max(float(metric["current_omission"]) for metric in metrics_by_number.values())
+        1.0,
+        max(
+            float(metric["current_omission"])
+            for metric in metrics_by_number.values()
+        ),
     )
-    omission_score = sum(value / omission_max for value in omission_values) / len(numbers)
-    odd_balance = 1 - abs(float(structure["odd_count"]) - ideal_odd) / len(numbers)
-    high_balance = 1 - abs(float(structure["high_count"]) - ideal_high) / len(numbers)
+    omission_score = sum(value / omission_max for value in omission_values) / len(
+        numbers
+    )
     return round(
         max(
             0.0,
@@ -141,6 +152,7 @@ class UnorderedCombinationGenerator(CandidateGenerator):
         max_overlap: int | None = None,
         max_attempts: int = 50000,
         temperature_constraint: bool = True,
+        use_temperature_preference: bool = True,
         include_ac: bool = True,
     ) -> tuple[list[Candidate], dict[str, Any]]:
         pick_count = int(pool["pick_count"])
@@ -237,7 +249,12 @@ class UnorderedCombinationGenerator(CandidateGenerator):
             if max(structure["zone_counts"]) == pick_count:
                 continue
             score = _score_candidate(
-                numbers, metrics_by_number, structure, pick_count / 2, pick_count / 2
+                numbers,
+                metrics_by_number,
+                structure,
+                pick_count / 2,
+                pick_count / 2,
+                use_temperature_preference,
             )
             category_counts = Counter(
                 metrics_by_number[number]["temperature"] for number in numbers
@@ -269,6 +286,8 @@ class UnorderedCombinationGenerator(CandidateGenerator):
             "requested_count": count,
             "generated_count": len(selected_candidates),
             "max_overlap": overlap_limit,
+            "temperature_constraint": temperature_constraint,
+            "temperature_preference": use_temperature_preference,
             "constraints_relaxed": False,
         }
         if len(selected_candidates) < count:

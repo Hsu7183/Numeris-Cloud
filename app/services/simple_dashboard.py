@@ -41,9 +41,14 @@ from app.services.generation.service import (
     serialize_generation_run,
 )
 
+SIMPLE_METHOD_REVISION = "VIDEO_FIVE_STEP_V1_AUDITED_20260724"
+
 
 def _seed_for(game_code: str, cutoff_id: int, mode: str) -> int:
-    raw = f"{game_code}|{cutoff_id}|{mode}|{__version__}".encode()
+    raw = (
+        f"{game_code}|{cutoff_id}|{mode}|{__version__}|"
+        f"{SIMPLE_METHOD_REVISION}"
+    ).encode()
     return int(hashlib.sha256(raw).hexdigest()[:12], 16)
 
 
@@ -70,6 +75,7 @@ def _recent_simple_run(
         if (
             run.config_json.get("simple_interface") is True
             and run.config_json.get("simple_mode") == mode
+            and run.config_json.get("method_revision") == SIMPLE_METHOD_REVISION
             and int(run.config_json.get("star_count", star_count)) == star_count
         ):
             return run
@@ -91,6 +97,7 @@ def _mark_simple_run(
             "simple_interface": True,
             "simple_mode": mode,
             "star_count": star_count,
+            "method_revision": SIMPLE_METHOD_REVISION,
         }
     )
     run.config_json = config
@@ -111,6 +118,7 @@ def _create_wheel_run(
     draws = _draws_for_game(db, game, 100)
     if not draws:
         raise GenerationError("NO_DATA", "此彩種尚無可用開獎資料")
+    analysis_draws = draws[-20:]
     primary_pool = dict(ruleset.config_json["pools"][0])
     pick_count = int(primary_pool["pick_count"])
     if wheel_size <= pick_count:
@@ -122,7 +130,10 @@ def _create_wheel_run(
             "這個包牌會超過100組，請選擇較少的核心號碼",
             {"combination_count": combination_count},
         )
-    samples, draw_nos = _pool_draws(draws, str(primary_pool["code"]))
+    samples, draw_nos = _pool_draws(
+        analysis_draws,
+        str(primary_pool["code"]),
+    )
     metrics = analyze_numbers(
         samples,
         int(primary_pool["min"]),
@@ -185,7 +196,17 @@ def _create_wheel_run(
         "wheel_size": wheel_size,
         "wheel_numbers": wheel_numbers,
         "combination_count": combination_count,
-        "lookback_count": min(100, len(draws)),
+        "lookback_count": len(analysis_draws),
+        "structure_lookback_count": len(draws),
+        "method_code": "VIDEO_FIVE_STEP_V1",
+        "method_revision": SIMPLE_METHOD_REVISION,
+        "method_steps": {
+            "step_1": f"最近{len(analysis_draws)}期，截止{draws[-1].draw_no}",
+            "step_2": "冷熱溫百分位均衡混合",
+            "step_3": "奇偶、大小及區間結構篩選",
+            "step_4": "包牌核心不套用AC；展開單式仍顯示AC",
+            "step_5": f"{wheel_size}碼核心完整展開{combination_count}組",
+        },
         "random_seed": seed,
         "star_count": pick_count,
     }
@@ -379,6 +400,12 @@ def _performance_rates(bucket: dict[str, int]) -> dict[str, Any]:
     }
 
 
+def _rate_delta(left: Any, right: Any) -> float | None:
+    if left is None or right is None:
+        return None
+    return round(float(left) - float(right), 2)
+
+
 def _add_replay_distribution(
     bucket: dict[str, int],
     distribution: dict[str, Any],
@@ -428,6 +455,8 @@ def _replay_performance_payload(
         _empty_performance_bucket
     )
     overall = _empty_performance_bucket()
+    uniform_overall = _empty_performance_bucket()
+    structured_overall = _empty_performance_bucket()
     periods: list[dict[str, Any]] = []
     for result, draw in rows:
         detail = dict(result.result_json or {})
@@ -442,6 +471,17 @@ def _replay_performance_payload(
         week = f"{iso.year}-W{iso.week:02d}"
         _merge_performance(weekly_buckets[week], period_stats)
         _merge_performance(overall, period_stats)
+        baseline_distributions = dict(result.baseline_distribution_json or {})
+        _add_replay_distribution(
+            uniform_overall,
+            dict(baseline_distributions.get("uniform") or {}),
+            pick_count,
+        )
+        _add_replay_distribution(
+            structured_overall,
+            dict(baseline_distributions.get("structured") or {}),
+            pick_count,
+        )
         periods.append(
             {
                 "draw_no": draw.draw_no,
@@ -492,13 +532,32 @@ def _replay_performance_payload(
         "week": None,
         **_performance_rates(_empty_performance_bucket()),
     }
+    method_rates = _performance_rates(overall)
+    uniform_rates = _performance_rates(uniform_overall)
+    structured_rates = _performance_rates(structured_overall)
     return {
         "weekly": weekly,
         "recent_periods": recent_periods,
         "summary": {
             "recent_10": _performance_rates(recent_10),
             "latest_week": latest_week,
-            "overall": _performance_rates(overall),
+            "overall": method_rates,
+        },
+        "baselines": {
+            "method": method_rates,
+            "uniform_random": uniform_rates,
+            "structure_only": structured_rates,
+            "number_accuracy_delta_vs_random": _rate_delta(
+                method_rates["number_accuracy"],
+                uniform_rates["number_accuracy"],
+            ),
+            "any_hit_delta_vs_random": _rate_delta(
+                method_rates["any_hit_ticket_rate"],
+                uniform_rates["any_hit_ticket_rate"],
+            ),
+            "same_ticket_count": method_rates["tickets"]
+            == uniform_rates["tickets"]
+            == structured_rates["tickets"],
         },
         "source": "VIDEO_FIVE_STEP_V1_REPLAY",
         "replay_run_uuid": replay.run_uuid,
@@ -781,6 +840,7 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
         "weekly_performance": performance["weekly"],
         "recent_periods": performance["recent_periods"],
         "performance_summary": performance["summary"],
+        "performance_baselines": performance.get("baselines"),
         "performance_source": performance.get("source"),
         "performance_replay_run_uuid": performance.get("replay_run_uuid"),
         "metric_definitions": {
@@ -799,6 +859,7 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
             "號碼命中率＝10組單式命中主要號碼總數除以全部檢查號碼數；"
             "至少中1碼單式＝10組中命中至少1個主要號碼的單式比例。"
             "逐期表顯示第1組，右側為該組命中數除以該組號碼數。"
+            "隨機基準使用相同期數與相同注數，差值以百分點表示。"
             "近10期、最新一週與累計數字都是歷史紀錄，不是未來中獎機率。"
         ),
     }

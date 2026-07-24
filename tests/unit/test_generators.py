@@ -84,6 +84,22 @@ def test_different_seed_can_change_result(
     assert [item.pools for item in first] != [item.pools for item in second]
 
 
+def test_structure_only_baseline_disables_temperature_preference(
+    pool49: dict[str, object], metrics49: list[dict[str, object]]
+) -> None:
+    candidates, diagnostics = UnorderedCombinationGenerator(20260724).generate(
+        5,
+        pool=pool49,
+        metrics=metrics49,
+        temperature_constraint=False,
+        use_temperature_preference=False,
+        max_attempts=30000,
+    )
+    assert len(candidates) == 5
+    assert diagnostics["temperature_constraint"] is False
+    assert diagnostics["temperature_preference"] is False
+
+
 def test_include_exclude_and_invalid_conditions(
     pool49: dict[str, object], metrics49: list[dict[str, object]]
 ) -> None:

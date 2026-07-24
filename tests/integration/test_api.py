@@ -111,6 +111,11 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
         assert wheel.status_code == 200, wheel.text
         wheel_payload = wheel.json()
         assert wheel_payload["generated_ticket_count"] == 7
+        assert wheel_payload["config"]["lookback_count"] == 20
+        assert wheel_payload["config"]["structure_lookback_count"] >= 20
+        assert wheel_payload["config"]["method_revision"].startswith(
+            "VIDEO_FIVE_STEP_V1_AUDITED"
+        )
         wheel_numbers = set(wheel_payload["config"]["wheel_numbers"])
         assert len(wheel_numbers) == 7
         assert all(
@@ -166,6 +171,14 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
             == payload["performance_summary"]["latest_week"]["ticket_hit_rate"]
         )
         assert payload["performance_summary"]["overall"]["number_accuracy"] is not None
+        baselines = payload["performance_baselines"]
+        if baselines is not None:
+            assert baselines["same_ticket_count"] is True
+            assert baselines["number_accuracy_delta_vs_random"] == round(
+                baselines["method"]["number_accuracy"]
+                - baselines["uniform_random"]["number_accuracy"],
+                2,
+            )
         assert "10組單式" in payload["metric_definitions"]["number_accuracy"]
         assert "逐期表第1組" in payload["metric_definitions"]["period_comparison"]
         assert "不是未來中獎機率" in payload["metric_note"]

@@ -244,6 +244,8 @@
     const recent = summary.recent_10 || {};
     const latestWeek = summary.latest_week || {};
     const overall = summary.overall || {};
+    const baselines = state.dashboard.performance_baselines || {};
+    const randomBaseline = baselines.uniform_random || {};
     const periods = state.dashboard.recent_periods || [];
     const isHighFrequency = state.dashboard?.game?.game_type === "high_frequency";
     const periodPageSize = window.innerHeight <= 800
@@ -265,9 +267,12 @@
     );
     $("#latest-week-label").textContent = latestWeek.week || "尚無週資料";
     $("#overall-hit-rate").textContent = rateText(overall.number_accuracy);
-    $("#overall-number-accuracy").textContent = rateText(
-      overall.any_hit_ticket_rate ?? overall.ticket_hit_rate,
-    );
+    $("#overall-random-rate").textContent = rateText(randomBaseline.number_accuracy);
+    const randomDelta = baselines.number_accuracy_delta_vs_random;
+    $("#overall-random-delta").textContent = randomDelta === null
+      || randomDelta === undefined
+      ? "—"
+      : `${randomDelta >= 0 ? "+" : ""}${randomDelta}百分點`;
     $("#weekly-table").innerHTML = visiblePeriods.map((row) => {
       const predicted = comparisonBalls(row, row.predicted_numbers);
       const actual = comparisonBalls(row, row.actual_numbers);

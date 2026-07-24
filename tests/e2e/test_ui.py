@@ -77,6 +77,7 @@ def test_simple_recommendation_ui_flow() -> None:
             page.on("pageerror", lambda error: page_errors.append(str(error)))
             page.goto(base_url)
             page.get_by_role("heading", name="選擇商品／彩種").wait_for()
+            page.get_by_text("步驟 2 · 影片五步法選號", exact=True).wait_for()
             page.get_by_text("近10期號碼命中率", exact=True).wait_for()
             page.get_by_text("累計號碼命中率", exact=True).wait_for()
             page.locator("#game-select").select_option("TW_LOTTO649")
