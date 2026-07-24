@@ -4,6 +4,7 @@ import pytest
 
 from app.services.analytics.core import (
     analyze_numbers,
+    analyze_ordered_positions,
     calculate_ac,
     calculate_structure,
     jaccard_similarity,
@@ -57,6 +58,22 @@ def test_frequency_input_validation() -> None:
         analyze_numbers([[4]], 1, 3, 1)
     with pytest.raises(ValueError, match="期別"):
         analyze_numbers([[1]], 1, 3, 1, [])
+
+
+def test_ordered_positions_are_analyzed_independently() -> None:
+    positions = analyze_ordered_positions(
+        [[1, 9, 1], [1, 8, 2], [1, 7, 3], [2, 6, 4]],
+        0,
+        9,
+        3,
+        ["1", "2", "3", "4"],
+    )
+    first_position = {item["number"]: item for item in positions[0]}
+    second_position = {item["number"]: item for item in positions[1]}
+    assert first_position[1]["frequency"] == 3
+    assert second_position[1]["frequency"] == 0
+    assert first_position[1]["temperature"] == "熱"
+    assert len(positions) == 3
 
 
 def test_structure_metrics() -> None:

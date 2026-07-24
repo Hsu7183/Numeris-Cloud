@@ -22,7 +22,11 @@ from app.models.database_models import (
     GenerationRun,
     Ruleset,
 )
-from app.services.analytics.core import analyze_numbers, calculate_ac
+from app.services.analytics.core import (
+    analyze_numbers,
+    analyze_ordered_positions,
+    calculate_ac,
+)
 from app.services.bootstrap import canonical_hash
 from app.services.generation.generators import (
     BingoGenerator,
@@ -213,11 +217,22 @@ def create_generation_run(db: Session, request: GenerationRequest) -> dict[str, 
             **generator_kwargs,
         )
     elif game.game_type == "ordered_digits":
+        ordered_samples, ordered_draw_nos = _pool_draws(
+            selected_draws,
+            str(primary_pool["code"]),
+        )
         generator = OrderedDigitGenerator(request.random_seed)
         candidates, diagnostics = generator.generate(
             count=request.ticket_count,
             pool=primary_pool,
             previous_numbers=previous_by_pool.get(str(primary_pool["code"])),
+            metrics_by_position=analyze_ordered_positions(
+                ordered_samples,
+                int(primary_pool["min"]),
+                int(primary_pool["max"]),
+                int(primary_pool["pick_count"]),
+                ordered_draw_nos,
+            ),
             max_overlap=request.max_overlap,
         )
     elif game.game_type == "high_frequency":

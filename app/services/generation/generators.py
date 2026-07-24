@@ -338,10 +338,23 @@ class OrderedDigitGenerator(CandidateGenerator):
         *,
         pool: dict[str, Any],
         previous_numbers: list[int] | None = None,
+        metrics_by_position: list[list[dict[str, Any]]] | None = None,
+        use_temperature_preference: bool = True,
         max_overlap: int | None = None,
         **_kwargs: Any,
     ) -> tuple[list[Candidate], dict[str, Any]]:
         digit_count = int(pool["pick_count"])
+        position_metrics = [
+            {int(item["number"]): item for item in metrics}
+            for metrics in (metrics_by_position or [])
+        ]
+        omission_maxima = [
+            max(
+                1.0,
+                max(float(item["current_omission"]) for item in metrics.values()),
+            )
+            for metrics in position_metrics
+        ]
         candidates: list[Candidate] = []
         for digits_tuple in itertools.product(range(10), repeat=digit_count):
             digits = list(digits_tuple)
@@ -354,16 +367,48 @@ class OrderedDigitGenerator(CandidateGenerator):
                 + abs(structure["high_count"] - digit_count / 2)
             ) / (2 * digit_count)
             seeded_tiebreaker = float(self.rng.random())
+            position_temperatures: list[str] = []
+            frequency_score = 0.5
+            omission_score = 0.5
+            if len(position_metrics) == digit_count:
+                selected_metrics = [
+                    position_metrics[position][digit]
+                    for position, digit in enumerate(digits)
+                ]
+                position_temperatures = [
+                    str(metric["temperature"]) for metric in selected_metrics
+                ]
+                frequency_score = sum(
+                    float(metric["percentile_rank"])
+                    for metric in selected_metrics
+                ) / digit_count
+                omission_score = sum(
+                    float(metric["current_omission"])
+                    / omission_maxima[position]
+                    for position, metric in enumerate(selected_metrics)
+                ) / digit_count
+            if use_temperature_preference:
+                preference_score = (
+                    0.3 * repeat_preference
+                    + 0.3 * balance
+                    + 0.2 * frequency_score
+                    + 0.15 * omission_score
+                    + 0.05 * seeded_tiebreaker
+                )
+            else:
+                preference_score = (
+                    0.45 * repeat_preference
+                    + 0.45 * balance
+                    + 0.1 * seeded_tiebreaker
+                )
             candidates.append(
                 Candidate(
                     pools={str(pool["code"]): digits},
                     structure=structure,
-                    preference_score=round(
-                        0.45 * repeat_preference + 0.45 * balance + 0.1 * seeded_tiebreaker,
-                        6,
-                    ),
+                    preference_score=round(preference_score, 6),
                     explanation={
                         "temperature_counts": {},
+                        "position_temperatures": position_temperatures,
                         "message": (
                             f"本組和值為{structure['sum']}，奇數位置{structure['odd_count']}個，"
                             f"大數字位置{structure['high_count']}個，"
@@ -379,6 +424,8 @@ class OrderedDigitGenerator(CandidateGenerator):
             "candidate_count": len(candidates),
             "requested_count": count,
             "generated_count": len(selected),
+            "position_temperature_analysis": len(position_metrics) == digit_count,
+            "temperature_preference": use_temperature_preference,
             "constraints_relaxed": False,
         }
 

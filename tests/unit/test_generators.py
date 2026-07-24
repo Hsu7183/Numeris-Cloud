@@ -3,7 +3,11 @@ from __future__ import annotations
 import pytest
 
 from app.core.exceptions import GenerationError
-from app.services.analytics.core import analyze_numbers, jaccard_similarity
+from app.services.analytics.core import (
+    analyze_numbers,
+    analyze_ordered_positions,
+    jaccard_similarity,
+)
 from app.services.generation.generators import (
     BingoGenerator,
     MultiPoolGenerator,
@@ -174,9 +178,26 @@ def test_multi_pool_generator(metrics49: list[dict[str, object]]) -> None:
 
 def test_ordered_digit_generator_keeps_leading_zero() -> None:
     pool = {"code": "digits", "pick_count": 3}
-    first, diag = OrderedDigitGenerator(305).generate(100, pool=pool, max_overlap=2)
-    second, _ = OrderedDigitGenerator(305).generate(100, pool=pool, max_overlap=2)
+    ordered_draws = [
+        [index % 10, (index * 3) % 10, (index * 7) % 10]
+        for index in range(20)
+    ]
+    position_metrics = analyze_ordered_positions(ordered_draws, 0, 9, 3)
+    first, diag = OrderedDigitGenerator(305).generate(
+        100,
+        pool=pool,
+        metrics_by_position=position_metrics,
+        max_overlap=2,
+    )
+    second, _ = OrderedDigitGenerator(305).generate(
+        100,
+        pool=pool,
+        metrics_by_position=position_metrics,
+        max_overlap=2,
+    )
     assert diag["candidate_count"] == 1000
+    assert diag["position_temperature_analysis"] is True
+    assert diag["temperature_preference"] is True
     assert [item.pools for item in first] == [item.pools for item in second]
     assert any(item.primary_numbers[0] == 0 for item in first)
     assert all(len(item.primary_numbers) == 3 for item in first)

@@ -24,7 +24,7 @@ from app.models.database_models import (
     ReplayRun,
     Ruleset,
 )
-from app.services.analytics.core import analyze_numbers
+from app.services.analytics.core import analyze_numbers, analyze_ordered_positions
 from app.services.generation.generators import (
     BingoGenerator,
     MultiPoolGenerator,
@@ -297,6 +297,13 @@ def _execute_replay(db: Session, replay: ReplayRun, job: Job) -> None:
                 count=replay.tickets_per_draw,
                 pool=pool,
                 previous_numbers=previous,
+                metrics_by_position=analyze_ordered_positions(
+                    sample_numbers,
+                    int(pool["min"]),
+                    int(pool["max"]),
+                    int(pool["pick_count"]),
+                    [draw.draw_no for draw in input_draws],
+                ),
             )
         elif game.game_type == "high_frequency":
             generator = BingoGenerator(seed)
@@ -359,7 +366,50 @@ def _execute_replay(db: Session, replay: ReplayRun, job: Job) -> None:
                 )
             else:
                 uniform_hits.append(len(set(uniform_numbers) & target_numbers))
-        if game.game_type in {
+        if game.game_type == "multi_pool":
+            structured_generator = MultiPoolGenerator(seed + 1_000_000)
+            structured_candidates, _ = structured_generator.generate(
+                replay.tickets_per_draw,
+                pools=ruleset.config_json["pools"],
+                metrics_by_pool=metrics_by_pool,
+                previous_by_pool=previous_by_pool,
+                ac_min=ac_min,
+                ac_max=ac_max,
+                max_attempts=30000,
+                temperature_constraint=False,
+                use_temperature_preference=False,
+            )
+            structured_hits.extend(
+                len(set(candidate.primary_numbers) & target_numbers)
+                for candidate in structured_candidates
+            )
+        elif game.game_type == "ordered_digits":
+            structured_generator = OrderedDigitGenerator(seed + 1_000_000)
+            structured_candidates, _ = structured_generator.generate(
+                replay.tickets_per_draw,
+                pool=pool,
+                previous_numbers=previous,
+                metrics_by_position=analyze_ordered_positions(
+                    sample_numbers,
+                    int(pool["min"]),
+                    int(pool["max"]),
+                    int(pool["pick_count"]),
+                    [draw.draw_no for draw in input_draws],
+                ),
+                use_temperature_preference=False,
+            )
+            structured_hits.extend(
+                sum(
+                    predicted == actual
+                    for predicted, actual in zip(
+                        candidate.primary_numbers,
+                        target_number_list,
+                        strict=False,
+                    )
+                )
+                for candidate in structured_candidates
+            )
+        elif game.game_type in {
             "unordered_unique_numbers",
             "derived_game",
             "high_frequency",

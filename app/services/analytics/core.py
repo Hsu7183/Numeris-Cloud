@@ -99,6 +99,39 @@ def analyze_numbers(
     return sorted(metrics, key=lambda item: int(item["number"]))
 
 
+def analyze_ordered_positions(
+    draws: Sequence[Sequence[int]],
+    minimum: int,
+    maximum: int,
+    digit_count: int,
+    draw_nos: Sequence[str] | None = None,
+) -> list[list[dict[str, Any]]]:
+    """依位置分開計算3星彩、4星彩的冷熱與遺漏。"""
+    if any(len(draw) != digit_count for draw in draws):
+        raise ValueError("開獎位數與規則不符")
+    if any(
+        digit < minimum or digit > maximum
+        for draw in draws
+        for digit in draw
+    ):
+        raise ValueError("開獎數字超出合法範圍")
+    labels = (
+        draw_nos
+        if draw_nos is not None
+        else [str(index + 1) for index in range(len(draws))]
+    )
+    return [
+        analyze_numbers(
+            [[int(draw[position])] for draw in draws],
+            minimum,
+            maximum,
+            1,
+            labels,
+        )
+        for position in range(digit_count)
+    ]
+
+
 def _consecutive_groups(numbers: Sequence[int]) -> tuple[int, int]:
     ordered = sorted(numbers)
     pairs = sum(1 for left, right in zip(ordered, ordered[1:], strict=False) if right - left == 1)
