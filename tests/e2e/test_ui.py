@@ -113,10 +113,16 @@ def test_simple_recommendation_ui_flow() -> None:
             choice_box = page.locator(".choice-card").bounding_box()
             summary_box = page.locator(".summary-card").bounding_box()
             performance_box = page.locator(".performance-section").bounding_box()
+            summary_ball_box = page.locator(".summary-ball").first.bounding_box()
+            metric_font_size = page.locator(".performance-cards strong").first.evaluate(
+                "(element) => parseFloat(getComputedStyle(element).fontSize)"
+            )
             assert desktop_metrics["scrollWidth"] == desktop_metrics["clientWidth"]
             assert desktop_metrics["scrollHeight"] == desktop_metrics["clientHeight"]
             assert choice_box is not None and summary_box is not None
             assert performance_box is not None
+            assert summary_ball_box is not None and summary_ball_box["width"] >= 60
+            assert metric_font_size >= 38
             assert choice_box["x"] < summary_box["x"]
             assert performance_box["y"] > summary_box["y"]
 

@@ -1331,3 +1331,458 @@ footer strong { color: var(--ink); white-space: nowrap; }
   .period-pager strong { font-size: 9px; }
   .result-section { top: 76px; bottom: 10px; }
 }
+
+/* Large, readable focus view. Important values remain legible from a distance. */
+@media (min-width: 1100px) {
+  :root {
+    --ink: #10251a;
+    --muted: #59685e;
+    --line: #d6dfd3;
+    --soft: #f1f5ee;
+    --green: #123f2b;
+    --green-2: #236044;
+    --lime: #d8f84f;
+    --lime-soft: #f0f8c9;
+    --shadow: 0 18px 48px rgba(22, 61, 43, .10);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 95% 0, rgba(216, 248, 79, .12), transparent 28%),
+      linear-gradient(180deg, #f7f9f5, #f2f5f0);
+  }
+
+  .site-header {
+    border-bottom-color: #d8e1d5;
+    background: rgba(249, 250, 247, .96);
+    box-shadow: 0 5px 24px rgba(24, 57, 40, .05);
+  }
+  .brand-mark {
+    box-shadow: 0 8px 20px rgba(18, 63, 43, .17);
+  }
+  .fullscreen-button,
+  .health {
+    min-height: 44px;
+    border-color: #d2dcd0;
+    box-shadow: 0 5px 16px rgba(24, 57, 40, .05);
+  }
+
+  main {
+    grid-template-rows: 128px 270px minmax(0, 1fr);
+    gap: 16px;
+    padding-block: 18px;
+  }
+
+  .intro,
+  .choice-card,
+  .summary-card,
+  .performance-section {
+    border-color: #d3ddd0;
+    box-shadow: var(--shadow);
+  }
+
+  .kicker {
+    width: fit-content;
+    border-radius: 999px;
+    padding: 4px 9px;
+    background: #edf6bd;
+    color: #557000;
+    font-size: 13px;
+    letter-spacing: .09em;
+  }
+
+  .intro {
+    grid-template-columns: minmax(360px, .8fr) minmax(650px, 1.7fr);
+    padding: 18px 28px;
+    background:
+      radial-gradient(circle at 91% 18%, rgba(216, 248, 79, .20), transparent 26%),
+      linear-gradient(112deg, #fff 0 48%, #f8fbe9 100%);
+  }
+  .intro .kicker {
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .intro h1 {
+    font-size: clamp(40px, 2.5vw, 48px);
+    line-height: 1.05;
+  }
+  .intro .game-picker {
+    min-height: 76px;
+    padding: 13px 16px 13px 22px;
+    border: 2px solid #c9d6c5;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 14px 34px rgba(24, 57, 40, .10);
+  }
+  .intro .game-picker label {
+    color: #536259;
+    font-size: 17px;
+  }
+  .intro .game-picker select {
+    font-size: 28px;
+    letter-spacing: -.02em;
+  }
+  .intro .data-badge {
+    padding: 11px 15px;
+    border: 1px solid #dfeda3;
+    font-size: 15px;
+  }
+
+  .choice-card {
+    padding: 24px 26px;
+    background:
+      linear-gradient(180deg, #fff 0 74%, #f8faf6 100%);
+  }
+  .choice-card .kicker {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .choice-card .card-heading h2 {
+    font-size: 33px;
+  }
+  .saved-chip {
+    padding: 9px 13px;
+    background: #eef4ea;
+    font-size: 14px;
+  }
+  .choice-card .mode-picker {
+    margin: 16px 0;
+    gap: 10px;
+  }
+  .choice-card .mode {
+    min-height: 74px;
+    padding: 13px 15px;
+    border-width: 2px;
+    border-radius: 16px;
+  }
+  .choice-card .mode strong { font-size: 18px; }
+  .choice-card .mode span { margin-top: 5px; font-size: 14px; }
+  .choice-card .mode.active {
+    box-shadow: 0 12px 28px rgba(18, 63, 43, .18);
+  }
+  .choice-card .primary-action {
+    min-height: 58px;
+    border-radius: 16px;
+    padding-inline: 20px;
+    font-size: 19px;
+    box-shadow: 0 10px 24px rgba(160, 188, 37, .18);
+  }
+
+  .summary-card {
+    padding: 27px 34px;
+    background:
+      radial-gradient(circle at 88% 8%, rgba(216, 248, 79, .18), transparent 29%),
+      linear-gradient(135deg, #164933, #0c2e20);
+  }
+  .summary-top span { font-size: 16px; }
+  .summary-top strong {
+    margin-top: 5px;
+    font-size: 38px;
+    letter-spacing: .01em;
+  }
+  .summary-status {
+    padding: 9px 14px;
+    font-size: 14px !important;
+  }
+  .summary-label {
+    margin: 14px 0 12px;
+    color: #bdd1c5;
+    font-size: 17px;
+  }
+  .summary-balls { gap: 12px; }
+  .summary-ball {
+    width: 62px;
+    height: 62px;
+    border: 3px solid rgba(255, 255, 255, .28);
+    font-size: 21px;
+    box-shadow: 0 9px 22px rgba(0, 0, 0, .15);
+  }
+  .summary-foot {
+    margin-top: 14px;
+    padding-top: 12px;
+    font-size: 14px;
+  }
+  .summary-open {
+    right: 30px;
+    bottom: 23px;
+    padding: 11px 16px;
+    border-radius: 14px;
+    font-size: 16px;
+  }
+
+  .performance-section {
+    grid-template-columns: minmax(310px, .47fr) minmax(0, 1.53fr);
+    grid-template-rows: 126px minmax(0, 1fr);
+    gap: 14px 24px;
+    padding: 18px 20px;
+    background:
+      linear-gradient(135deg, rgba(240, 248, 201, .24), transparent 34%),
+      #fff;
+  }
+  .performance-section .section-heading {
+    padding: 22px;
+    border: 1px solid #dde8b7;
+    border-radius: 19px;
+    background: linear-gradient(145deg, #f7fbe6, #eef6c9);
+  }
+  .performance-section .section-heading .kicker {
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .performance-section .section-heading h2 {
+    max-width: 300px;
+    font-size: clamp(31px, 2vw, 39px);
+    line-height: 1.1;
+  }
+  .performance-section .section-heading p:not(.kicker) {
+    margin-top: 13px;
+    color: #536259;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .performance-section #reload-dashboard {
+    min-height: 42px;
+    padding: 9px 15px;
+    font-size: 14px;
+  }
+
+  .performance-cards { gap: 12px; }
+  .performance-cards article {
+    min-height: 118px;
+    padding: 16px 20px;
+    border-top: 4px solid #b8d342;
+    border-radius: 17px;
+    box-shadow: 0 8px 20px rgba(25, 64, 44, .06);
+  }
+  .performance-cards span {
+    color: #405448;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .performance-cards strong {
+    margin: 7px 0 3px;
+    font-size: 39px;
+    line-height: 1;
+  }
+  .performance-cards small {
+    color: #5c6b61;
+    font-size: 14px;
+  }
+
+  .period-grid { gap: 8px; }
+  .period-card {
+    grid-template-columns: 108px minmax(0, 1fr) minmax(0, 1.25fr) 94px;
+    gap: 9px 14px;
+    padding: 8px 14px;
+    border-radius: 15px;
+    background: linear-gradient(90deg, #fff, #fbfcf9);
+    box-shadow: 0 4px 12px rgba(25, 64, 44, .035);
+  }
+  .period-id span { font-size: 12px; }
+  .period-id strong {
+    margin-top: 3px;
+    font-size: 17px;
+  }
+  .compare-group {
+    grid-template-columns: 43px minmax(0, 1fr);
+    gap: 7px;
+  }
+  .compare-group > span {
+    font-size: 14px;
+    font-weight: 850;
+  }
+  .compare-group > div { gap: 5px; }
+  .compare-group i { font-size: 13px; }
+  .compare-ball {
+    width: 34px;
+    height: 34px;
+    border-width: 2px;
+    font-size: 13px;
+  }
+  .compare-ball.hit {
+    box-shadow: 0 0 0 3px rgba(183, 206, 72, .17);
+  }
+  .period-rate strong { font-size: 24px; }
+  .period-rate small {
+    margin-top: 3px;
+    font-size: 12px;
+  }
+  .period-pager { margin-top: 8px; }
+  .period-pager .secondary-action {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+  .period-pager strong {
+    min-width: 86px;
+    font-size: 13px;
+  }
+
+  body[data-game-type="high_frequency"] .compare-group.actual > div {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+  body[data-game-type="high_frequency"] .choice-card {
+    position: relative;
+  }
+  body[data-game-type="high_frequency"] .choice-card .mode-picker {
+    width: 44%;
+    grid-template-columns: 1fr;
+    margin-block: 12px;
+  }
+  body[data-game-type="high_frequency"] .choice-card .mode {
+    min-height: 66px;
+  }
+  body[data-game-type="high_frequency"] .star-control {
+    position: absolute;
+    top: 101px;
+    right: 26px;
+    width: 44%;
+    min-height: 66px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 2px solid var(--line);
+    border-radius: 16px;
+    background: #fff;
+    color: #405448;
+    font-size: 16px;
+  }
+  body[data-game-type="high_frequency"] .star-control select {
+    padding: 9px 12px;
+    font-size: 16px;
+  }
+  body[data-game-type="high_frequency"] .compare-group.actual .compare-ball {
+    width: 23px;
+    height: 23px;
+    border-width: 1px;
+    font-size: 9px;
+  }
+}
+
+/* Compact landscape still favors readable type by showing three periods per page. */
+@media (min-width: 1100px) and (max-height: 800px) {
+  main {
+    grid-template-rows: 106px 224px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .intro { padding: 10px 18px; }
+  .intro .kicker { padding: 2px 7px; font-size: 11px; }
+  .intro h1 { font-size: 33px; }
+  .intro .game-picker {
+    min-height: 62px;
+    padding: 7px 12px 7px 16px;
+  }
+  .intro .game-picker label { font-size: 14px; }
+  .intro .game-picker select { font-size: 22px; }
+  .intro .data-badge { padding: 7px 9px; font-size: 12px; }
+
+  .choice-card { padding: 15px 17px; }
+  .choice-card .kicker { margin-bottom: 3px; padding: 2px 7px; font-size: 11px; }
+  .choice-card .card-heading h2 { font-size: 25px; }
+  .saved-chip { padding: 6px 9px; font-size: 11px; }
+  .choice-card .mode-picker { margin: 8px 0; gap: 7px; }
+  .choice-card .mode {
+    min-height: 58px;
+    padding: 8px 10px;
+  }
+  .choice-card .mode strong { font-size: 15px; }
+  .choice-card .mode span { font-size: 12px; }
+  .choice-card .primary-action { min-height: 46px; font-size: 16px; }
+
+  .summary-card { padding: 17px 24px; }
+  .summary-top span { font-size: 12px; }
+  .summary-top strong { font-size: 29px; }
+  .summary-status { padding: 6px 9px; font-size: 11px !important; }
+  .summary-label { margin: 7px 0; font-size: 13px; }
+  .summary-balls { gap: 7px; }
+  .summary-ball {
+    width: 47px;
+    height: 47px;
+    border-width: 2px;
+    font-size: 16px;
+  }
+  .summary-foot { margin-top: 7px; padding-top: 6px; font-size: 11px; }
+  .summary-open { right: 18px; bottom: 12px; padding: 7px 10px; font-size: 12px; }
+
+  .performance-section {
+    grid-template-columns: 245px minmax(0, 1fr);
+    grid-template-rows: 92px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 11px 13px;
+  }
+  .performance-section .section-heading {
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .performance-section .section-heading .kicker {
+    margin-bottom: 6px;
+    padding: 2px 7px;
+    font-size: 10px;
+  }
+  .performance-section .section-heading h2 {
+    font-size: 26px;
+    line-height: 1.08;
+  }
+  .performance-section #reload-dashboard {
+    min-height: 34px;
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  .performance-cards { gap: 7px; }
+  .performance-cards article {
+    min-height: 88px;
+    padding: 8px 11px;
+    border-top-width: 3px;
+    border-radius: 13px;
+  }
+  .performance-cards span { font-size: 13px; }
+  .performance-cards strong { margin: 3px 0 1px; font-size: 28px; }
+  .performance-cards small { font-size: 11px; }
+
+  .period-grid { grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 5px; }
+  .period-card {
+    grid-template-columns: 86px minmax(0, 1fr) minmax(0, 1.25fr) 76px;
+    gap: 5px 8px;
+    padding: 5px 8px;
+    border-radius: 11px;
+  }
+  .period-id span { display: block; font-size: 9px; }
+  .period-id strong { font-size: 14px; }
+  .compare-group { grid-template-columns: 34px minmax(0, 1fr); gap: 4px; }
+  .compare-group > span { font-size: 11px; }
+  .compare-group > div { gap: 3px; }
+  .compare-ball {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+  .period-rate strong { font-size: 19px; }
+  .period-rate small { font-size: 9px; }
+  .period-pager { margin-top: 5px; }
+  .period-pager .secondary-action { padding: 5px 9px; font-size: 10px; }
+  .period-pager strong { min-width: 68px; font-size: 10px; }
+
+  body[data-game-type="high_frequency"] .compare-group.actual .compare-ball {
+    width: 20px;
+    height: 20px;
+    font-size: 8px;
+  }
+  body[data-game-type="high_frequency"] .choice-card .mode-picker {
+    width: 44%;
+    margin-block: 7px;
+  }
+  body[data-game-type="high_frequency"] .choice-card .mode {
+    min-height: 55px;
+  }
+  body[data-game-type="high_frequency"] .star-control {
+    top: 79px;
+    right: 17px;
+    min-height: 55px;
+    padding: 7px 9px;
+    border-radius: 13px;
+    font-size: 13px;
+  }
+  body[data-game-type="high_frequency"] .star-control select {
+    padding: 6px 9px;
+    font-size: 13px;
+  }
+}

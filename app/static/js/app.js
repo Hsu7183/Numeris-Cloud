@@ -141,6 +141,7 @@
   function renderDataStatus() {
     const data = state.dashboard.data;
     const badge = $("#data-badge");
+    document.body.dataset.gameType = state.dashboard.game.game_type;
     if (data.official_count > 0) {
       badge.textContent = `官方 ${data.official_count.toLocaleString("zh-TW")} 期 · 截至 ${data.latest_draw_date}`;
       badge.classList.remove("fixture");
@@ -244,11 +245,15 @@
     const latestWeek = summary.latest_week || {};
     const overall = summary.overall || {};
     const periods = state.dashboard.recent_periods || [];
-    const periodPageCount = Math.max(1, Math.ceil(periods.length / 5));
+    const isHighFrequency = state.dashboard?.game?.game_type === "high_frequency";
+    const periodPageSize = window.innerHeight <= 800
+      ? (isHighFrequency ? 2 : 3)
+      : 5;
+    const periodPageCount = Math.max(1, Math.ceil(periods.length / periodPageSize));
     state.periodPage = Math.min(state.periodPage, periodPageCount - 1);
     const visiblePeriods = periods.slice(
-      state.periodPage * 5,
-      state.periodPage * 5 + 5,
+      state.periodPage * periodPageSize,
+      state.periodPage * periodPageSize + periodPageSize,
     );
     $("#recent-hit-rate").textContent = rateText(recent.ticket_hit_rate);
     $("#recent-number-accuracy").textContent = rateText(recent.number_accuracy);
@@ -285,6 +290,8 @@
     $("#weekly-empty").classList.toggle("hidden", periods.length > 0);
     $("#period-pager").classList.toggle("hidden", periodPageCount <= 1);
     $("#period-page").textContent = `第 ${state.periodPage + 1}／${periodPageCount} 頁`;
+    $("#period-prev").textContent = `← 前${periodPageSize}期`;
+    $("#period-next").textContent = `後${periodPageSize}期 →`;
     $("#period-prev").disabled = state.periodPage === 0;
     $("#period-next").disabled = state.periodPage >= periodPageCount - 1;
     $("#metric-note").textContent = state.dashboard.metric_note;
@@ -448,6 +455,7 @@
   });
   window.addEventListener("resize", () => {
     if (state.run) renderTickets();
+    if (state.dashboard) renderWeekly();
   });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && state.combinationsOpen) setCombinationsOpen(false);
