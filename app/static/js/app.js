@@ -8,6 +8,7 @@
     run: null,
     mode: "single",
     ticketPage: 0,
+    combinationsOpen: false,
     busy: false,
   };
 
@@ -62,6 +63,15 @@
       numbers,
       groupIndex,
     }));
+  }
+
+  function rateText(value) {
+    return value === null || value === undefined ? "—" : `${value}%`;
+  }
+
+  function setCombinationsOpen(open) {
+    state.combinationsOpen = Boolean(open && state.run?.tickets?.length);
+    $("#result-section").classList.toggle("hidden", !state.combinationsOpen);
   }
 
   function renderQuickGames() {
@@ -153,7 +163,11 @@
       <div class="summary-foot">
         <span>資料截至 ${esc(run.cutoff_draw_no)}</span>
         <span>共 ${run.generated_ticket_count} 組</span>
-      </div>`;
+      </div>
+      <button id="open-combinations" class="summary-open">
+        查看完整 ${run.generated_ticket_count} 組 <b>→</b>
+      </button>`;
+    $("#open-combinations").addEventListener("click", () => setCombinationsOpen(true));
   }
 
   function renderRun(run) {
@@ -161,13 +175,13 @@
     state.ticketPage = 0;
     renderSummary(run);
     if (!run?.tickets?.length) {
-      $("#result-section").classList.add("hidden");
+      setCombinationsOpen(false);
       return;
     }
     const mode = run.config?.simple_mode || "single";
     state.mode = mode;
     if (state.dashboard) renderModes();
-    $("#result-section").classList.remove("hidden");
+    $("#result-section").classList.toggle("hidden", !state.combinationsOpen);
     $("#result-title").textContent = `${state.dashboard.game.display_name} · ${modeLabel(mode)}`;
     $("#result-meta").textContent = (
       `目標 ${run.target_draw_no}｜資料截至 ${run.cutoff_draw_no}｜`
@@ -211,17 +225,25 @@
   }
 
   function renderWeekly() {
-    const weekly = state.dashboard.weekly_performance || [];
-    const latest = weekly[0];
-    $("#week-hit-rate").textContent = latest ? `${latest.ticket_hit_rate}%` : "—";
-    $("#number-accuracy").textContent = latest ? `${latest.number_accuracy}%` : "—";
-    $("#best-hit").textContent = latest ? `${latest.best_hit} 碼` : "—";
-    $("#weekly-table").innerHTML = weekly.map((row) => `
-      <tr>
-        <td>${esc(row.week)}</td><td>${row.evaluated_runs}</td><td>${row.tickets}</td>
-        <td>${row.ticket_hit_rate}%</td><td>${row.number_accuracy}%</td><td>${row.best_hit} 碼</td>
-      </tr>`).join("");
-    $("#weekly-empty").classList.toggle("hidden", weekly.length > 0);
+    const summary = state.dashboard.performance_summary || {};
+    const recent = summary.recent_10 || {};
+    const latestWeek = summary.latest_week || {};
+    const overall = summary.overall || {};
+    const periods = state.dashboard.recent_periods || [];
+    $("#recent-hit-rate").textContent = rateText(recent.ticket_hit_rate);
+    $("#recent-number-accuracy").textContent = rateText(recent.number_accuracy);
+    $("#weekly-hit-rate").textContent = rateText(latestWeek.ticket_hit_rate);
+    $("#weekly-number-accuracy").textContent = rateText(latestWeek.number_accuracy);
+    $("#latest-week-label").textContent = latestWeek.week || "尚無週資料";
+    $("#overall-hit-rate").textContent = rateText(overall.ticket_hit_rate);
+    $("#overall-number-accuracy").textContent = rateText(overall.number_accuracy);
+    $("#weekly-table").innerHTML = periods.map((row) => `
+      <article class="period-card">
+        <div><span>期別</span><strong>${esc(row.draw_no)}</strong></div>
+        <b>${rateText(row.ticket_hit_rate)}</b>
+        <small>${esc(row.draw_date)} · 最高命中 ${row.best_hit} 碼 · 正確率 ${rateText(row.number_accuracy)}</small>
+      </article>`).join("");
+    $("#weekly-empty").classList.toggle("hidden", periods.length > 0);
     $("#metric-note").textContent = state.dashboard.metric_note;
   }
 
@@ -289,6 +311,7 @@
     state.gameCode = gameCode;
     state.mode = "single";
     state.run = null;
+    setCombinationsOpen(false);
     renderQuickGames();
     $("#run-summary").innerHTML = `
       <div class="empty-state"><span class="empty-ball">…</span>
@@ -355,6 +378,7 @@
   $("#game-select").addEventListener("change", (event) => changeGame(event.target.value));
   $("#generate").addEventListener("click", () => generate(false));
   $("#refresh-run").addEventListener("click", () => generate(true));
+  $("#close-combinations").addEventListener("click", () => setCombinationsOpen(false));
   $("#ticket-prev").addEventListener("click", () => {
     state.ticketPage = Math.max(0, state.ticketPage - 1);
     renderTickets();
@@ -365,6 +389,9 @@
   });
   window.addEventListener("resize", () => {
     if (state.run) renderTickets();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && state.combinationsOpen) setCombinationsOpen(false);
   });
   $("#reload-dashboard").addEventListener("click", async () => {
     try {

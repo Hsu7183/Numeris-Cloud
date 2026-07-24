@@ -63,19 +63,25 @@ def test_simple_recommendation_ui_flow() -> None:
             page_errors: list[str] = []
             page.on("pageerror", lambda error: page_errors.append(str(error)))
             page.goto(base_url)
-            page.get_by_role("heading", name="選彩種， 直接看下期組合。").wait_for()
+            page.get_by_role("heading", name="選擇商品／彩種").wait_for()
+            page.get_by_text("近10期命中率", exact=True).wait_for()
+            page.get_by_text("累計總命中率", exact=True).wait_for()
             page.locator("#game-select").select_option("TW_LOTTO649")
-            page.locator("#result-title").filter(has_text="大樂透").wait_for(timeout=30000)
+            page.locator("#open-combinations").wait_for(timeout=30000)
+            page.locator("#open-combinations").click()
+            page.locator("#result-title").filter(has_text="大樂透").wait_for()
             page.locator(".ticket").first.wait_for(state="visible")
             assert page.locator(".ticket").count() == 10
             assert "/api/exports/generation/" in (
                 page.locator("#export-csv").get_attribute("href") or ""
             )
 
+            page.locator("#close-combinations").click()
             page.locator("#game-select").select_option("HK_MARKSIX")
             page.locator("[data-mode='wheel7']").wait_for(state="visible")
             page.locator("[data-mode='wheel7']").click()
             page.locator("#generate").click()
+            page.locator("#open-combinations").click()
             page.locator("#wheel-core").wait_for(state="visible", timeout=30000)
             assert page.locator(".ticket").count() == 7
             assert page.locator(".sidebar").count() == 0
@@ -88,14 +94,15 @@ def test_simple_recommendation_ui_flow() -> None:
                     scrollHeight: document.documentElement.scrollHeight,
                 })"""
             )
-            intro_box = page.locator(".intro").bounding_box()
+            choice_box = page.locator(".choice-card").bounding_box()
             summary_box = page.locator(".summary-card").bounding_box()
             performance_box = page.locator(".performance-section").bounding_box()
             assert desktop_metrics["scrollWidth"] == desktop_metrics["clientWidth"]
             assert desktop_metrics["scrollHeight"] == desktop_metrics["clientHeight"]
-            assert intro_box is not None and summary_box is not None
+            assert choice_box is not None and summary_box is not None
             assert performance_box is not None
-            assert intro_box["x"] < summary_box["x"] < performance_box["x"]
+            assert choice_box["x"] < summary_box["x"]
+            assert performance_box["y"] > summary_box["y"]
 
             page.set_viewport_size({"width": 1366, "height": 768})
             compact_metrics = page.evaluate(

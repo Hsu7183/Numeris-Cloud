@@ -138,6 +138,10 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
         assert payload["game"]["wheel_modes"] == [7, 8, 9]
         assert payload["records"]
         assert payload["weekly_performance"]
+        assert payload["recent_periods"][0]["draw_no"] == "F0060"
+        assert payload["performance_summary"]["recent_10"]["tickets"] > 0
+        assert payload["performance_summary"]["latest_week"]["ticket_hit_rate"] is not None
+        assert payload["performance_summary"]["overall"]["number_accuracy"] is not None
         assert "不是未來中獎機率" in payload["metric_note"]
 
 

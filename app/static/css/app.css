@@ -958,3 +958,302 @@ footer strong { color: var(--ink); white-space: nowrap; }
   .history-card { padding: 8px 10px; }
   .history-balls .number-ball { width: 27px; height: 27px; font-size: 11px; }
 }
+
+/* Focus view: select a game, see the balls, then read the last 10 results. */
+@media (min-width: 1100px) {
+  main {
+    grid-template-columns: minmax(430px, .72fr) minmax(620px, 1.8fr);
+    grid-template-rows: 120px 250px minmax(0, 1fr);
+    grid-template-areas:
+      "intro intro"
+      "choice summary"
+      "performance performance";
+  }
+
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(300px, .8fr) minmax(600px, 1.7fr);
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    column-gap: 32px;
+    padding: 16px 24px;
+    background:
+      linear-gradient(110deg, #fff 0 47%, rgba(217, 244, 91, .13) 100%);
+  }
+  .intro .kicker {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: end;
+  }
+  .intro h1 {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    font-size: clamp(32px, 2.2vw, 43px);
+    white-space: nowrap;
+  }
+  .intro .game-picker {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    align-self: center;
+    margin: 0;
+    grid-template-columns: auto minmax(220px, 1fr) auto;
+    padding: 12px 14px 12px 20px;
+    border-color: #ccd7c8;
+    box-shadow: 0 12px 30px rgba(29, 55, 40, .08);
+  }
+  .intro .game-picker label { font-size: 15px; }
+  .intro .game-picker select { font-size: 24px; }
+  .intro .data-badge {
+    grid-column: auto;
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .choice-card {
+    padding: 20px 22px;
+  }
+  .choice-card .card-heading { align-items: center; }
+  .choice-card .card-heading h2 { font-size: 28px; }
+  .choice-card .mode-picker {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 14px 0;
+    gap: 8px;
+  }
+  .choice-card .mode {
+    min-height: 62px;
+    padding: 10px 13px;
+  }
+  .choice-card .mode strong { font-size: 14px; }
+  .choice-card .mode span { font-size: 11px; }
+  .choice-card .primary-action {
+    min-height: 50px;
+    padding-block: 12px;
+  }
+  .choice-card .small-note { display: none; }
+
+  .summary-card {
+    padding: 24px 30px;
+    overflow: clip;
+    background:
+      radial-gradient(circle at 88% 12%, rgba(217, 244, 91, .13), transparent 27%),
+      linear-gradient(135deg, #173f2e, #0f2d21);
+  }
+  .summary-card::after {
+    width: 310px;
+    height: 310px;
+    right: -135px;
+    top: -145px;
+  }
+  .summary-label {
+    margin: 16px 0 11px;
+    font-size: 15px;
+  }
+  .summary-balls { gap: 10px; }
+  .summary-ball {
+    width: 54px;
+    height: 54px;
+    font-size: 17px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
+  }
+  .summary-foot {
+    margin-top: 14px;
+    padding-top: 11px;
+  }
+  .summary-open {
+    position: absolute;
+    right: 28px;
+    bottom: 21px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 12px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, .1);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .summary-open:hover { background: rgba(255, 255, 255, .18); }
+  .summary-open b { color: var(--lime); }
+
+  .performance-section {
+    display: grid;
+    grid-template-columns: minmax(255px, .42fr) minmax(0, 1.58fr);
+    grid-template-rows: 112px minmax(0, 1fr);
+    gap: 12px 22px;
+    padding: 20px 22px;
+  }
+  .performance-section .section-heading {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin: 0;
+    padding-right: 20px;
+    border-right: 1px solid var(--line);
+  }
+  .performance-section .section-heading .kicker {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 12px;
+  }
+  .performance-section .section-heading h2 {
+    max-width: 250px;
+    font-size: clamp(25px, 1.75vw, 33px);
+    line-height: 1.13;
+  }
+  .performance-section .section-heading p:not(.kicker) {
+    display: block;
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .performance-section #reload-dashboard { margin-top: auto; }
+  .performance-cards {
+    grid-column: 2;
+    grid-row: 1;
+    gap: 10px;
+  }
+  .performance-cards article {
+    min-height: 104px;
+    padding: 14px 18px;
+    text-align: left;
+    background: linear-gradient(145deg, #fff, #f7f9f4);
+  }
+  .performance-cards span {
+    min-height: 0;
+    color: #516154;
+    font-size: 14px;
+  }
+  .performance-cards strong {
+    display: inline-block;
+    margin: 7px 0 4px;
+    color: var(--green);
+    font-size: 31px;
+  }
+  .performance-cards small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .performance-cards small b { color: #425445; }
+
+  .period-card-wrap {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .period-grid {
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-rows: 92px;
+    align-content: start;
+    gap: 8px;
+  }
+  .period-card {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 4px 8px;
+    align-content: center;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: #fff;
+  }
+  .period-card div span,
+  .period-card div strong { display: block; }
+  .period-card div span {
+    color: var(--muted);
+    font-size: 10px;
+  }
+  .period-card div strong {
+    margin-top: 2px;
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .period-card > b {
+    align-self: center;
+    color: var(--green);
+    font-size: 20px;
+  }
+  .period-card small {
+    grid-column: 1 / -1;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .period-card-wrap .table-empty {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    border: 1px dashed #cfd7cb;
+    border-radius: 14px;
+    background: #fafbf8;
+    font-size: 14px;
+  }
+  .performance-section .metric-note { display: none; }
+  .history-section { display: none; }
+
+  .result-section {
+    position: fixed;
+    top: 88px;
+    bottom: 18px;
+    left: 50%;
+    z-index: 100;
+    width: min(1600px, calc(100vw - 48px));
+    max-height: none;
+    margin: 0;
+    transform: translateX(-50%);
+    box-shadow:
+      0 0 0 100vmax rgba(11, 28, 20, .58),
+      0 30px 90px rgba(11, 28, 20, .28);
+  }
+}
+
+@media (min-width: 1100px) and (max-height: 800px) {
+  main {
+    grid-template-rows: 100px 220px minmax(0, 1fr);
+  }
+  .intro { padding: 10px 16px; }
+  .intro h1 { font-size: 31px; }
+  .intro .game-picker { padding-block: 7px; }
+  .intro .game-picker select { font-size: 20px; }
+  .choice-card { padding: 14px 16px; }
+  .choice-card .mode-picker { margin: 9px 0; }
+  .choice-card .mode { min-height: 54px; padding: 7px 10px; }
+  .choice-card .primary-action { min-height: 44px; padding-block: 9px; }
+  .summary-card { padding: 17px 23px; }
+  .summary-label { margin: 9px 0 8px; }
+  .summary-ball { width: 43px; height: 43px; font-size: 15px; }
+  .summary-foot { margin-top: 8px; padding-top: 7px; }
+  .summary-open { right: 20px; bottom: 14px; padding: 8px 11px; }
+  .performance-section {
+    grid-template-rows: 86px minmax(0, 1fr);
+    padding: 13px 15px;
+    gap: 8px 15px;
+  }
+  .performance-section .section-heading h2 { font-size: 24px; }
+  .performance-section .section-heading p:not(.kicker) { display: none; }
+  .performance-cards article { min-height: 82px; padding: 9px 12px; }
+  .performance-cards span { font-size: 12px; }
+  .performance-cards strong { margin: 3px 0 1px; font-size: 24px; }
+  .performance-cards small { font-size: 10px; }
+  .period-card { padding: 6px 9px; }
+  .period-grid { grid-auto-rows: 72px; }
+  .period-card > b { font-size: 17px; }
+  .result-section { top: 76px; bottom: 10px; }
+}

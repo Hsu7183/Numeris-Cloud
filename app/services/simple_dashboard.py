@@ -7,7 +7,6 @@ import uuid
 from collections import defaultdict
 from datetime import UTC, datetime
 from typing import Any
-from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -310,27 +309,87 @@ def _sync_available_evaluations(db: Session, game: Game) -> int:
     return synced
 
 
-def _weekly_performance(db: Session, game: Game) -> list[dict[str, Any]]:
+def _empty_performance_bucket() -> dict[str, int]:
+    return {
+        "evaluated_runs": 0,
+        "tickets": 0,
+        "tickets_with_hit": 0,
+        "exact_tickets": 0,
+        "hit_numbers": 0,
+        "checked_numbers": 0,
+        "best_hit": 0,
+    }
+
+
+def _add_performance_results(
+    bucket: dict[str, int],
+    results: list[TicketResult],
+    pick_count: int,
+) -> None:
+    bucket["evaluated_runs"] += 1
+    bucket["tickets"] += len(results)
+    bucket["checked_numbers"] += len(results) * pick_count
+    for result in results:
+        hits = int(result.main_hit_count)
+        bucket["hit_numbers"] += hits
+        bucket["best_hit"] = max(bucket["best_hit"], hits)
+        if hits > 0:
+            bucket["tickets_with_hit"] += 1
+        if hits >= pick_count:
+            bucket["exact_tickets"] += 1
+
+
+def _merge_performance(
+    target: dict[str, int],
+    source: dict[str, int],
+) -> None:
+    for key in (
+        "evaluated_runs",
+        "tickets",
+        "tickets_with_hit",
+        "exact_tickets",
+        "hit_numbers",
+        "checked_numbers",
+    ):
+        target[key] += source[key]
+    target["best_hit"] = max(target["best_hit"], source["best_hit"])
+
+
+def _performance_rates(bucket: dict[str, int]) -> dict[str, Any]:
+    tickets = bucket["tickets"]
+    checked_numbers = bucket["checked_numbers"]
+    return {
+        **bucket,
+        "ticket_hit_rate": (
+            round(bucket["tickets_with_hit"] / tickets * 100, 2)
+            if tickets
+            else None
+        ),
+        "number_accuracy": (
+            round(bucket["hit_numbers"] / checked_numbers * 100, 2)
+            if checked_numbers
+            else None
+        ),
+    }
+
+
+def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
     evaluations = list(
         db.scalars(
             select(EvaluationRun)
             .join(GenerationRun, EvaluationRun.generation_run_id == GenerationRun.id)
-            .where(GenerationRun.game_id == game.id)
-            .order_by(EvaluationRun.evaluated_at.desc())
-            .limit(500)
+            .where(
+                GenerationRun.game_id == game.id,
+                EvaluationRun.status == "completed",
+            )
+            .order_by(EvaluationRun.id.desc())
         )
     )
-    buckets: dict[str, dict[str, Any]] = defaultdict(
-        lambda: {
-            "evaluated_runs": 0,
-            "tickets": 0,
-            "tickets_with_hit": 0,
-            "exact_tickets": 0,
-            "hit_numbers": 0,
-            "checked_numbers": 0,
-            "best_hit": 0,
-        }
+    weekly_buckets: dict[str, dict[str, int]] = defaultdict(
+        _empty_performance_bucket
     )
+    period_buckets: dict[str, dict[str, Any]] = {}
+    overall = _empty_performance_bucket()
     for evaluation in evaluations:
         run = db.get(GenerationRun, evaluation.generation_run_id)
         if run is None:
@@ -338,13 +397,8 @@ def _weekly_performance(db: Session, game: Game) -> list[dict[str, Any]]:
         actual_draw = db.get(Draw, evaluation.actual_draw_id)
         if actual_draw is None or actual_draw.draw_no != run.target_draw_no:
             continue
-        evaluated_at = evaluation.evaluated_at
-        if evaluated_at.tzinfo is None:
-            evaluated_at = evaluated_at.replace(tzinfo=UTC)
-        iso = evaluated_at.astimezone(ZoneInfo("Asia/Taipei")).isocalendar()
+        iso = actual_draw.draw_date.isocalendar()
         week = f"{iso.year}-W{iso.week:02d}"
-        bucket = buckets[week]
-        bucket["evaluated_runs"] += 1
         ruleset = db.get(Ruleset, evaluation.ruleset_id)
         pick_count = 1
         if ruleset is not None:
@@ -356,38 +410,56 @@ def _weekly_performance(db: Session, game: Game) -> list[dict[str, Any]]:
                 select(TicketResult).where(TicketResult.evaluation_run_id == evaluation.id)
             )
         )
-        bucket["tickets"] += len(results)
-        bucket["checked_numbers"] += len(results) * pick_count
-        for result in results:
-            hits = int(result.main_hit_count)
-            bucket["hit_numbers"] += hits
-            bucket["best_hit"] = max(int(bucket["best_hit"]), hits)
-            if hits > 0:
-                bucket["tickets_with_hit"] += 1
-            if hits >= pick_count:
-                bucket["exact_tickets"] += 1
-    output: list[dict[str, Any]] = []
-    for week in sorted(buckets, reverse=True)[:8]:
-        bucket = buckets[week]
-        tickets = int(bucket["tickets"])
-        checked_numbers = int(bucket["checked_numbers"])
-        output.append(
+        _add_performance_results(weekly_buckets[week], results, pick_count)
+        _add_performance_results(overall, results, pick_count)
+        period = period_buckets.setdefault(
+            actual_draw.draw_no,
+            {
+                "draw_no": actual_draw.draw_no,
+                "draw_date": actual_draw.draw_date.isoformat(),
+                "stats": _empty_performance_bucket(),
+            },
+        )
+        _add_performance_results(period["stats"], results, pick_count)
+
+    weekly: list[dict[str, Any]] = []
+    for week in sorted(weekly_buckets, reverse=True)[:10]:
+        weekly.append(
             {
                 "week": week,
-                **bucket,
-                "ticket_hit_rate": round(
-                    int(bucket["tickets_with_hit"]) / tickets * 100, 2
-                )
-                if tickets
-                else 0.0,
-                "number_accuracy": round(
-                    int(bucket["hit_numbers"]) / checked_numbers * 100, 2
-                )
-                if checked_numbers
-                else 0.0,
+                **_performance_rates(weekly_buckets[week]),
             }
         )
-    return output
+    recent_periods: list[dict[str, Any]] = []
+    sorted_periods = sorted(
+        period_buckets.values(),
+        key=lambda item: (str(item["draw_date"]), str(item["draw_no"])),
+        reverse=True,
+    )
+    recent_10 = _empty_performance_bucket()
+    for period in sorted_periods[:10]:
+        stats = period["stats"]
+        _merge_performance(recent_10, stats)
+        recent_periods.append(
+            {
+                "draw_no": period["draw_no"],
+                "draw_date": period["draw_date"],
+                **_performance_rates(stats),
+            }
+        )
+    latest_week = weekly[0] if weekly else {
+        "week": None,
+        **_performance_rates(_empty_performance_bucket()),
+    }
+    return {
+        "weekly": weekly,
+        "recent_periods": recent_periods,
+        "summary": {
+            "recent_10": _performance_rates(recent_10),
+            "latest_week": latest_week,
+            "overall": _performance_rates(overall),
+        },
+    }
 
 
 def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
@@ -464,6 +536,7 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
         and size > primary_pick
         and math.comb(size, primary_pick) <= 100
     ]
+    performance = _performance_payload(db, game)
     return {
         "game": {
             "game_code": game.game_code,
@@ -482,10 +555,12 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
         },
         "latest_recommendation": latest_simple,
         "records": records,
-        "weekly_performance": _weekly_performance(db, game),
+        "weekly_performance": performance["weekly"],
+        "recent_periods": performance["recent_periods"],
+        "performance_summary": performance["summary"],
         "metric_note": (
-            "週命中率＝已核對單式中至少命中1個主要號碼的比例；"
+            "命中率＝已核對單式中至少命中1個主要號碼的比例；"
             "號碼正確率＝命中主要號碼總數除以核對號碼總數。"
-            "兩者都是歷史紀錄，不是未來中獎機率。"
+            "近10期、最新一週與累計數字都是歷史紀錄，不是未來中獎機率。"
         ),
     }

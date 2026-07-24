@@ -7,7 +7,7 @@
   <meta name="description" content="選擇彩種，直接查看下期推薦、包牌組合、上一期命中與每週歷史表現。">
   <title>Numeris｜下期彩球組合</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/css/app.css?v={{ app_version }}-single-screen">
+  <link rel="stylesheet" href="/static/css/app.css?v={{ app_version }}-focus-view-4">
 </head>
 <body>
   <header class="site-header">
@@ -30,8 +30,8 @@
     <div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
 
     <section class="intro" id="next">
-      <p class="kicker">下一期推薦</p>
-      <h1>選彩種，<br>直接看下期組合。</h1>
+      <p class="kicker">步驟 1</p>
+      <h1>選擇商品／彩種</h1>
       <p class="intro-copy">推薦會自動保存。開獎資料更新後，系統會核對上一期命中並更新每週歷史表現。</p>
 
       <div class="game-picker">
@@ -46,7 +46,7 @@
       <article class="choice-card">
         <div class="card-heading">
           <div>
-            <p class="kicker">選擇組合方式</p>
+            <p class="kicker">步驟 2 · 選擇推薦方式</p>
             <h2 id="choice-title">香港六合彩</h2>
           </div>
           <span class="saved-chip">自動保存</span>
@@ -93,6 +93,7 @@
           <p id="result-meta"></p>
         </div>
         <div class="result-actions">
+          <button id="close-combinations" class="secondary-action">返回主畫面</button>
           <button id="refresh-run" class="secondary-action">換一組</button>
           <a id="export-csv" class="secondary-action" href="#">下載 CSV</a>
         </div>
@@ -114,38 +115,33 @@
     <section class="performance-section" id="weekly">
       <div class="section-heading">
         <div>
-          <p class="kicker">開獎後自動核對</p>
-          <h2>每週歷史表現</h2>
-          <p>只統計已經開獎、而且完成核對的推薦。</p>
+          <p class="kicker">步驟 3 · 開獎後自動核對</p>
+          <h2>近10期、每週與累計命中率</h2>
+          <p>只統計目標期別和實際開獎期別一致的推薦。</p>
         </div>
         <button id="reload-dashboard" class="secondary-action">重新整理</button>
       </div>
 
       <div class="performance-cards">
         <article>
-          <span>最近一週命中率</span>
-          <strong id="week-hit-rate">—</strong>
-          <small>至少命中1個主要號碼的單式比例</small>
+          <span>近10期命中率</span>
+          <strong id="recent-hit-rate">—</strong>
+          <small>號碼正確率 <b id="recent-number-accuracy">—</b></small>
         </article>
         <article>
-          <span>號碼正確率</span>
-          <strong id="number-accuracy">—</strong>
-          <small>命中號碼數 ÷ 已核對號碼數</small>
+          <span>最新一週命中率</span>
+          <strong id="weekly-hit-rate">—</strong>
+          <small><b id="latest-week-label">尚無週資料</b> · 正確率 <b id="weekly-number-accuracy">—</b></small>
         </article>
         <article>
-          <span>單式最高命中</span>
-          <strong id="best-hit">—</strong>
-          <small>最近一週單張推薦的最高命中數</small>
+          <span>累計總命中率</span>
+          <strong id="overall-hit-rate">—</strong>
+          <small>號碼正確率 <b id="overall-number-accuracy">—</b></small>
         </article>
       </div>
 
-      <div class="table-card">
-        <table>
-          <thead>
-            <tr><th>週次</th><th>已核對推薦</th><th>單式張數</th><th>至少命中1碼</th><th>號碼正確率</th><th>最高命中</th></tr>
-          </thead>
-          <tbody id="weekly-table"></tbody>
-        </table>
+      <div class="period-card-wrap">
+        <div id="weekly-table" class="period-grid"></div>
         <div id="weekly-empty" class="table-empty hidden">目前還沒有已開獎的推薦。資料更新並對到目標期後，這裡會自動累積週報。</div>
       </div>
       <p id="metric-note" class="metric-note"></p>
@@ -180,6 +176,6 @@
     <span>歷史開獎結果不代表未來結果，產生的號碼不構成中獎保證。未滿18歲不得購買或兌領彩券，請量力而為。</span>
   </footer>
 
-  <script src="/static/js/app.js?v={{ app_version }}-single-screen"></script>
+  <script src="/static/js/app.js?v={{ app_version }}-focus-view-4"></script>
 </body>
 </html>
