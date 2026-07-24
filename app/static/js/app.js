@@ -255,13 +255,19 @@
       state.periodPage * periodPageSize,
       state.periodPage * periodPageSize + periodPageSize,
     );
-    $("#recent-hit-rate").textContent = rateText(recent.ticket_hit_rate);
-    $("#recent-number-accuracy").textContent = rateText(recent.number_accuracy);
-    $("#weekly-hit-rate").textContent = rateText(latestWeek.ticket_hit_rate);
-    $("#weekly-number-accuracy").textContent = rateText(latestWeek.number_accuracy);
+    $("#recent-hit-rate").textContent = rateText(recent.number_accuracy);
+    $("#recent-number-accuracy").textContent = rateText(
+      recent.any_hit_ticket_rate ?? recent.ticket_hit_rate,
+    );
+    $("#weekly-hit-rate").textContent = rateText(latestWeek.number_accuracy);
+    $("#weekly-number-accuracy").textContent = rateText(
+      latestWeek.any_hit_ticket_rate ?? latestWeek.ticket_hit_rate,
+    );
     $("#latest-week-label").textContent = latestWeek.week || "尚無週資料";
-    $("#overall-hit-rate").textContent = rateText(overall.ticket_hit_rate);
-    $("#overall-number-accuracy").textContent = rateText(overall.number_accuracy);
+    $("#overall-hit-rate").textContent = rateText(overall.number_accuracy);
+    $("#overall-number-accuracy").textContent = rateText(
+      overall.any_hit_ticket_rate ?? overall.ticket_hit_rate,
+    );
     $("#weekly-table").innerHTML = visiblePeriods.map((row) => {
       const predicted = comparisonBalls(row, row.predicted_numbers);
       const actual = comparisonBalls(row, row.actual_numbers);
@@ -276,7 +282,7 @@
           <strong>${esc(row.draw_no)}</strong>
         </div>
         <div class="compare-group">
-          <span>預測</span><div>${predicted}</div>
+          <span>第1組</span><div>${predicted}</div>
         </div>
         <div class="compare-group actual">
           <span>開獎</span><div>${actual}${special ? `<i>＋</i>${special}` : ""}</div>

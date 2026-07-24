@@ -146,9 +146,28 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
         assert len(recent_period["actual_special_numbers"]) == 1
         assert recent_period["comparison_number_count"] == 6
         assert recent_period["comparison_hit_rate"] is not None
-        assert payload["performance_summary"]["recent_10"]["tickets"] > 0
+        recent_summary = payload["performance_summary"]["recent_10"]
+        assert recent_summary["tickets"] > 0
+        assert recent_summary["number_accuracy"] == round(
+            recent_summary["hit_numbers"]
+            / recent_summary["checked_numbers"]
+            * 100,
+            2,
+        )
+        assert recent_summary["any_hit_ticket_rate"] == round(
+            recent_summary["tickets_with_hit"]
+            / recent_summary["tickets"]
+            * 100,
+            2,
+        )
         assert payload["performance_summary"]["latest_week"]["ticket_hit_rate"] is not None
+        assert (
+            payload["performance_summary"]["latest_week"]["any_hit_ticket_rate"]
+            == payload["performance_summary"]["latest_week"]["ticket_hit_rate"]
+        )
         assert payload["performance_summary"]["overall"]["number_accuracy"] is not None
+        assert "10組單式" in payload["metric_definitions"]["number_accuracy"]
+        assert "逐期表第1組" in payload["metric_definitions"]["period_comparison"]
         assert "不是未來中獎機率" in payload["metric_note"]
 
 

@@ -360,13 +360,17 @@ def _merge_performance(
 def _performance_rates(bucket: dict[str, int]) -> dict[str, Any]:
     tickets = bucket["tickets"]
     checked_numbers = bucket["checked_numbers"]
+    any_hit_ticket_rate = (
+        round(bucket["tickets_with_hit"] / tickets * 100, 2)
+        if tickets
+        else None
+    )
     return {
         **bucket,
-        "ticket_hit_rate": (
-            round(bucket["tickets_with_hit"] / tickets * 100, 2)
-            if tickets
-            else None
-        ),
+        # Keep the original key for API compatibility. The explicit alias prevents
+        # the value from being mistaken for the percentage of correct numbers.
+        "ticket_hit_rate": any_hit_ticket_rate,
+        "any_hit_ticket_rate": any_hit_ticket_rate,
         "number_accuracy": (
             round(bucket["hit_numbers"] / checked_numbers * 100, 2)
             if checked_numbers
@@ -779,10 +783,22 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
         "performance_summary": performance["summary"],
         "performance_source": performance.get("source"),
         "performance_replay_run_uuid": performance.get("replay_run_uuid"),
+        "metric_definitions": {
+            "number_accuracy": (
+                "10組單式命中主要號碼總數 ÷ 10組全部檢查號碼數"
+            ),
+            "any_hit_ticket_rate": (
+                "至少命中1個主要號碼的單式數 ÷ 全部單式數"
+            ),
+            "period_comparison": (
+                "逐期表第1組命中主要號碼數 ÷ 第1組號碼數"
+            ),
+        },
         "metric_note": (
             "週更以影片五步法逐期回放計算，每一期只使用該期以前資料。"
-            "命中率＝已核對單式中至少命中1個主要號碼的比例；"
-            "號碼正確率＝命中主要號碼總數除以核對號碼總數。"
+            "號碼命中率＝10組單式命中主要號碼總數除以全部檢查號碼數；"
+            "至少中1碼單式＝10組中命中至少1個主要號碼的單式比例。"
+            "逐期表顯示第1組，右側為該組命中數除以該組號碼數。"
             "近10期、最新一週與累計數字都是歷史紀錄，不是未來中獎機率。"
         ),
     }
