@@ -1786,3 +1786,311 @@ footer strong { color: var(--ink); white-space: nowrap; }
     font-size: 13px;
   }
 }
+
+/* Visual polish: balanced composition and clearer comparison groups. */
+@media (min-width: 1100px) {
+  :root {
+    --line: #dbe4d8;
+    --lime: #d8ef58;
+    --lime-soft: #f1f6d4;
+    --shadow: 0 16px 42px rgba(18, 53, 36, .08);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 89% -8%, rgba(209, 232, 105, .18), transparent 28%),
+      linear-gradient(145deg, #f7f9f5, #edf2ed);
+  }
+
+  .site-header {
+    background: rgba(250, 251, 248, .97);
+    box-shadow: 0 1px 0 rgba(24, 58, 41, .08);
+  }
+  .brand-mark {
+    border-radius: 16px 16px 16px 6px;
+    background: linear-gradient(145deg, #174c35, #0d3323);
+  }
+  .fullscreen-button,
+  .health {
+    border: 0;
+    background: rgba(255, 255, 255, .82);
+    box-shadow:
+      0 0 0 1px rgba(24, 58, 41, .09),
+      0 8px 20px rgba(24, 58, 41, .05);
+  }
+
+  .intro,
+  .choice-card,
+  .summary-card,
+  .performance-section {
+    border: 0;
+    box-shadow:
+      0 0 0 1px rgba(24, 58, 41, .08),
+      0 18px 42px rgba(24, 58, 41, .07);
+  }
+
+  .kicker {
+    padding: 5px 10px;
+    background: #edf3c8;
+    color: #4f6508;
+  }
+
+  .intro {
+    background:
+      radial-gradient(circle at 91% 5%, rgba(216, 239, 88, .23), transparent 31%),
+      linear-gradient(112deg, #fff 0 52%, #f7faea 100%);
+  }
+  .intro .game-picker {
+    border: 0;
+    background: rgba(255, 255, 255, .93);
+    box-shadow:
+      0 0 0 2px rgba(38, 83, 57, .14),
+      0 12px 30px rgba(22, 59, 40, .08);
+  }
+  .intro .data-badge {
+    border: 0;
+    background: #eef6bd;
+    color: #526800;
+  }
+
+  .choice-card {
+    background:
+      radial-gradient(circle at 100% 100%, rgba(216, 239, 88, .11), transparent 35%),
+      #fff;
+  }
+  .saved-chip {
+    border: 1px solid #dfe7dc;
+    background: #f5f7f3;
+  }
+  .choice-card .mode {
+    position: relative;
+    border-color: #d8e1d5;
+    background: #fbfcfa;
+  }
+  .choice-card .mode:hover {
+    border-color: #9eb29f;
+    background: #f5f8f3;
+    transform: translateY(-1px);
+  }
+  .choice-card .mode.active {
+    border-color: #14452f;
+    background:
+      radial-gradient(circle at 100% 0, rgba(216, 239, 88, .12), transparent 42%),
+      linear-gradient(145deg, #174a34, #103a29);
+  }
+  .choice-card .primary-action {
+    background: linear-gradient(135deg, #ddf35f, #cce845);
+    color: #1a3619;
+    box-shadow: 0 10px 24px rgba(143, 171, 31, .17);
+  }
+  .choice-card .primary-action:hover {
+    background: linear-gradient(135deg, #e5f77c, #d5ed57);
+  }
+
+  .summary-card {
+    background:
+      radial-gradient(circle at 91% 0, rgba(216, 239, 88, .18), transparent 31%),
+      linear-gradient(135deg, #154a33 0%, #0e3928 58%, #0a2e20 100%);
+  }
+  .summary-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(255, 255, 255, .13) .8px, transparent .8px);
+    background-size: 18px 18px;
+    mask-image: linear-gradient(90deg, transparent 35%, #000);
+  }
+  .summary-ball {
+    border-color: rgba(255, 255, 255, .54);
+    background: linear-gradient(145deg, #fff, #f5f8f3);
+    box-shadow:
+      inset 0 -3px 0 rgba(17, 63, 42, .08),
+      0 10px 24px rgba(0, 0, 0, .16);
+  }
+  .summary-open {
+    border-color: rgba(255, 255, 255, .28);
+    background: rgba(255, 255, 255, .13);
+    backdrop-filter: blur(8px);
+  }
+
+  .performance-section {
+    grid-template-columns: minmax(300px, .47fr) minmax(0, 1.53fr);
+    grid-template-rows: 126px minmax(0, 1fr);
+    background: rgba(255, 255, 255, .94);
+  }
+  .performance-section .section-heading {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    min-width: 0;
+    height: 126px;
+    padding: 18px 20px;
+    border: 0;
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 100% 0, rgba(216, 239, 88, .20), transparent 42%),
+      linear-gradient(145deg, #173f2e, #0f3123);
+    color: #fff;
+    overflow: hidden;
+  }
+  .performance-section .section-heading .kicker {
+    margin-bottom: 8px;
+    background: rgba(216, 239, 88, .16);
+    color: #e4f57f;
+  }
+  .performance-section .section-heading h2 {
+    max-width: none;
+    color: #fff;
+    font-size: 31px;
+    line-height: 1.05;
+  }
+  .performance-section .section-heading p:not(.kicker) {
+    margin-top: 8px;
+    color: #bdd0c4;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .performance-section #reload-dashboard {
+    position: absolute;
+    right: 18px;
+    bottom: 14px;
+    margin: 0;
+    border-color: rgba(255, 255, 255, .24);
+    background: rgba(255, 255, 255, .10);
+    color: #fff;
+  }
+
+  .performance-cards {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .performance-cards article {
+    position: relative;
+    border: 0;
+    border-top: 0;
+    background: linear-gradient(145deg, #fff, #f7f9f5);
+    box-shadow:
+      0 0 0 1px rgba(26, 64, 44, .09),
+      0 9px 22px rgba(25, 64, 44, .06);
+    overflow: hidden;
+  }
+  .performance-cards article::after {
+    content: "";
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    right: -30px;
+    bottom: -35px;
+    border-radius: 50%;
+    background: rgba(196, 220, 75, .14);
+  }
+  .performance-cards article:nth-child(2)::after { background: rgba(49, 116, 80, .10); }
+  .performance-cards article:nth-child(3)::after { background: rgba(237, 169, 80, .11); }
+
+  .period-card-wrap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .period-grid { gap: 8px; }
+  .period-card {
+    grid-template-columns: 116px minmax(0, 1fr) minmax(0, 1.18fr) 112px;
+    gap: 12px 16px;
+    padding: 8px 12px;
+    border: 0;
+    border-left: 4px solid #b7d34c;
+    border-radius: 14px;
+    background: #fbfcfa;
+    box-shadow:
+      0 0 0 1px rgba(24, 58, 41, .08),
+      0 5px 14px rgba(24, 58, 41, .035);
+  }
+  .period-card:nth-child(even) {
+    border-left-color: #5e9472;
+    background: #f7faf7;
+  }
+  .period-id { padding-left: 4px; }
+  .period-id strong { color: #123f2b; }
+  .compare-group {
+    min-height: 42px;
+    grid-template-columns: 48px minmax(0, 1fr);
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: #f0f4ee;
+  }
+  .compare-group.actual { background: #f3f7e7; }
+  .compare-group > span { color: #496054; }
+  .compare-ball {
+    border-color: #d8e1d5;
+    background: #fff;
+    box-shadow: inset 0 -2px 0 rgba(18, 63, 43, .06);
+  }
+  .compare-ball.hit {
+    border-color: #9ebf25;
+    background: linear-gradient(145deg, #e8f879, #cae83e);
+    box-shadow:
+      inset 0 -2px 0 rgba(87, 111, 0, .12),
+      0 0 0 3px rgba(183, 206, 72, .14);
+  }
+  .compare-ball.special {
+    border-color: #e5aa78;
+    background: #fff5e9;
+  }
+  .period-rate {
+    min-width: 0;
+    padding: 7px 10px;
+    border-radius: 12px;
+    background: #edf4d4;
+  }
+  .period-rate strong { line-height: 1; }
+  .period-rate small { color: #526153; }
+  .period-pager .secondary-action {
+    border: 0;
+    background: #eef2ec;
+  }
+
+  body[data-game-type="high_frequency"] .compare-group.actual {
+    padding-block: 3px;
+  }
+}
+
+@media (min-width: 1100px) and (max-height: 800px) {
+  .performance-section {
+    grid-template-columns: 235px minmax(0, 1fr);
+    grid-template-rows: 92px minmax(0, 1fr);
+  }
+  .performance-section .section-heading {
+    height: 92px;
+    padding: 11px 13px;
+    border-radius: 14px;
+  }
+  .performance-section .section-heading .kicker {
+    margin-bottom: 5px;
+    font-size: 9px;
+  }
+  .performance-section .section-heading h2 { font-size: 24px; }
+  .performance-section .section-heading p:not(.kicker) { display: none; }
+  .performance-section #reload-dashboard {
+    right: 11px;
+    bottom: 9px;
+    min-height: 30px;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  .period-card {
+    grid-template-columns: 88px minmax(0, 1fr) minmax(0, 1.18fr) 82px;
+    gap: 5px 8px;
+    padding: 4px 7px;
+    border-left-width: 3px;
+  }
+  .compare-group {
+    min-height: 34px;
+    grid-template-columns: 34px minmax(0, 1fr);
+    padding: 2px 4px;
+    border-radius: 9px;
+  }
+  .period-rate {
+    padding: 5px 6px;
+    border-radius: 9px;
+  }
+}
