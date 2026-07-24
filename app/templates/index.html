@@ -7,7 +7,7 @@
   <meta name="description" content="選擇彩種，直接查看下期推薦、包牌組合、上一期命中與每週歷史表現。">
   <title>Numeris｜下期彩球組合</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="/static/css/app.css?v={{ app_version }}-single-screen">
 </head>
 <body>
   <header class="site-header">
@@ -31,7 +31,7 @@
 
     <section class="intro" id="next">
       <p class="kicker">下一期推薦</p>
-      <h1>選一個彩種，<br>直接看下期組合。</h1>
+      <h1>選彩種，<br>直接看下期組合。</h1>
       <p class="intro-copy">推薦會自動保存。開獎資料更新後，系統會核對上一期命中並更新每週歷史表現。</p>
 
       <div class="game-picker">
@@ -100,7 +100,11 @@
 
       <div id="wheel-core" class="wheel-core hidden"></div>
       <div id="tickets" class="tickets"></div>
-      <button id="show-all" class="show-all hidden">顯示全部組合</button>
+      <div id="ticket-pager" class="ticket-pager hidden" aria-label="組合分頁">
+        <button id="ticket-prev" class="secondary-action">← 上一頁</button>
+        <strong id="ticket-page">第 1／1 頁</strong>
+        <button id="ticket-next" class="secondary-action">下一頁 →</button>
+      </div>
 
       <div class="plain-warning">
         這些是依歷史資料與固定條件產生的組合，不是開獎預測，也不代表較高中獎機率。
@@ -176,6 +180,6 @@
     <span>歷史開獎結果不代表未來結果，產生的號碼不構成中獎保證。未滿18歲不得購買或兌領彩券，請量力而為。</span>
   </footer>
 
-  <script src="/static/js/app.js"></script>
+  <script src="/static/js/app.js?v={{ app_version }}-single-screen"></script>
 </body>
 </html>

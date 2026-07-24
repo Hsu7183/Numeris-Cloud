@@ -63,7 +63,7 @@ def test_simple_recommendation_ui_flow() -> None:
             page_errors: list[str] = []
             page.on("pageerror", lambda error: page_errors.append(str(error)))
             page.goto(base_url)
-            page.get_by_role("heading", name="選一個彩種， 直接看下期組合。").wait_for()
+            page.get_by_role("heading", name="選彩種， 直接看下期組合。").wait_for()
             page.locator("#game-select").select_option("TW_LOTTO649")
             page.locator("#result-title").filter(has_text="大樂透").wait_for(timeout=30000)
             page.locator(".ticket").first.wait_for(state="visible")
@@ -80,14 +80,38 @@ def test_simple_recommendation_ui_flow() -> None:
             assert page.locator(".ticket").count() == 7
             assert page.locator(".sidebar").count() == 0
             page.set_viewport_size({"width": 1920, "height": 1080})
-            intro_layout = page.locator(".intro").evaluate(
-                "element => getComputedStyle(element).display"
+            desktop_metrics = page.evaluate(
+                """() => ({
+                    clientWidth: document.documentElement.clientWidth,
+                    clientHeight: document.documentElement.clientHeight,
+                    scrollWidth: document.documentElement.scrollWidth,
+                    scrollHeight: document.documentElement.scrollHeight,
+                })"""
             )
-            title_box = page.locator(".intro h1").bounding_box()
-            picker_box = page.locator(".game-picker").bounding_box()
-            assert intro_layout == "grid"
-            assert title_box is not None and picker_box is not None
-            assert picker_box["x"] > title_box["x"]
+            intro_box = page.locator(".intro").bounding_box()
+            summary_box = page.locator(".summary-card").bounding_box()
+            performance_box = page.locator(".performance-section").bounding_box()
+            assert desktop_metrics["scrollWidth"] == desktop_metrics["clientWidth"]
+            assert desktop_metrics["scrollHeight"] == desktop_metrics["clientHeight"]
+            assert intro_box is not None and summary_box is not None
+            assert performance_box is not None
+            assert intro_box["x"] < summary_box["x"] < performance_box["x"]
+
+            page.set_viewport_size({"width": 1366, "height": 768})
+            compact_metrics = page.evaluate(
+                """() => ({
+                    clientWidth: document.documentElement.clientWidth,
+                    clientHeight: document.documentElement.clientHeight,
+                    scrollWidth: document.documentElement.scrollWidth,
+                    scrollHeight: document.documentElement.scrollHeight,
+                })"""
+            )
+            assert compact_metrics["scrollWidth"] == compact_metrics["clientWidth"]
+            assert compact_metrics["scrollHeight"] == compact_metrics["clientHeight"]
+            assert page.locator(".ticket").count() == 6
+            page.locator("#ticket-next").click()
+            assert page.locator("#ticket-page").inner_text() == "第 2／2 頁"
+            assert page.locator(".ticket").count() == 1
             assert not page_errors
             browser.close()
     finally:

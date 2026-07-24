@@ -7,7 +7,7 @@
     dashboard: null,
     run: null,
     mode: "single",
-    showAll: false,
+    ticketPage: 0,
     busy: false,
   };
 
@@ -158,7 +158,7 @@
 
   function renderRun(run) {
     state.run = run;
-    state.showAll = false;
+    state.ticketPage = 0;
     renderSummary(run);
     if (!run?.tickets?.length) {
       $("#result-section").classList.add("hidden");
@@ -188,8 +188,12 @@
 
   function renderTickets() {
     if (!state.run) return;
-    const limit = state.showAll ? state.run.tickets.length : Math.min(12, state.run.tickets.length);
-    $("#tickets").innerHTML = state.run.tickets.slice(0, limit).map((ticket) => {
+    const pageSize = window.innerHeight <= 800 ? 6 : 10;
+    const pageCount = Math.max(1, Math.ceil(state.run.tickets.length / pageSize));
+    state.ticketPage = Math.min(state.ticketPage, pageCount - 1);
+    const start = state.ticketPage * pageSize;
+    const visibleTickets = state.run.tickets.slice(start, start + pageSize);
+    $("#tickets").innerHTML = visibleTickets.map((ticket) => {
       const groups = allPoolNumbers(ticket);
       const pools = groups.map((group) => (
         group.numbers.map((number) => ball(number, group.groupIndex ? "pool-two" : "")).join("")
@@ -199,11 +203,11 @@
         <div class="ball-row">${pools}</div>
       </article>`;
     }).join("");
-    const showAll = $("#show-all");
-    showAll.classList.toggle("hidden", state.run.tickets.length <= 12);
-    showAll.textContent = state.showAll
-      ? "收起組合"
-      : `顯示全部 ${state.run.tickets.length} 組`;
+    const pager = $("#ticket-pager");
+    pager.classList.toggle("hidden", pageCount <= 1);
+    $("#ticket-page").textContent = `第 ${state.ticketPage + 1}／${pageCount} 頁`;
+    $("#ticket-prev").disabled = state.ticketPage === 0;
+    $("#ticket-next").disabled = state.ticketPage >= pageCount - 1;
   }
 
   function renderWeekly() {
@@ -235,7 +239,7 @@
       $("#history-list").innerHTML = '<div class="history-empty">尚無推薦紀錄。產生下期組合後會自動出現在這裡。</div>';
       return;
     }
-    $("#history-list").innerHTML = records.map((record) => {
+    $("#history-list").innerHTML = records.slice(0, 3).map((record) => {
       const evaluation = record.evaluation || {};
       const checked = evaluation.status === "completed";
       const best = checked
@@ -320,7 +324,6 @@
       renderWeekly();
       renderHistory();
       notice(refresh ? "已換一組並保存新紀錄" : "下期組合已保存");
-      $("#result-section").scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (error) {
       notice(error.message, true);
     } finally {
@@ -352,9 +355,16 @@
   $("#game-select").addEventListener("change", (event) => changeGame(event.target.value));
   $("#generate").addEventListener("click", () => generate(false));
   $("#refresh-run").addEventListener("click", () => generate(true));
-  $("#show-all").addEventListener("click", () => {
-    state.showAll = !state.showAll;
+  $("#ticket-prev").addEventListener("click", () => {
+    state.ticketPage = Math.max(0, state.ticketPage - 1);
     renderTickets();
+  });
+  $("#ticket-next").addEventListener("click", () => {
+    state.ticketPage += 1;
+    renderTickets();
+  });
+  window.addEventListener("resize", () => {
+    if (state.run) renderTickets();
   });
   $("#reload-dashboard").addEventListener("click", async () => {
     try {
