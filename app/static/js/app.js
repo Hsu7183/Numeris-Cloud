@@ -8,6 +8,7 @@
     run: null,
     mode: "single",
     ticketPage: 0,
+    periodPage: 0,
     combinationsOpen: false,
     busy: false,
   };
@@ -67,6 +68,19 @@
 
   function rateText(value) {
     return value === null || value === undefined ? "—" : `${value}%`;
+  }
+
+  function comparisonBalls(row, numbers, { special = false } = {}) {
+    const hitNumbers = new Set((row.comparison_hit_numbers || []).map(Number));
+    const hitPositions = new Set((row.comparison_hit_positions || []).map(Number));
+    const ordered = state.dashboard?.game?.game_type === "ordered_digits";
+    return (numbers || []).map((number, index) => {
+      const hit = !special && (
+        ordered ? hitPositions.has(index) : hitNumbers.has(Number(number))
+      );
+      return `<span class="compare-ball ${hit ? "hit" : ""} ${special ? "special" : ""}">`
+        + `${String(number).padStart(2, "0")}</span>`;
+    }).join("");
   }
 
   function setCombinationsOpen(open) {
@@ -230,6 +244,12 @@
     const latestWeek = summary.latest_week || {};
     const overall = summary.overall || {};
     const periods = state.dashboard.recent_periods || [];
+    const periodPageCount = Math.max(1, Math.ceil(periods.length / 5));
+    state.periodPage = Math.min(state.periodPage, periodPageCount - 1);
+    const visiblePeriods = periods.slice(
+      state.periodPage * 5,
+      state.periodPage * 5 + 5,
+    );
     $("#recent-hit-rate").textContent = rateText(recent.ticket_hit_rate);
     $("#recent-number-accuracy").textContent = rateText(recent.number_accuracy);
     $("#weekly-hit-rate").textContent = rateText(latestWeek.ticket_hit_rate);
@@ -237,13 +257,36 @@
     $("#latest-week-label").textContent = latestWeek.week || "尚無週資料";
     $("#overall-hit-rate").textContent = rateText(overall.ticket_hit_rate);
     $("#overall-number-accuracy").textContent = rateText(overall.number_accuracy);
-    $("#weekly-table").innerHTML = periods.map((row) => `
-      <article class="period-card">
-        <div><span>期別</span><strong>${esc(row.draw_no)}</strong></div>
-        <b>${rateText(row.ticket_hit_rate)}</b>
-        <small>${esc(row.draw_date)} · 最高命中 ${row.best_hit} 碼 · 正確率 ${rateText(row.number_accuracy)}</small>
-      </article>`).join("");
+    $("#weekly-table").innerHTML = visiblePeriods.map((row) => {
+      const predicted = comparisonBalls(row, row.predicted_numbers);
+      const actual = comparisonBalls(row, row.actual_numbers);
+      const special = comparisonBalls(
+        row,
+        row.actual_special_numbers,
+        { special: true },
+      );
+      return `<article class="period-card">
+        <div class="period-id">
+          <span>${esc(row.draw_date)}</span>
+          <strong>${esc(row.draw_no)}</strong>
+        </div>
+        <div class="compare-group">
+          <span>預測</span><div>${predicted}</div>
+        </div>
+        <div class="compare-group actual">
+          <span>開獎</span><div>${actual}${special ? `<i>＋</i>${special}` : ""}</div>
+        </div>
+        <div class="period-rate">
+          <strong>${rateText(row.comparison_hit_rate)}</strong>
+          <small>命中 ${row.comparison_hit_count}/${row.comparison_number_count}</small>
+        </div>
+      </article>`;
+    }).join("");
     $("#weekly-empty").classList.toggle("hidden", periods.length > 0);
+    $("#period-pager").classList.toggle("hidden", periodPageCount <= 1);
+    $("#period-page").textContent = `第 ${state.periodPage + 1}／${periodPageCount} 頁`;
+    $("#period-prev").disabled = state.periodPage === 0;
+    $("#period-next").disabled = state.periodPage >= periodPageCount - 1;
     $("#metric-note").textContent = state.dashboard.metric_note;
   }
 
@@ -311,6 +354,7 @@
     state.gameCode = gameCode;
     state.mode = "single";
     state.run = null;
+    state.periodPage = 0;
     setCombinationsOpen(false);
     renderQuickGames();
     $("#run-summary").innerHTML = `
@@ -379,6 +423,14 @@
   $("#generate").addEventListener("click", () => generate(false));
   $("#refresh-run").addEventListener("click", () => generate(true));
   $("#close-combinations").addEventListener("click", () => setCombinationsOpen(false));
+  $("#period-prev").addEventListener("click", () => {
+    state.periodPage = Math.max(0, state.periodPage - 1);
+    renderWeekly();
+  });
+  $("#period-next").addEventListener("click", () => {
+    state.periodPage += 1;
+    renderWeekly();
+  });
   $("#ticket-prev").addEventListener("click", () => {
     state.ticketPage = Math.max(0, state.ticketPage - 1);
     renderTickets();

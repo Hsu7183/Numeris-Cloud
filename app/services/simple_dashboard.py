@@ -373,6 +373,85 @@ def _performance_rates(bucket: dict[str, int]) -> dict[str, Any]:
     }
 
 
+def _comparison_payload(
+    run: GenerationRun,
+    actual_draw: Draw,
+    ruleset: Ruleset | None,
+    game: Game,
+) -> dict[str, Any]:
+    primary_pool_code = "main"
+    if ruleset is not None:
+        primary_pool_code = str(ruleset.config_json["pools"][0]["code"])
+    wheel_numbers = run.config_json.get("wheel_numbers")
+    if isinstance(wheel_numbers, list) and wheel_numbers:
+        predicted_numbers = [int(number) for number in wheel_numbers]
+        prediction_source = "包牌核心號碼"
+    else:
+        first_ticket = run.tickets[0] if run.tickets else None
+        predicted_numbers = (
+            [
+                int(number.number_value)
+                for number in first_ticket.numbers
+                if number.pool_code == primary_pool_code
+            ]
+            if first_ticket is not None
+            else []
+        )
+        prediction_source = "推薦第1組"
+    actual_main = [
+        int(number.number_value)
+        for number in sorted(
+            (
+                number
+                for number in actual_draw.numbers
+                if number.pool_code == primary_pool_code and not number.is_special
+            ),
+            key=lambda number: (
+                number.draw_order if number.draw_order is not None else 999,
+                number.sorted_order if number.sorted_order is not None else 999,
+                number.id,
+            ),
+        )
+    ]
+    actual_special = [
+        int(number.number_value)
+        for number in actual_draw.numbers
+        if number.is_special
+    ]
+    if game.game_type == "ordered_digits":
+        hit_positions = [
+            index
+            for index, (predicted, actual) in enumerate(
+                zip(predicted_numbers, actual_main, strict=False)
+            )
+            if predicted == actual
+        ]
+        hit_numbers = [predicted_numbers[index] for index in hit_positions]
+        hit_count = len(hit_positions)
+    else:
+        hit_positions = []
+        hit_numbers = sorted(set(predicted_numbers) & set(actual_main))
+        hit_count = len(hit_numbers)
+    hit_rate = (
+        round(hit_count / len(predicted_numbers) * 100, 2)
+        if predicted_numbers
+        else None
+    )
+    return {
+        "run_uuid": run.run_uuid,
+        "prediction_mode": str(run.config_json.get("simple_mode", "single")),
+        "prediction_source": prediction_source,
+        "predicted_numbers": predicted_numbers,
+        "actual_numbers": actual_main,
+        "actual_special_numbers": actual_special,
+        "comparison_hit_numbers": hit_numbers,
+        "comparison_hit_positions": hit_positions,
+        "comparison_hit_count": hit_count,
+        "comparison_number_count": len(predicted_numbers),
+        "comparison_hit_rate": hit_rate,
+    }
+
+
 def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
     evaluations = list(
         db.scalars(
@@ -418,6 +497,12 @@ def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
                 "draw_no": actual_draw.draw_no,
                 "draw_date": actual_draw.draw_date.isoformat(),
                 "stats": _empty_performance_bucket(),
+                "comparison": _comparison_payload(
+                    run,
+                    actual_draw,
+                    ruleset,
+                    game,
+                ),
             },
         )
         _add_performance_results(period["stats"], results, pick_count)
@@ -444,6 +529,7 @@ def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
             {
                 "draw_no": period["draw_no"],
                 "draw_date": period["draw_date"],
+                **period["comparison"],
                 **_performance_rates(stats),
             }
         )

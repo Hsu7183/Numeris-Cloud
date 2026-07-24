@@ -1147,54 +1147,114 @@ footer strong { color: var(--ink); white-space: nowrap; }
     grid-column: 2;
     grid-row: 2;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
   }
   .period-grid {
-    height: auto;
+    min-height: 0;
+    flex: 1;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    grid-auto-rows: 92px;
-    align-content: start;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(5, minmax(0, 1fr));
+    gap: 6px;
   }
   .period-card {
     min-width: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto auto;
-    gap: 4px 8px;
-    align-content: center;
-    padding: 10px 12px;
+    grid-template-columns: 90px minmax(0, 1fr) minmax(0, 1.25fr) 78px;
+    gap: 8px 12px;
+    align-items: center;
+    padding: 7px 11px;
     border: 1px solid var(--line);
     border-radius: 13px;
     background: #fff;
   }
-  .period-card div span,
-  .period-card div strong { display: block; }
-  .period-card div span {
+  .period-id span,
+  .period-id strong { display: block; }
+  .period-id span {
     color: var(--muted);
-    font-size: 10px;
+    font-size: 9px;
   }
-  .period-card div strong {
+  .period-id strong {
     margin-top: 2px;
     overflow: hidden;
     font-size: 14px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .period-card > b {
-    align-self: center;
+  .compare-group {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 5px;
+    align-items: center;
+  }
+  .compare-group > span {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 750;
+  }
+  .compare-group > div {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .compare-group i {
+    color: #8b948b;
+    font-size: 10px;
+    font-style: normal;
+  }
+  .compare-ball {
+    flex: none;
+    width: 25px;
+    height: 25px;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid #dfe5dc;
+    border-radius: 50%;
+    background: #f6f8f4;
+    color: #34463a;
+    font-size: 10px;
+    font-weight: 850;
+  }
+  .compare-ball.hit {
+    border-color: #9cb92c;
+    background: var(--lime);
+    color: #253400;
+    box-shadow: 0 0 0 2px rgba(183, 206, 72, .16);
+  }
+  .compare-ball.special {
+    border-color: #f2b07f;
+    background: #fff0df;
+    color: #9a501d;
+  }
+  .period-rate { text-align: right; }
+  .period-rate strong,
+  .period-rate small { display: block; }
+  .period-rate strong {
     color: var(--green);
     font-size: 20px;
   }
-  .period-card small {
-    grid-column: 1 / -1;
-    overflow: hidden;
+  .period-rate small {
+    margin-top: 2px;
     color: var(--muted);
-    font-size: 10px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 9px;
   }
+  .period-pager {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 7px;
+  }
+  .period-pager .secondary-action { padding: 6px 10px; font-size: 11px; }
+  .period-pager strong { min-width: 70px; text-align: center; font-size: 11px; }
+  .period-pager button:disabled { opacity: .4; cursor: default; }
   .period-card-wrap .table-empty {
     height: 100%;
     display: grid;
@@ -1252,8 +1312,22 @@ footer strong { color: var(--ink); white-space: nowrap; }
   .performance-cards span { font-size: 12px; }
   .performance-cards strong { margin: 3px 0 1px; font-size: 24px; }
   .performance-cards small { font-size: 10px; }
-  .period-card { padding: 6px 9px; }
-  .period-grid { grid-auto-rows: 72px; }
-  .period-card > b { font-size: 17px; }
+  .period-grid { gap: 3px; }
+  .period-card {
+    grid-template-columns: 78px minmax(0, 1fr) minmax(0, 1.25fr) 65px;
+    gap: 5px 8px;
+    padding: 3px 7px;
+    border-radius: 10px;
+  }
+  .period-id span { display: none; }
+  .period-id strong { font-size: 12px; }
+  .compare-group { grid-template-columns: 28px minmax(0, 1fr); gap: 3px; }
+  .compare-group > span { font-size: 9px; }
+  .compare-ball { width: 20px; height: 20px; font-size: 8px; }
+  .period-rate strong { font-size: 16px; }
+  .period-rate small { font-size: 8px; }
+  .period-pager { margin-top: 4px; }
+  .period-pager .secondary-action { padding: 4px 8px; font-size: 9px; }
+  .period-pager strong { font-size: 9px; }
   .result-section { top: 76px; bottom: 10px; }
 }
