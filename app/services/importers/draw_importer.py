@@ -10,7 +10,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from sqlalchemy import select
+from sqlalchemy import insert, select, update
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import ValidationError
@@ -221,6 +221,289 @@ def import_rows(
     except Exception as exc:
         db.rollback()
         raise exc
+    return summary
+
+
+def bulk_import_rows(
+    db: Session,
+    rows: list[dict[str, Any]],
+    source_name: str,
+    source_locator: str,
+    local_path: str,
+    raw_sha256: str | None = None,
+    official: bool = False,
+    source_artifact: SourceArtifact | None = None,
+    batch_size: int = 500,
+) -> ImportSummary:
+    """大量官方資料匯入。
+
+    與 ``import_rows`` 使用相同驗證與衝突規則，但以批次查詢及批次寫入處理
+    BINGO年度檔，避免每一期都個別查詢與 flush。
+    """
+    summary = ImportSummary()
+    raw_sha256 = (
+        raw_sha256
+        or hashlib.sha256(
+            json.dumps(rows, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
+        ).hexdigest()
+    )
+    artifact = source_artifact
+    if artifact is None:
+        encoded = json.dumps(rows, ensure_ascii=False, default=str).encode("utf-8")
+        artifact = SourceArtifact(
+            market_code=str(rows[0]["market_code"]) if rows else "UNKNOWN",
+            source_name=source_name,
+            source_locator=source_locator,
+            local_path=local_path,
+            http_status=None,
+            content_type="application/json",
+            file_size=len(encoded),
+            sha256=raw_sha256,
+            parser_version="1.2.0",
+            parse_status="running",
+            validation_status="pending",
+        )
+        db.add(artifact)
+        db.flush()
+    else:
+        artifact.parse_status = "running"
+        artifact.validation_status = "pending"
+
+    game_codes = sorted({str(row["game_code"]) for row in rows})
+    games = {
+        game.game_code: game
+        for game in db.scalars(select(Game).where(Game.game_code.in_(game_codes)))
+    }
+    missing_games = sorted(set(game_codes) - set(games))
+    if missing_games:
+        raise ValidationError("IMPORT_GAME", "找不到遊戲代碼", {"game_codes": missing_games})
+    rulesets: dict[int, Ruleset] = {}
+    for game in games.values():
+        ruleset = db.scalar(
+            select(Ruleset)
+            .where(Ruleset.game_id == game.id, Ruleset.status == "active")
+            .order_by(Ruleset.id.desc())
+        )
+        if ruleset is None:
+            raise ValidationError(
+                "IMPORT_RULESET",
+                "找不到有效遊戲規則",
+                {"game_code": game.game_code},
+            )
+        rulesets[game.id] = ruleset
+
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        grouped.setdefault(str(row["game_code"]), []).append(row)
+
+    try:
+        for game_code, game_rows in grouped.items():
+            game = games[game_code]
+            ruleset = rulesets[game.id]
+            for offset in range(0, len(game_rows), batch_size):
+                batch = game_rows[offset : offset + batch_size]
+                draw_nos = [str(row["draw_no"]).strip() for row in batch]
+                existing_rows = db.execute(
+                    select(
+                        Draw.id,
+                        Draw.draw_no,
+                        DrawNumber.pool_code,
+                        DrawNumber.number_value,
+                        DrawNumber.is_special,
+                        DrawNumber.id,
+                    )
+                    .outerjoin(DrawNumber, DrawNumber.draw_id == Draw.id)
+                    .where(Draw.game_id == game.id, Draw.draw_no.in_(draw_nos))
+                    .order_by(Draw.id, DrawNumber.id)
+                ).all()
+                existing: dict[str, dict[str, Any]] = {}
+                for (
+                    draw_id,
+                    draw_no,
+                    pool_code,
+                    number_value,
+                    is_special,
+                    _number_id,
+                ) in existing_rows:
+                    item = existing.setdefault(
+                        str(draw_no),
+                        {"id": int(draw_id), "numbers": []},
+                    )
+                    if number_value is not None:
+                        item["numbers"].append(
+                            (str(pool_code), int(number_value), bool(is_special))
+                        )
+
+                pending: list[dict[str, Any]] = []
+                for row in batch:
+                    summary.processed += 1
+                    pool_code = str(row.get("pool_code", "main"))
+                    numbers = [int(value) for value in row["numbers"]]
+                    special = row.get("special_number")
+                    special_number = (
+                        int(special) if special not in (None, "", "nan") else None
+                    )
+                    pool = _validate_numbers(
+                        ruleset.config_json,
+                        pool_code,
+                        numbers,
+                        special_number,
+                    )
+                    second_numbers = [
+                        int(value) for value in row.get("second_pool_numbers", [])
+                    ]
+                    second_pool: dict[str, Any] | None = None
+                    if second_numbers:
+                        second_pool = _validate_numbers(
+                            ruleset.config_json,
+                            str(ruleset.config_json["pools"][1]["code"]),
+                            second_numbers,
+                            None,
+                        )
+                    draw_no = str(row["draw_no"]).strip()
+                    found = existing.get(draw_no)
+                    if found is not None:
+                        current = [
+                            value
+                            for code, value, is_special in found["numbers"]
+                            if code == pool_code and not is_special
+                        ]
+                        current_special = next(
+                            (
+                                value
+                                for _code, value, is_special in found["numbers"]
+                                if is_special
+                            ),
+                            None,
+                        )
+                        if current == numbers and current_special == special_number:
+                            summary.skipped += 1
+                        else:
+                            db.execute(
+                                update(Draw)
+                                .where(Draw.id == int(found["id"]))
+                                .values(verification_status="conflict")
+                            )
+                            summary.conflicts += 1
+                        continue
+                    pending.append(
+                        {
+                            "row": row,
+                            "draw_no": draw_no,
+                            "draw_date": _normalize_date(row["draw_date"]),
+                            "pool": pool,
+                            "pool_code": pool_code,
+                            "numbers": numbers,
+                            "special_number": special_number,
+                            "second_numbers": second_numbers,
+                            "second_pool": second_pool,
+                        }
+                    )
+
+                if not pending:
+                    db.flush()
+                    continue
+                draw_values = [
+                    {
+                        "game_id": game.id,
+                        "ruleset_id": ruleset.id,
+                        "draw_no": item["draw_no"],
+                        "draw_date": item["draw_date"],
+                        "local_timezone": "Asia/Taipei",
+                        "source_artifact_id": artifact.id,
+                        "source_status": "official" if official else "fixture",
+                        "verification_status": (
+                            "verified" if official else "fixture_verified"
+                        ),
+                    }
+                    for item in pending
+                ]
+                db.execute(insert(Draw), draw_values)
+                inserted_draws = dict(
+                    db.execute(
+                        select(Draw.draw_no, Draw.id).where(
+                            Draw.game_id == game.id,
+                            Draw.draw_no.in_([item["draw_no"] for item in pending]),
+                        )
+                    ).all()
+                )
+                number_values: list[dict[str, Any]] = []
+                for item in pending:
+                    draw_id = int(inserted_draws[item["draw_no"]])
+                    numbers = item["numbers"]
+                    pool = item["pool"]
+                    ordered = bool(pool["ordered"])
+                    draw_order_known = bool(
+                        item["row"].get("draw_order_known", ordered)
+                    )
+                    sorted_positions = (
+                        {
+                            value: index + 1
+                            for index, value in enumerate(sorted(numbers))
+                        }
+                        if bool(pool["unique"])
+                        else {}
+                    )
+                    for index, number in enumerate(numbers, 1):
+                        number_values.append(
+                            {
+                                "draw_id": draw_id,
+                                "pool_code": item["pool_code"],
+                                "draw_order": index if draw_order_known else None,
+                                "sorted_order": (
+                                    index if ordered else sorted_positions[number]
+                                ),
+                                "number_value": number,
+                                "is_special": False,
+                            }
+                        )
+                    if item["second_numbers"]:
+                        second_pool = item["second_pool"]
+                        for index, number in enumerate(item["second_numbers"], 1):
+                            number_values.append(
+                                {
+                                    "draw_id": draw_id,
+                                    "pool_code": str(second_pool["code"]),
+                                    "draw_order": (
+                                        index
+                                        if bool(
+                                            item["row"].get(
+                                                "second_pool_draw_order_known",
+                                                False,
+                                            )
+                                        )
+                                        else None
+                                    ),
+                                    "sorted_order": index,
+                                    "number_value": number,
+                                    "is_special": False,
+                                }
+                            )
+                    if item["special_number"] is not None:
+                        number_values.append(
+                            {
+                                "draw_id": draw_id,
+                                "pool_code": "special",
+                                "draw_order": None,
+                                "sorted_order": None,
+                                "number_value": item["special_number"],
+                                "is_special": True,
+                            }
+                        )
+                if number_values:
+                    db.execute(insert(DrawNumber), number_values)
+                summary.inserted += len(pending)
+                db.flush()
+
+        artifact.parser_version = "1.2.0"
+        artifact.parse_status = "completed"
+        artifact.validation_status = (
+            "conflict" if summary.conflicts else "verified" if official else "fixture_verified"
+        )
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     return summary
 
 

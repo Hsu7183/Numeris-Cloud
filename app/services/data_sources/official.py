@@ -3,13 +3,15 @@ from __future__ import annotations
 import csv
 import hashlib
 import io
+import itertools
 import json
 import logging
 import ssl
 import time
 import uuid
 import zipfile
-from datetime import UTC, datetime
+from calendar import monthrange
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlencode, urlparse
@@ -24,7 +26,10 @@ from app.core.database import SessionLocal
 from app.core.paths import CONFIG_DIR, RAW_DIR
 from app.models.database_models import Job, SourceArtifact
 from app.services.bootstrap import load_json_yaml
-from app.services.importers.draw_importer import import_rows, summary_dict
+from app.services.importers.draw_importer import (
+    bulk_import_rows,
+    summary_dict,
+)
 
 LOGGER = logging.getLogger("data_update")
 USER_AGENT = "Numeris/1.0 (+local historical lottery data manager)"
@@ -45,6 +50,30 @@ def _get(url: str) -> httpx.Response:
         verify=ssl_context,
     ) as client:
         response = client.get(url)
+        response.raise_for_status()
+        return response
+
+
+@retry(
+    retry=retry_if_exception_type((httpx.TimeoutException, httpx.TransportError)),
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=1, max=8),
+    reraise=True,
+)
+def _post_json(url: str, payload: dict[str, Any]) -> httpx.Response:
+    ssl_context = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    with httpx.Client(
+        timeout=30,
+        follow_redirects=True,
+        headers={
+            "User-Agent": USER_AGENT,
+            "Accept-Language": "zh-TW,zh;q=0.9",
+            "Origin": "https://bet.hkjc.com",
+            "Referer": "https://bet.hkjc.com/",
+        },
+        verify=ssl_context,
+    ) as client:
+        response = client.post(url, json=payload)
         response.raise_for_status()
         return response
 
@@ -94,16 +123,21 @@ def _parse_taiwan_annual_zip(content: bytes) -> tuple[list[dict[str, Any]], list
     with zipfile.ZipFile(io.BytesIO(content)) as archive:
         for member in archive.infolist():
             filename = Path(member.filename).name
-            game_name = filename.rsplit("_", 1)[0]
-            schema = TAIWAN_CSV_SCHEMAS.get(game_name)
-            if schema is None:
-                skipped_files.append(filename)
-                continue
             if member.file_size > 100_000_000:
                 raise ValueError(f"官方CSV超過安全大小限制：{filename}")
             with archive.open(member) as binary:
                 text = io.TextIOWrapper(binary, encoding="utf-8-sig", newline="")
                 reader = csv.DictReader(text)
+                first_record = next(reader, None)
+                game_name = (
+                    str(first_record.get("遊戲名稱", "")).strip()
+                    if first_record is not None
+                    else ""
+                )
+                schema = TAIWAN_CSV_SCHEMAS.get(game_name)
+                if schema is None:
+                    skipped_files.append(filename)
+                    continue
                 required = {
                     "遊戲名稱",
                     "期別",
@@ -113,7 +147,7 @@ def _parse_taiwan_annual_zip(content: bytes) -> tuple[list[dict[str, Any]], list
                 if reader.fieldnames is None or not required.issubset(reader.fieldnames):
                     missing = sorted(required - set(reader.fieldnames or []))
                     raise ValueError(f"官方CSV欄位不符：{filename}，缺少 {missing}")
-                for record in reader:
+                for record in itertools.chain([first_record], reader):
                     numbers = [
                         int(record[f"獎號{index}"])
                         for index in range(1, int(schema["number_count"]) + 1)
@@ -238,7 +272,7 @@ def _save_artifact(
         sha256=sha256,
         etag=response.headers.get("etag"),
         last_modified=response.headers.get("last-modified"),
-        parser_version="1.0.0",
+        parser_version="1.2.0",
         parse_status=parse_status,
         validation_status="pending",
         error_message=None,
@@ -268,9 +302,29 @@ def _update_taiwan(db: Session) -> dict[str, object]:
     parsed_draws = 0
     skipped_files: list[str] = []
     start_year = datetime.now().year
-    years = range(start_year, start_year - int(sources.get("annual_years_back", 0)) - 1, -1)
+    first_year = int(sources.get("annual_first_year", start_year))
+    years = range(start_year, first_year - 1, -1)
     for year in years:
         query_url = f"{api_url}?{urlencode({'year': year})}"
+        known = db.scalar(
+            select(SourceArtifact).where(
+                SourceArtifact.source_locator
+                == f"https://cdn.taiwanlottery.com.tw/app/FilesForDownload/Download/LottoResult/{year}.zip",
+                SourceArtifact.validation_status == "verified",
+            )
+        )
+        if known is not None and year < start_year:
+            downloaded.append(
+                {
+                    "year": year,
+                    "url": known.source_locator,
+                    "path": known.local_path,
+                    "sha256": known.sha256,
+                    "import": {"processed": 0, "inserted": 0, "skipped": 0},
+                    "cached": True,
+                }
+            )
+            continue
         time.sleep(float(sources.get("request_interval_seconds", 1.5)))
         api_response = _get(query_url)
         _save_artifact(
@@ -307,7 +361,7 @@ def _update_taiwan(db: Session) -> dict[str, object]:
         )
         db.commit()
         annual_rows, annual_skipped = _parse_taiwan_annual_zip(file_response.content)
-        summary = import_rows(
+        summary = bulk_import_rows(
             db,
             annual_rows,
             source_name="台灣彩券官方年度檔",
@@ -328,12 +382,15 @@ def _update_taiwan(db: Session) -> dict[str, object]:
                 "import": summary_dict(summary),
             }
         )
+    current = _update_taiwan_current(db, sources, stamp)
+    parsed_draws += int(current["parsed_draws"])
     return {
         "discovery_page": str(response.url),
         "download_api": api_url,
         "download_links_found": len(downloaded),
         "downloaded": downloaded,
         "parsed_draws": parsed_draws,
+        "current_month": current,
         "skipped_files": skipped_files,
         "notice": (
             "已透過官方API發現年度檔並完成欄位驗證；"
@@ -358,15 +415,408 @@ def _update_hong_kong(db: Session) -> dict[str, object]:
         "endpoint_research_required",
     )
     db.commit()
+    endpoint = str(sources["graphql_endpoint"])
+    first_year = int(sources.get("history_first_year", 1993))
+    today = date.today()
+    ranges = list(_quarter_ranges(date(first_year, 1, 1), today))
+    downloaded: list[dict[str, object]] = []
+    parsed_draws = 0
+    for start, end in ranges:
+        logical_locator = (
+            f"{endpoint}?startDate={start:%Y%m%d}&endDate={end:%Y%m%d}&drawType=All"
+        )
+        known = db.scalar(
+            select(SourceArtifact).where(
+                SourceArtifact.source_locator == logical_locator,
+                SourceArtifact.validation_status == "verified",
+            )
+        )
+        if known is not None and end < date(today.year, 1, 1):
+            downloaded.append(
+                {
+                    "start": start.isoformat(),
+                    "end": end.isoformat(),
+                    "path": known.local_path,
+                    "sha256": known.sha256,
+                    "cached": True,
+                }
+            )
+            continue
+        time.sleep(float(sources.get("request_interval_seconds", 2.0)))
+        api_response = _post_json(
+            endpoint,
+            {
+                "query": HK_MARKSIX_QUERY,
+                "variables": {
+                    "startDate": start.strftime("%Y%m%d"),
+                    "endDate": end.strftime("%Y%m%d"),
+                    "drawType": "All",
+                },
+            },
+        )
+        api_payload = api_response.json()
+        if api_payload.get("errors"):
+            raise ValueError(
+                f"香港賽馬會官方結果端點錯誤：{api_payload['errors']}"
+            )
+        api_destination = (
+            RAW_DIR
+            / "hong_kong"
+            / stamp
+            / f"marksix_{start:%Y%m%d}_{end:%Y%m%d}.json"
+        )
+        artifact = _save_artifact(
+            db,
+            "HK",
+            "香港賽馬會六合彩官方GraphQL",
+            logical_locator,
+            api_response,
+            api_destination,
+            "downloaded",
+        )
+        db.commit()
+        rows = _parse_hkjc_draws(api_payload)
+        summary = bulk_import_rows(
+            db,
+            rows,
+            source_name="香港賽馬會六合彩官方GraphQL",
+            source_locator=logical_locator,
+            local_path=str(api_destination),
+            raw_sha256=artifact.sha256,
+            official=True,
+            source_artifact=artifact,
+        )
+        parsed_draws += summary.inserted
+        downloaded.append(
+            {
+                "start": start.isoformat(),
+                "end": end.isoformat(),
+                "path": str(api_destination),
+                "sha256": artifact.sha256,
+                "draws": len(rows),
+                "import": summary_dict(summary),
+            }
+        )
     return {
         "page": str(response.url),
         "raw_path": str(destination),
-        "parsed_draws": 0,
-        "notice": (
-            "已保存官方結果頁原始內容；尚未確認穩定官方JSON端點，"
-            "因此未把HTML畫面文字當成正式開獎資料。"
-        ),
+        "graphql_endpoint": endpoint,
+        "history_first_year": first_year,
+        "ranges": len(ranges),
+        "downloaded": downloaded,
+        "parsed_draws": parsed_draws,
+        "notice": "已依官方結果頁實際使用的GraphQL端點下載並驗證六合彩歷史獎號。",
     }
+
+
+TAIWAN_CURRENT_SCHEMAS: tuple[dict[str, Any], ...] = (
+    {
+        "endpoint": "SuperLotto638Result",
+        "result_key": "superLotto638Res",
+        "game_code": "TW_SUPER_LOTTO638",
+        "pool_code": "first",
+        "number_count": 6,
+        "second_pool": True,
+    },
+    {
+        "endpoint": "Lotto649Result",
+        "result_key": "lotto649Res",
+        "game_code": "TW_LOTTO649",
+        "pool_code": "main",
+        "number_count": 6,
+        "special": True,
+    },
+    {
+        "endpoint": "Daily539Result",
+        "result_key": "daily539Res",
+        "game_code": "TW_DAILY539",
+        "pool_code": "main",
+        "number_count": 5,
+    },
+    {
+        "endpoint": "3DResult",
+        "result_key": "lotto3DRes",
+        "game_code": "TW_PICK3",
+        "pool_code": "digits",
+        "number_count": 3,
+        "ordered": True,
+    },
+    {
+        "endpoint": "4DResult",
+        "result_key": "lotto4DRes",
+        "game_code": "TW_PICK4",
+        "pool_code": "digits",
+        "number_count": 4,
+        "ordered": True,
+    },
+)
+
+
+def _update_taiwan_current(
+    db: Session,
+    sources: dict[str, Any],
+    stamp: str,
+) -> dict[str, object]:
+    base_url = str(sources["current_results_api"]).rstrip("/")
+    current_month = date.today().strftime("%Y-%m")
+    results: list[dict[str, object]] = []
+    parsed_draws = 0
+    for schema in TAIWAN_CURRENT_SCHEMAS:
+        query_url = (
+            f"{base_url}/{schema['endpoint']}?"
+            + urlencode(
+                {
+                    "month": current_month,
+                    "endMonth": current_month,
+                    "pageNum": 1,
+                    "pageSize": 500,
+                }
+            )
+        )
+        time.sleep(float(sources.get("request_interval_seconds", 1.5)))
+        response = _get(query_url)
+        destination = (
+            RAW_DIR
+            / "taiwan"
+            / stamp
+            / f"current_{schema['endpoint']}_{current_month}.json"
+        )
+        artifact = _save_artifact(
+            db,
+            "TW",
+            "台灣彩券當月官方查詢API",
+            query_url,
+            response,
+            destination,
+            "downloaded",
+        )
+        db.commit()
+        content = response.json().get("content") or {}
+        records = content.get(schema["result_key"]) or []
+        rows: list[dict[str, Any]] = []
+        for record in records:
+            shown = [int(value) for value in record["drawNumberAppear"]]
+            number_count = int(schema["number_count"])
+            row: dict[str, Any] = {
+                "market_code": "TW",
+                "game_code": schema["game_code"],
+                "draw_no": str(record["period"]),
+                "draw_date": str(record["lotteryDate"]).split("T", 1)[0],
+                "pool_code": schema["pool_code"],
+                "numbers": shown[:number_count],
+                "draw_order_known": bool(schema.get("ordered", False)),
+                "source_reference": "台灣彩券當月官方查詢API",
+            }
+            if schema.get("special"):
+                row["special_number"] = shown[number_count]
+            if schema.get("second_pool"):
+                row["second_pool_numbers"] = [shown[number_count]]
+            rows.append(row)
+        summary = bulk_import_rows(
+            db,
+            rows,
+            source_name="台灣彩券當月官方查詢API",
+            source_locator=query_url,
+            local_path=str(destination),
+            raw_sha256=artifact.sha256,
+            official=True,
+            source_artifact=artifact,
+        )
+        parsed_draws += summary.inserted
+        results.append(
+            {
+                "game_code": schema["game_code"],
+                "url": query_url,
+                "path": str(destination),
+                "sha256": artifact.sha256,
+                "draws": len(rows),
+                "import": summary_dict(summary),
+            }
+        )
+
+    bingo_results = _update_taiwan_current_bingo(db, sources, stamp, base_url)
+    parsed_draws += int(bingo_results["parsed_draws"])
+    return {
+        "month": current_month,
+        "traditional": results,
+        "bingo": bingo_results,
+        "parsed_draws": parsed_draws,
+    }
+
+
+def _update_taiwan_current_bingo(
+    db: Session,
+    sources: dict[str, Any],
+    stamp: str,
+    base_url: str,
+) -> dict[str, object]:
+    today = date.today()
+    current = today.replace(day=1)
+    downloaded: list[dict[str, object]] = []
+    parsed_draws = 0
+    while current <= today:
+        page = 1
+        total = 1
+        imported_for_day = 0
+        while (page - 1) * 200 < total:
+            query_url = (
+                f"{base_url}/BingoResult?"
+                + urlencode(
+                    {
+                        "openDate": current.isoformat(),
+                        "pageNum": page,
+                        "pageSize": 200,
+                    }
+                )
+            )
+            time.sleep(float(sources.get("request_interval_seconds", 1.5)))
+            response = _get(query_url)
+            payload = response.json().get("content") or {}
+            total = int(payload.get("totalSize") or 0)
+            records = payload.get("bingoQueryResult") or []
+            destination = (
+                RAW_DIR
+                / "taiwan"
+                / stamp
+                / f"current_BingoResult_{current:%Y%m%d}_p{page}.json"
+            )
+            artifact = _save_artifact(
+                db,
+                "TW",
+                "台灣彩券BINGO當日官方查詢API",
+                query_url,
+                response,
+                destination,
+                "downloaded",
+            )
+            db.commit()
+            rows = [
+                {
+                    "market_code": "TW",
+                    "game_code": "TW_BINGO",
+                    "draw_no": str(record["drawTerm"]),
+                    "draw_date": current.isoformat(),
+                    "pool_code": "main",
+                    "numbers": [int(value) for value in record["openShowOrder"]],
+                    "draw_order_known": True,
+                    "source_reference": "台灣彩券BINGO當日官方查詢API",
+                }
+                for record in records
+            ]
+            summary = bulk_import_rows(
+                db,
+                rows,
+                source_name="台灣彩券BINGO當日官方查詢API",
+                source_locator=query_url,
+                local_path=str(destination),
+                raw_sha256=artifact.sha256,
+                official=True,
+                source_artifact=artifact,
+            )
+            parsed_draws += summary.inserted
+            imported_for_day += summary.inserted
+            page += 1
+            if not records:
+                break
+        downloaded.append(
+            {
+                "date": current.isoformat(),
+                "official_total": total,
+                "inserted": imported_for_day,
+            }
+        )
+        current += timedelta(days=1)
+    return {
+        "days": len(downloaded),
+        "downloaded": downloaded,
+        "parsed_draws": parsed_draws,
+    }
+
+
+HK_MARKSIX_QUERY = """fragment lotteryDrawsFragment on LotteryDraw {
+    id
+    year
+    no
+    openDate
+    closeDate
+    drawDate
+    status
+    snowballCode
+    snowballName_en
+    snowballName_ch
+    lotteryPool {
+      sell
+      status
+      totalInvestment
+      jackpot
+      unitBet
+      estimatedPrize
+      derivedFirstPrizeDiv
+      lotteryPrizes {
+        type
+        winningUnit
+        dividend
+      }
+    }
+    drawResult {
+      drawnNo
+      xDrawnNo
+    }
+  }
+query marksixResult(
+  $lastNDraw: Int,
+  $startDate: String,
+  $endDate: String,
+  $drawType: LotteryDrawType
+) {
+            lotteryDraws(
+              lastNDraw: $lastNDraw,
+              startDate: $startDate,
+              endDate: $endDate,
+              drawType: $drawType
+            ) {
+              ...lotteryDrawsFragment
+            }
+        }"""
+
+
+def _quarter_ranges(start: date, end: date) -> list[tuple[date, date]]:
+    ranges: list[tuple[date, date]] = []
+    current = start
+    while current <= end:
+        quarter_end_month = ((current.month - 1) // 3 + 1) * 3
+        quarter_end = date(
+            current.year,
+            quarter_end_month,
+            monthrange(current.year, quarter_end_month)[1],
+        )
+        ranges.append((current, min(quarter_end, end)))
+        current = quarter_end + timedelta(days=1)
+    return ranges
+
+
+def _parse_hkjc_draws(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    draws = (payload.get("data") or {}).get("lotteryDraws") or []
+    rows: list[dict[str, Any]] = []
+    for draw in draws:
+        result = draw.get("drawResult") or {}
+        numbers = [int(value) for value in result.get("drawnNo") or []]
+        special = result.get("xDrawnNo")
+        if draw.get("status") != "Result" or len(numbers) != 6 or special is None:
+            continue
+        rows.append(
+            {
+                "market_code": "HK",
+                "game_code": "HK_MARKSIX",
+                "draw_no": f"{str(draw['year'])[-2:]}/{int(draw['no']):03d}",
+                "draw_date": str(draw["drawDate"]).split("+", 1)[0],
+                "pool_code": "main",
+                "numbers": numbers,
+                "special_number": int(special),
+                "source_reference": "香港賽馬會六合彩官方GraphQL",
+            }
+        )
+    return rows
 
 
 def job_to_dict(job: Job) -> dict[str, object]:

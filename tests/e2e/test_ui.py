@@ -18,9 +18,22 @@ def _free_port() -> int:
         return int(sock.getsockname()[1])
 
 
+def _stop_process_tree(process: subprocess.Popen[bytes]) -> None:
+    if os.name == "nt":
+        subprocess.run(
+            ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+            check=False,
+            capture_output=True,
+        )
+    elif process.poll() is None:
+        process.terminate()
+        process.wait(timeout=15)
+
+
 def test_simple_recommendation_ui_flow() -> None:
     port = _free_port()
-    source_db = Path("data/database/numeris.sqlite3").resolve()
+    database_url = os.environ["NUMERIS_DATABASE_URL"]
+    source_db = Path(database_url.removeprefix("sqlite:///")).resolve()
     e2e_db = Path(f"data/cache/numeris_e2e_{port}.sqlite3").resolve()
     e2e_db.parent.mkdir(parents=True, exist_ok=True)
     source_connection = sqlite3.connect(source_db)
@@ -67,6 +80,9 @@ def test_simple_recommendation_ui_flow() -> None:
             page.get_by_text("近10期命中率", exact=True).wait_for()
             page.get_by_text("累計總命中率", exact=True).wait_for()
             page.locator("#game-select").select_option("TW_LOTTO649")
+            page.locator("#choice-title").filter(has_text="大樂透").wait_for(
+                timeout=30000
+            )
             page.locator("#open-combinations").wait_for(timeout=30000)
             page.locator("#open-combinations").click()
             page.locator("#result-title").filter(has_text="大樂透").wait_for()
@@ -122,5 +138,6 @@ def test_simple_recommendation_ui_flow() -> None:
             assert not page_errors
             browser.close()
     finally:
-        process.terminate()
-        process.wait(timeout=15)
+        _stop_process_tree(process)
+        for suffix in ("", "-wal", "-shm"):
+            e2e_db.with_name(e2e_db.name + suffix).unlink(missing_ok=True)

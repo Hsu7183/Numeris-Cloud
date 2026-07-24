@@ -117,7 +117,7 @@
         <div>
           <p class="kicker">步驟 3 · 開獎後自動核對</p>
           <h2>近10期、每週與累計命中率</h2>
-          <p>只統計目標期別和實際開獎期別一致的推薦。</p>
+          <p>影片五步法逐期回放；每一期只使用當期以前的歷史資料。</p>
         </div>
         <button id="reload-dashboard" class="secondary-action">重新整理</button>
       </div>
@@ -142,7 +142,7 @@
 
       <div class="period-card-wrap">
         <div id="weekly-table" class="period-grid"></div>
-        <div id="weekly-empty" class="table-empty hidden">目前還沒有已開獎的推薦。資料更新並對到目標期後，這裡會自動累積週報。</div>
+        <div id="weekly-empty" class="table-empty hidden">目前尚無足夠歷史資料可進行逐期回放。</div>
         <div id="period-pager" class="period-pager hidden" aria-label="最近10期分頁">
           <button id="period-prev" class="secondary-action">← 前5期</button>
           <strong id="period-page">第 1／2 頁</strong>
@@ -181,6 +181,6 @@
     <span>歷史開獎結果不代表未來結果，產生的號碼不構成中獎保證。未滿18歲不得購買或兌領彩券，請量力而為。</span>
   </footer>
 
-  <script src="/static/js/app.js?v={{ app_version }}-comparison-view-2"></script>
+  <script src="/static/js/app.js?v={{ app_version }}-official-history-replay"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 {
   "app_name": "Numeris 彩球分析與選號系統",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "timezone": "Asia/Taipei",
   "language": "zh-TW",
   "host": "127.0.0.1",

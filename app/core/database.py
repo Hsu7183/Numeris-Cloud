@@ -48,5 +48,5 @@ def get_db() -> Generator[Session, None, None]:
 def database_status() -> dict[str, object]:
     with engine.connect() as connection:
         version = connection.execute(text("select sqlite_version()")).scalar_one()
-        integrity = connection.execute(text("pragma quick_check")).scalar_one()
-    return {"sqlite_version": version, "integrity": integrity}
+        reachable = connection.execute(text("select 1")).scalar_one() == 1
+    return {"sqlite_version": version, "reachable": reachable}

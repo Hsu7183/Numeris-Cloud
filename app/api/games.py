@@ -11,16 +11,29 @@ from app.models.database_models import Draw, Game, Ruleset
 router = APIRouter(tags=["彩種與規則"])
 
 
-def _game_payload(db: Session, game: Game) -> dict[str, object]:
+def _game_payload(
+    db: Session,
+    game: Game,
+    *,
+    known_draw_count: int | None = None,
+    known_latest: Draw | None = None,
+    load_stats: bool = True,
+) -> dict[str, object]:
     ruleset = db.scalar(
         select(Ruleset).where(Ruleset.game_id == game.id).order_by(Ruleset.id.desc())
     )
-    draw_count = db.scalar(select(func.count()).select_from(Draw).where(Draw.game_id == game.id))
-    latest = db.scalar(
-        select(Draw)
-        .where(Draw.game_id == game.id)
-        .order_by(Draw.draw_date.desc(), Draw.draw_no.desc())
-    )
+    draw_count = known_draw_count
+    if load_stats and draw_count is None:
+        draw_count = db.scalar(
+            select(func.count()).select_from(Draw).where(Draw.game_id == game.id)
+        )
+    latest = known_latest
+    if load_stats and latest is None:
+        latest = db.scalar(
+            select(Draw)
+            .where(Draw.game_id == game.id)
+            .order_by(Draw.draw_date.desc(), Draw.draw_no.desc())
+        )
     return {
         "game_code": game.game_code,
         "market_code": game.market_code,
@@ -48,9 +61,36 @@ def _game_payload(db: Session, game: Game) -> dict[str, object]:
 
 
 @router.get("/api/games")
-def list_games(db: Session = Depends(get_db)) -> list[dict[str, object]]:
+def list_games(
+    include_stats: bool = True,
+    db: Session = Depends(get_db),
+) -> list[dict[str, object]]:
     games = list(db.scalars(select(Game).order_by(Game.market_code, Game.id)))
-    return [_game_payload(db, game) for game in games]
+    if not include_stats:
+        return [_game_payload(db, game, load_stats=False) for game in games]
+    draw_counts = {
+        int(game_id): int(count)
+        for game_id, count in db.execute(
+            select(Draw.game_id, func.count()).group_by(Draw.game_id)
+        )
+    }
+    latest_by_game = {
+        game.id: db.scalar(
+            select(Draw)
+            .where(Draw.game_id == game.id)
+            .order_by(Draw.draw_date.desc(), Draw.draw_no.desc())
+        )
+        for game in games
+    }
+    return [
+        _game_payload(
+            db,
+            game,
+            known_draw_count=draw_counts.get(game.id, 0),
+            known_latest=latest_by_game[game.id],
+        )
+        for game in games
+    ]
 
 
 @router.get("/api/games/{game_code}")

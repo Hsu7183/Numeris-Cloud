@@ -350,7 +350,11 @@
   }
 
   async function changeGame(gameCode) {
-    if (!gameCode || state.busy) return;
+    if (!gameCode) return;
+    while (state.busy) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      if ($("#game-select").value !== gameCode) return;
+    }
     state.gameCode = gameCode;
     state.mode = "single";
     state.run = null;
@@ -402,7 +406,10 @@
 
   async function init() {
     try {
-      const [health, games] = await Promise.all([api("/api/health"), api("/api/games")]);
+      const [health, games] = await Promise.all([
+        api("/api/health"),
+        api("/api/games?include_stats=false"),
+      ]);
       $("#health").innerHTML = `<i></i>${esc(health.status === "ok" ? "系統正常" : "需要檢查")}`;
       state.games = games.filter((game) => game.active);
       const preferred = state.games.find((game) => game.game_code === "HK_MARKSIX");

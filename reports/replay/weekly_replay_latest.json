@@ -1,0 +1,349 @@
+{
+  "generated_at": "2026-07-24T02:02:30.817165+00:00",
+  "method": "VIDEO_FIVE_STEP_V1",
+  "future_data_used": false,
+  "results": [
+    {
+      "game_code": "HK_MARKSIX",
+      "run_uuid": "5d1162ed-1ef0-443d-97ba-5e2da0a48c57",
+      "status": "completed",
+      "summary": {
+        "game_code": "HK_MARKSIX",
+        "simulated_draws": 104,
+        "tickets_per_draw": 10,
+        "total_tickets": 1040,
+        "hit_distribution": {
+          "0": 441,
+          "1": 437,
+          "2": 142,
+          "3": 18,
+          "4": 2
+        },
+        "uniform_baseline_distribution": {
+          "0": 434,
+          "1": 449,
+          "2": 143,
+          "3": 14
+        },
+        "structured_baseline_distribution": {
+          "0": 455,
+          "1": 416,
+          "2": 148,
+          "3": 21
+        },
+        "highest_single_ticket_hit": 4,
+        "average_hits": 0.752885,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    },
+    {
+      "game_code": "TW_39MATCH",
+      "run_uuid": "d41962c7-0cb5-497f-b6ac-f8758d4fd757",
+      "status": "completed",
+      "summary": {
+        "game_code": "TW_39MATCH",
+        "simulated_draws": 104,
+        "tickets_per_draw": 10,
+        "total_tickets": 1040,
+        "hit_distribution": {
+          "0": 495,
+          "1": 430,
+          "2": 105,
+          "3": 8,
+          "4": 2
+        },
+        "uniform_baseline_distribution": {
+          "0": 515,
+          "1": 406,
+          "2": 106,
+          "3": 12,
+          "4": 1
+        },
+        "structured_baseline_distribution": {
+          "0": 501,
+          "1": 432,
+          "2": 95,
+          "3": 12
+        },
+        "highest_single_ticket_hit": 4,
+        "average_hits": 0.646154,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    },
+    {
+      "game_code": "TW_49MATCH",
+      "run_uuid": "2f5a66f4-dcdb-4837-b56a-0152a02cdaec",
+      "status": "completed",
+      "summary": {
+        "game_code": "TW_49MATCH",
+        "simulated_draws": 104,
+        "tickets_per_draw": 10,
+        "total_tickets": 1040,
+        "hit_distribution": {
+          "0": 448,
+          "1": 445,
+          "2": 131,
+          "3": 15,
+          "4": 1
+        },
+        "uniform_baseline_distribution": {
+          "0": 443,
+          "1": 434,
+          "2": 140,
+          "3": 21,
+          "4": 2
+        },
+        "structured_baseline_distribution": {
+          "0": 455,
+          "1": 412,
+          "2": 149,
+          "3": 24
+        },
+        "highest_single_ticket_hit": 4,
+        "average_hits": 0.726923,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    },
+    {
+      "game_code": "TW_BINGO",
+      "run_uuid": "46893dc5-b079-4187-9ad0-a8a4d400bd29",
+      "status": "completed",
+      "summary": {
+        "game_code": "TW_BINGO",
+        "simulated_draws": 1000,
+        "tickets_per_draw": 10,
+        "total_tickets": 10000,
+        "hit_distribution": {
+          "0": 1625,
+          "1": 3561,
+          "2": 3177,
+          "3": 1329,
+          "4": 265,
+          "5": 43
+        },
+        "uniform_baseline_distribution": {
+          "0": 1684,
+          "1": 3651,
+          "2": 3088,
+          "3": 1262,
+          "4": 282,
+          "5": 33
+        },
+        "structured_baseline_distribution": {
+          "0": 1692,
+          "1": 3567,
+          "2": 3066,
+          "3": 1358,
+          "4": 277,
+          "5": 39,
+          "6": 1
+        },
+        "highest_single_ticket_hit": 5,
+        "average_hits": 1.5177,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    },
+    {
+      "game_code": "TW_DAILY539",
+      "run_uuid": "91d9fc07-3613-4744-8fab-0a5c028d2329",
+      "status": "completed",
+      "summary": {
+        "game_code": "TW_DAILY539",
+        "simulated_draws": 104,
+        "tickets_per_draw": 10,
+        "total_tickets": 1040,
+        "hit_distribution": {
+          "0": 514,
+          "1": 415,
+          "2": 100,
+          "3": 11
+        },
+        "uniform_baseline_distribution": {
+          "0": 484,
+          "1": 436,
+          "2": 107,
+          "3": 13
+        },
+        "structured_baseline_distribution": {
+          "0": 506,
+          "1": 412,
+          "2": 110,
+          "3": 12
+        },
+        "highest_single_ticket_hit": 3,
+        "average_hits": 0.623077,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    },
+    {
+      "game_code": "TW_LOTTO649",
+      "run_uuid": "e3ec008a-1b30-43dc-826b-583f94eb456c",
+      "status": "completed",
+      "summary": {
+        "game_code": "TW_LOTTO649",
+        "simulated_draws": 104,
+        "tickets_per_draw": 10,
+        "total_tickets": 1040,
+        "hit_distribution": {
+          "0": 454,
+          "1": 426,
+          "2": 136,
+          "3": 23,
+          "4": 1
+        },
+        "uniform_baseline_distribution": {
+          "0": 449,
+          "1": 430,
+          "2": 146,
+          "3": 13,
+          "4": 2
+        },
+        "structured_baseline_distribution": {
+          "0": 456,
+          "1": 427,
+          "2": 138,
+          "3": 19
+        },
+        "highest_single_ticket_hit": 4,
+        "average_hits": 0.741346,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    },
+    {
+      "game_code": "TW_PICK3",
+      "run_uuid": "4d95c2b8-79df-48ca-9b7d-12007992ecee",
+      "status": "completed",
+      "summary": {
+        "game_code": "TW_PICK3",
+        "simulated_draws": 104,
+        "tickets_per_draw": 10,
+        "total_tickets": 1040,
+        "hit_distribution": {
+          "0": 759,
+          "1": 250,
+          "2": 31
+        },
+        "uniform_baseline_distribution": {
+          "0": 759,
+          "1": 246,
+          "2": 33,
+          "3": 2
+        },
+        "structured_baseline_distribution": {
+          "0": 759,
+          "1": 246,
+          "2": 33,
+          "3": 2
+        },
+        "highest_single_ticket_hit": 2,
+        "average_hits": 0.3,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    },
+    {
+      "game_code": "TW_PICK4",
+      "run_uuid": "fa38e672-4b9f-4bce-9a35-c6333bb7987d",
+      "status": "completed",
+      "summary": {
+        "game_code": "TW_PICK4",
+        "simulated_draws": 104,
+        "tickets_per_draw": 10,
+        "total_tickets": 1040,
+        "hit_distribution": {
+          "0": 681,
+          "1": 307,
+          "2": 47,
+          "3": 5
+        },
+        "uniform_baseline_distribution": {
+          "0": 667,
+          "1": 314,
+          "2": 55,
+          "3": 3,
+          "4": 1
+        },
+        "structured_baseline_distribution": {
+          "0": 667,
+          "1": 314,
+          "2": 55,
+          "3": 3,
+          "4": 1
+        },
+        "highest_single_ticket_hit": 3,
+        "average_hits": 0.4,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    },
+    {
+      "game_code": "TW_SUPER_LOTTO638",
+      "run_uuid": "d8f85792-6041-4db1-8439-3b8e9d32df32",
+      "status": "completed",
+      "summary": {
+        "game_code": "TW_SUPER_LOTTO638",
+        "simulated_draws": 104,
+        "tickets_per_draw": 10,
+        "total_tickets": 1040,
+        "hit_distribution": {
+          "0": 341,
+          "1": 439,
+          "2": 216,
+          "3": 41,
+          "4": 3
+        },
+        "uniform_baseline_distribution": {
+          "0": 342,
+          "1": 480,
+          "2": 190,
+          "3": 26,
+          "4": 2
+        },
+        "structured_baseline_distribution": {
+          "0": 342,
+          "1": 480,
+          "2": 190,
+          "3": 26,
+          "4": 2
+        },
+        "highest_single_ticket_hit": 4,
+        "average_hits": 0.967308,
+        "calculation_method": "VIDEO_FIVE_STEP_V1",
+        "source_status": "official",
+        "future_data_used": false,
+        "roi_calculated": false,
+        "roi_note": "未載入完整且已驗證的逐期獎金資料，因此不計算成本、獎金或回收率。"
+      }
+    }
+  ]
+}

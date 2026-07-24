@@ -8,13 +8,21 @@
     ],
     "annual_download_page": "https://www.taiwanlottery.com/lotto/history/result_download/",
     "annual_download_api": "https://api.taiwanlottery.com/TLCAPIWeB/Lottery/ResultDownload",
-    "annual_years_back": 0,
+    "annual_first_year": 2007,
+    "current_results_api": "https://api.taiwanlottery.com/TLCAPIWeB/Lottery",
     "history_page": "https://www.taiwanlottery.com/lotto/history/history_result/",
     "request_interval_seconds": 1.5
   },
   "hong_kong": {
-    "official_domains": ["bet.hkjc.com", "special.hkjc.com", "hkjc.com"],
+    "official_domains": [
+      "bet.hkjc.com",
+      "special.hkjc.com",
+      "hkjc.com",
+      "info.cld.hkjc.com"
+    ],
     "results_page": "https://bet.hkjc.com/marksix/index.aspx?lang=ch",
+    "graphql_endpoint": "https://info.cld.hkjc.com/graphql/base/",
+    "history_first_year": 1993,
     "request_interval_seconds": 2.0
   }
 }

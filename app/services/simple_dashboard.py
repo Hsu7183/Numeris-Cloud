@@ -21,6 +21,8 @@ from app.models.database_models import (
     Game,
     GenerationPreset,
     GenerationRun,
+    ReplayDrawResult,
+    ReplayRun,
     Ruleset,
     TicketResult,
 )
@@ -373,6 +375,133 @@ def _performance_rates(bucket: dict[str, int]) -> dict[str, Any]:
     }
 
 
+def _add_replay_distribution(
+    bucket: dict[str, int],
+    distribution: dict[str, Any],
+    pick_count: int,
+) -> None:
+    parsed = {int(hits): int(count) for hits, count in distribution.items()}
+    tickets = sum(parsed.values())
+    bucket["evaluated_runs"] += 1
+    bucket["tickets"] += tickets
+    bucket["checked_numbers"] += tickets * pick_count
+    bucket["tickets_with_hit"] += sum(
+        count for hits, count in parsed.items() if hits > 0
+    )
+    bucket["exact_tickets"] += sum(
+        count for hits, count in parsed.items() if hits >= pick_count
+    )
+    bucket["hit_numbers"] += sum(hits * count for hits, count in parsed.items())
+    if parsed:
+        bucket["best_hit"] = max(bucket["best_hit"], max(parsed))
+
+
+def _replay_performance_payload(
+    db: Session,
+    game: Game,
+) -> dict[str, Any] | None:
+    replay = db.scalar(
+        select(ReplayRun)
+        .join(GenerationPreset, ReplayRun.preset_id == GenerationPreset.id)
+        .where(
+            ReplayRun.game_id == game.id,
+            ReplayRun.status == "completed",
+            GenerationPreset.preset_code == "VIDEO_FIVE_STEP_V1",
+        )
+        .order_by(ReplayRun.completed_at.desc(), ReplayRun.id.desc())
+    )
+    if replay is None:
+        return None
+    rows = db.execute(
+        select(ReplayDrawResult, Draw)
+        .join(Draw, ReplayDrawResult.target_draw_id == Draw.id)
+        .where(ReplayDrawResult.replay_run_id == replay.id)
+        .order_by(Draw.draw_date, Draw.draw_no)
+    ).all()
+    if not rows:
+        return None
+    weekly_buckets: dict[str, dict[str, int]] = defaultdict(
+        _empty_performance_bucket
+    )
+    overall = _empty_performance_bucket()
+    periods: list[dict[str, Any]] = []
+    for result, draw in rows:
+        detail = dict(result.result_json or {})
+        pick_count = int(detail.get("comparison_number_count") or 1)
+        period_stats = _empty_performance_bucket()
+        _add_replay_distribution(
+            period_stats,
+            dict(result.hit_distribution_json or {}),
+            pick_count,
+        )
+        iso = draw.draw_date.isocalendar()
+        week = f"{iso.year}-W{iso.week:02d}"
+        _merge_performance(weekly_buckets[week], period_stats)
+        _merge_performance(overall, period_stats)
+        periods.append(
+            {
+                "draw_no": draw.draw_no,
+                "draw_date": draw.draw_date.isoformat(),
+                "run_uuid": replay.run_uuid,
+                "prediction_mode": detail.get("prediction_mode", "replay"),
+                "prediction_source": detail.get(
+                    "prediction_source",
+                    "影片五步法逐期回放第1組",
+                ),
+                "predicted_numbers": detail.get("predicted_numbers", []),
+                "actual_numbers": detail.get("actual_numbers", []),
+                "actual_special_numbers": detail.get(
+                    "actual_special_numbers",
+                    [],
+                ),
+                "comparison_hit_numbers": detail.get(
+                    "comparison_hit_numbers",
+                    [],
+                ),
+                "comparison_hit_positions": detail.get(
+                    "comparison_hit_positions",
+                    [],
+                ),
+                "comparison_hit_count": detail.get("comparison_hit_count", 0),
+                "comparison_number_count": pick_count,
+                "comparison_hit_rate": detail.get("comparison_hit_rate"),
+                **_performance_rates(period_stats),
+            }
+        )
+    weekly = [
+        {"week": week, **_performance_rates(weekly_buckets[week])}
+        for week in sorted(weekly_buckets, reverse=True)[:10]
+    ]
+    recent_periods = list(reversed(periods[-10:]))
+    recent_10 = _empty_performance_bucket()
+    for period in periods[-10:]:
+        stats = _empty_performance_bucket()
+        stats.update(
+            {
+                key: int(period[key])
+                for key in stats
+                if period.get(key) is not None
+            }
+        )
+        _merge_performance(recent_10, stats)
+    latest_week = weekly[0] if weekly else {
+        "week": None,
+        **_performance_rates(_empty_performance_bucket()),
+    }
+    return {
+        "weekly": weekly,
+        "recent_periods": recent_periods,
+        "summary": {
+            "recent_10": _performance_rates(recent_10),
+            "latest_week": latest_week,
+            "overall": _performance_rates(overall),
+        },
+        "source": "VIDEO_FIVE_STEP_V1_REPLAY",
+        "replay_run_uuid": replay.run_uuid,
+        "future_data_used": False,
+    }
+
+
 def _comparison_payload(
     run: GenerationRun,
     actual_draw: Draw,
@@ -453,6 +582,9 @@ def _comparison_payload(
 
 
 def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
+    replay_payload = _replay_performance_payload(db, game)
+    if replay_payload is not None:
+        return replay_payload
     evaluations = list(
         db.scalars(
             select(EvaluationRun)
@@ -545,6 +677,7 @@ def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
             "latest_week": latest_week,
             "overall": _performance_rates(overall),
         },
+        "source": "LOCKED_RECOMMENDATION_EVALUATION",
     }
 
 
@@ -644,7 +777,10 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
         "weekly_performance": performance["weekly"],
         "recent_periods": performance["recent_periods"],
         "performance_summary": performance["summary"],
+        "performance_source": performance.get("source"),
+        "performance_replay_run_uuid": performance.get("replay_run_uuid"),
         "metric_note": (
+            "週更以影片五步法逐期回放計算，每一期只使用該期以前資料。"
             "命中率＝已核對單式中至少命中1個主要號碼的比例；"
             "號碼正確率＝命中主要號碼總數除以核對號碼總數。"
             "近10期、最新一週與累計數字都是歷史紀錄，不是未來中獎機率。"

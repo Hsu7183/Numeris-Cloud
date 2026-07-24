@@ -25,7 +25,12 @@ FastAPI提供JSON API與Jinja2單頁介面；SQLAlchemy 2使用SQLite；Alembic�
 
 ## 資料更新流程
 
-`POST /api/data/update`建立job；背景工作依`config/sources.yaml`連線官方網域、保存原始回應及metadata。台灣來源先讀取官方下載頁，再呼叫`ResultDownload`官方API取得當年CDN ZIP；CSV欄位完整符合白名單schema後，才匯入6種獨立遊戲。39／49樂合彩共用母遊戲事件，大樂透加開獎項不作一般開獎匯入。手動上傳由`POST /api/imports/upload`接收，先保存於`data/imports`，再於transaction中驗證及匯入。
+`POST /api/data/update`建立job；背景工作依`config/sources.yaml`連線官方網域、
+保存原始回應及metadata。台灣來源呼叫`ResultDownload`官方API取得2007年至今的
+年度CDN ZIP，再以當月查詢API補齊傳統彩券及BINGO；年度CSV以「遊戲名稱」欄辨識
+遊戲，不依可能亂碼的舊ZIP檔名。香港來源使用賽馬會結果頁實際呼叫的官方GraphQL，
+以季度區間下載1993年至今六合彩結果。所有資料通過白名單schema後才由批次匯入器
+寫入。39／49樂合彩共用母遊戲事件，大樂透加開獎項不作一般開獎匯入。
 
 ## 分析流程
 
@@ -37,7 +42,10 @@ API驗證輸入 → 取得截止期 → 建立各pool metrics → PCG64產生候
 
 ## 防止未來資料洩漏
 
-一般生成使用資料庫最新可用期別作截止點，並只載入所需lookback與AC歷史視窗。歷史逐期模擬必須透過`replay_input_draws(draws, target_index, lookback)`，其切片右界永遠是`target_index`，不包含目標期及未來期。每期結果保存`target_draw_id`、`cutoff_draw_id`與分析期識別，測試`tests/unit/test_replay_guard.py`驗證。
+一般生成使用資料庫最新可用期別作截止點，並只載入所需lookback與AC歷史視窗。
+歷史逐期模擬以目標期前的查詢條件載入資料，不包含目標期及未來期。每期保存
+`target_draw_id`、`cutoff_draw_id`、預測／實際號碼、命中位置與
+`future_data_used=false`；`tests/unit/test_replay_guard.py`持續驗證切片守門。
 
 ## 新增彩種
 
