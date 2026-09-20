@@ -1,0 +1,32 @@
+name: 更新今彩539 GitHub Pages 資料
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-daily539-pages
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 安裝 Numeris
+        run: pip install .
+      - name: 抓取官方資料並產生靜態統計
+        run: python -m scripts.export_daily539_static
+      - name: 儲存更新後的資料
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/daily539.json
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(data): update Daily 539 statistics"
+          git push

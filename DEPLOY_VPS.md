@@ -1,4 +1,6 @@
-# Numeris Cloud 部署說明
+# Numeris Cloud VPS 部署說明（可選）
+
+> 如果只使用 GitHub Pages，請改看 `GITHUB_PAGES_SETUP.md`，不需要 VPS，也不需要本文件的設定。
 
 這份設定將 Numeris 放在 Linux VPS，以 Docker 常駐執行。GitHub 只保存程式碼；資料庫、原始資料、報告與日誌留在 VPS 的 Docker volumes，不會被推回 GitHub。
 

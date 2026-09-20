@@ -1,0 +1,16 @@
+:root { color-scheme: light; font-family: system-ui, "Microsoft JhengHei", sans-serif; color: #073b32; background: #f1f6ec; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+.page-shell { width: min(1500px, calc(100% - 48px)); margin: 0 auto; }
+.hero { padding: 42px 0 28px; border-bottom: 1px solid #d4e2d4; }
+.brand, .eyebrow { margin: 0; color: #007561; font-weight: 800; letter-spacing: .14em; }
+.brand span { margin-left: 18px; font-size: .85rem; }
+h1 { font-size: clamp(2rem, 4vw, 3.5rem); margin: 12px 0; } em { color: #007561; font-style: normal; }
+.lead, .status, .notice { color: #60766f; } .status.error { color: #b42318; }
+.result-header { display: flex; justify-content: space-between; gap: 24px; align-items: end; padding: 28px 0 18px; } .result-header h2 { margin: 4px 0 0; }
+.latest { padding: 14px 20px; border-radius: 12px; text-align: right; background: #e2f3c7; } .latest span { display: block; font-size: .8rem; } .latest strong { font-size: 1.05rem; }
+.comparison-list { display: grid; grid-template-columns: repeat(4, minmax(210px, 1fr)); gap: 14px; }
+.comparison-panel { min-height: 430px; padding: 18px; border: 1px solid #cbded3; border-radius: 16px; background: #fffefa; box-shadow: 0 7px 18px #0b50300d; }
+.comparison-panel header { border-bottom: 2px solid #007561; padding-bottom: 8px; } .comparison-panel header p, .comparison-panel header h2, .comparison-panel header span { margin: 0; } .comparison-panel header h2 { font-size: 2rem; color: #007561; } .comparison-panel small { font-size: .7em; }
+.group-note { color: #60766f; font-size: .8rem; margin: 10px 0 2px; }.frequency-group { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #dce8df; }.frequency-group strong { min-width: 34px; text-align: right; }.ball { display: inline-grid; place-items: center; width: 25px; height: 25px; margin: 1px; border: 1px solid #a9bdb2; border-radius: 50%; font-size: .75rem; background: #e5eee8; }.drawn-ball { background: #d9353c; border-color: #aa1e26; color: white; font-weight: 800; }.hidden { display: none; }.notice { margin: 28px 0 42px; }
+@media (max-width: 1050px) { .comparison-list { grid-template-columns: repeat(2, minmax(210px, 1fr)); } } @media (max-width: 580px) { .page-shell { width: min(100% - 28px, 1500px); } .comparison-list { grid-template-columns: 1fr; } .result-header { align-items: start; flex-direction: column; } }

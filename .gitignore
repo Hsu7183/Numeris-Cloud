@@ -28,6 +28,7 @@ reports/build/coverage/
 reports/build/*.png
 reports/replay/*.html
 reports/replay/*.json
+.github-pages-data/
 .env
 .env.*
 !.env.example
