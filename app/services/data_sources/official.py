@@ -306,7 +306,7 @@ def _save_artifact(
     return artifact
 
 
-def _update_taiwan(db: Session) -> dict[str, object]:
+def _update_taiwan(db: Session, *, first_year_override: int | None = None) -> dict[str, object]:
     sources = load_json_yaml(CONFIG_DIR / "sources.yaml")["taiwan"]
     page_url = sources["annual_download_page"]
     response = _get(page_url)
@@ -326,7 +326,7 @@ def _update_taiwan(db: Session) -> dict[str, object]:
     parsed_draws = 0
     skipped_files: list[str] = []
     start_year = datetime.now().year
-    first_year = int(sources.get("annual_first_year", start_year))
+    first_year = first_year_override or int(sources.get("annual_first_year", start_year))
     years = range(start_year, first_year - 1, -1)
     for year in years:
         query_url = f"{api_url}?{urlencode({'year': year})}"

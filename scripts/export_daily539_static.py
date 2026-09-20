@@ -7,7 +7,7 @@ from app.api.draws import recent_daily539_draws
 from app.core.database import Base, SessionLocal, engine
 from app.core.paths import PROJECT_ROOT, ensure_directories
 from app.services.bootstrap import initialize_catalog
-from app.services.data_sources.official import create_update_job, run_update_job
+from app.services.data_sources.official import _update_taiwan
 
 
 OUTPUT_PATH = PROJECT_ROOT / "docs" / "data" / "daily539.json"
@@ -21,9 +21,9 @@ def prepare_database() -> None:
 
 
 def update_taiwan_draws() -> None:
+    """Only the current year is needed for 200 daily draws in the Pages export."""
     with SessionLocal() as db:
-        job = create_update_job(db, "taiwan")
-    run_update_job(str(job["job_uuid"]))
+        _update_taiwan(db, first_year_override=datetime.now().year)
 
 
 def export_payload() -> dict[str, object]:

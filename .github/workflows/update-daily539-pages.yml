@@ -5,13 +5,14 @@ on:
   push:
     paths:
       - "docs/data/.gitkeep"
+      - "scripts/export_daily539_static.py"
 
 permissions:
   contents: write
 
 concurrency:
   group: update-daily539-pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   update:
