@@ -1,0 +1,24 @@
+services:
+  numeris:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8767:8767"
+    volumes:
+      - numeris-data:/app/data
+      - numeris-logs:/app/logs
+      - numeris-reports:/app/reports
+
+  updater:
+    build: .
+    profiles: ["maintenance"]
+    command: ["python", "-m", "scripts.startup_refresh"]
+    volumes:
+      - numeris-data:/app/data
+      - numeris-logs:/app/logs
+      - numeris-reports:/app/reports
+
+volumes:
+  numeris-data:
+  numeris-logs:
+  numeris-reports:
