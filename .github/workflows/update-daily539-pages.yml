@@ -2,6 +2,9 @@ name: 更新今彩539 GitHub Pages 資料
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "docs/data/.gitkeep"
 
 permissions:
   contents: write
