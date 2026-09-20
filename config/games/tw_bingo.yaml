@@ -3,6 +3,7 @@
   "market_code": "TW",
   "display_name_zh_tw": "BINGO BINGO賓果賓果",
   "display_name_en": "BINGO BINGO",
+  "active": false,
   "game_type": "high_frequency",
   "supports_ac": false,
   "supports_special_ball": false,
@@ -16,4 +17,3 @@
   "display_format": "02d",
   "verified_scope": "20個開獎號碼及1至10星選號；其他玩法獎等未驗證"
 }
-

@@ -13,6 +13,7 @@ class GenerationRequest(BaseModel):
     random_seed: int = Field(default=20260723, ge=0)
     preset_code: str = "VIDEO_FIVE_STEP_V1"
     target_draw_no: str | None = None
+    cutoff_draw_no: str | None = None
     max_overlap: int | None = Field(default=None, ge=0)
     star_count: int = Field(default=6, ge=1, le=10)
     include_numbers: list[int] = Field(default_factory=list)
@@ -22,6 +23,9 @@ class GenerationRequest(BaseModel):
     ac_min: int | None = None
     ac_max: int | None = None
     max_attempts: int = Field(default=50000, ge=100, le=500000)
+    selection_strategy: Literal["preference", "coverage"] = "preference"
+    coverage_target_hits: int | None = Field(default=None, ge=1, le=10)
+    use_temperature_preference: bool = True
 
     @model_validator(mode="after")
     def check_number_lists(self) -> GenerationRequest:
@@ -38,11 +42,21 @@ class ReplayRequest(BaseModel):
     tickets_per_draw: int = Field(default=5, ge=1, le=50)
     random_seed: int = Field(default=20260723, ge=0)
     baseline_repetitions: int = Field(default=20, ge=1, le=500)
+    strategy: Literal["video", "coverage"] = "video"
+    cadence: Literal["draw", "week"] = "draw"
+    star_count: int = Field(default=6, ge=1, le=10)
 
 
 class SimpleGenerationRequest(BaseModel):
     game_code: str = "HK_MARKSIX"
-    mode: Literal["single", "wheel7", "wheel8", "wheel9"] = "single"
+    mode: Literal[
+        "weekly",
+        "coverage",
+        "single",
+        "wheel7",
+        "wheel8",
+        "wheel9",
+    ] = "weekly"
     ticket_count: int = Field(default=10, ge=1, le=100)
     star_count: int = Field(default=6, ge=1, le=10)
     random_seed: int | None = Field(default=None, ge=0)

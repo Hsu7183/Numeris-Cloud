@@ -8,7 +8,7 @@ FastAPI提供JSON API與Jinja2單頁介面；SQLAlchemy 2使用SQLite；Alembic�
 
 - `app/main.py`：應用生命週期、錯誤格式、路由、首頁。
 - `app/models/database_models.py`：21張資料表。
-- `config/games/*.yaml`：9種遊戲ruleset（內容為JSON相容YAML）。
+- `config/games/*.yaml`：8種啟用商品ruleset；BINGO設定保留但為inactive（內容為JSON相容YAML）。
 - `app/services/analytics/core.py`：頻率、遺漏、冷熱、結構、AC。
 - `app/services/generation/generators.py`：四類候選生成器與差異化。
 - `app/services/generation/service.py`：資料截止、生成run持久化與鎖定。
@@ -27,7 +27,7 @@ FastAPI提供JSON API與Jinja2單頁介面；SQLAlchemy 2使用SQLite；Alembic�
 
 `POST /api/data/update`建立job；背景工作依`config/sources.yaml`連線官方網域、
 保存原始回應及metadata。台灣來源呼叫`ResultDownload`官方API取得2007年至今的
-年度CDN ZIP，再以當月查詢API補齊傳統彩券及BINGO；年度CSV以「遊戲名稱」欄辨識
+年度CDN ZIP，再以當月查詢API補齊啟用中的傳統彩券；年度CSV以「遊戲名稱」欄辨識
 遊戲，不依可能亂碼的舊ZIP檔名。香港來源使用賽馬會結果頁實際呼叫的官方GraphQL，
 以季度區間下載1993年至今六合彩結果。所有資料通過白名單schema後才由批次匯入器
 寫入。39／49樂合彩共用母遊戲事件，大樂透加開獎項不作一般開獎匯入。
@@ -43,6 +43,10 @@ API驗證輸入 → 取得截止期 → 建立各pool metrics → PCG64產生候
 ## 防止未來資料洩漏
 
 一般生成使用資料庫最新可用期別作截止點，並只載入所需lookback與AC歷史視窗。
+新推薦鎖定時會以目標期、截止期、鎖定時間、完整設定與全部ticket建立SHA-256
+`recommendation_anchor`。實戰核對必須同時通過定錨、目標期一致，以及
+`draw.created_at > generation_run.locked_at`；同一目標期只計最早鎖定的一份。
+舊有未定錨推薦與歷史回放不得混入首頁實戰達標率。
 歷史逐期模擬以目標期前的查詢條件載入資料，不包含目標期及未來期。每期保存
 `target_draw_id`、`cutoff_draw_id`、預測／實際號碼、命中位置與
 `future_data_used=false`；`tests/unit/test_replay_guard.py`持續驗證切片守門。

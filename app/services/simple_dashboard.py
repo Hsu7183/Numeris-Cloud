@@ -7,6 +7,7 @@ import uuid
 from collections import defaultdict
 from datetime import UTC, datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -29,7 +30,16 @@ from app.models.database_models import (
 from app.services.analytics.core import analyze_numbers, calculate_structure
 from app.services.bootstrap import canonical_hash
 from app.services.evaluation.service import evaluate_generation_run, get_evaluation
-from app.services.generation.generators import Candidate, UnorderedCombinationGenerator
+from app.services.generation.anchor import (
+    as_utc,
+    draw_arrived_after_lock,
+    verify_recommendation_anchor,
+)
+from app.services.generation.generators import (
+    Candidate,
+    UnorderedCombinationGenerator,
+    recommended_coverage_target,
+)
 from app.services.generation.service import (
     _draws_for_game,
     _next_draw_no,
@@ -40,14 +50,37 @@ from app.services.generation.service import (
     lock_generation_run,
     serialize_generation_run,
 )
+from app.services.replay.anchor import (
+    WALK_FORWARD_ANCHOR_SCOPE,
+    WALK_FORWARD_ANCHOR_VERSION,
+    calculate_walk_forward_anchor,
+)
 
 SIMPLE_METHOD_REVISION = "VIDEO_FIVE_STEP_V1_AUDITED_20260724"
+COVERAGE_METHOD_REVISION = "COVERAGE_OPTIMIZED_V1_20260724"
+WEEKLY_METHOD_REVISION = "WEEKLY_SINGLE_V1_20260724"
+TAIPEI = ZoneInfo("Asia/Taipei")
 
 
-def _seed_for(game_code: str, cutoff_id: int, mode: str) -> int:
+def _method_revision(mode: str) -> str:
+    if mode == "weekly":
+        return WEEKLY_METHOD_REVISION
+    return COVERAGE_METHOD_REVISION if mode == "coverage" else SIMPLE_METHOD_REVISION
+
+
+def _week_key(value: datetime) -> str:
+    iso = value.isocalendar()
+    return f"{iso.year}-W{iso.week:02d}"
+
+
+def _current_week_key() -> str:
+    return _week_key(datetime.now(TAIPEI))
+
+
+def _seed_for(game_code: str, anchor_key: int | str, mode: str) -> int:
     raw = (
-        f"{game_code}|{cutoff_id}|{mode}|{__version__}|"
-        f"{SIMPLE_METHOD_REVISION}"
+        f"{game_code}|{anchor_key}|{mode}|{__version__}|"
+        f"{_method_revision(mode)}"
     ).encode()
     return int(hashlib.sha256(raw).hexdigest()[:12], 16)
 
@@ -58,25 +91,31 @@ def _recent_simple_run(
     cutoff_id: int,
     mode: str,
     star_count: int,
+    week_key: str | None = None,
 ) -> GenerationRun | None:
+    conditions = [
+        GenerationRun.game_id == game_id,
+        GenerationRun.locked.is_(True),
+    ]
+    if mode != "weekly":
+        conditions.append(GenerationRun.cutoff_draw_id == cutoff_id)
     runs = list(
         db.scalars(
             select(GenerationRun)
-            .where(
-                GenerationRun.game_id == game_id,
-                GenerationRun.cutoff_draw_id == cutoff_id,
-                GenerationRun.locked.is_(True),
-            )
+            .where(*conditions)
             .order_by(GenerationRun.id.desc())
-            .limit(30)
+            .limit(100)
         )
     )
     for run in runs:
+        config = dict(run.config_json or {})
         if (
-            run.config_json.get("simple_interface") is True
-            and run.config_json.get("simple_mode") == mode
-            and run.config_json.get("method_revision") == SIMPLE_METHOD_REVISION
-            and int(run.config_json.get("star_count", star_count)) == star_count
+            config.get("simple_interface") is True
+            and config.get("simple_mode") == mode
+            and config.get("method_revision") == _method_revision(mode)
+            and int(config.get("star_count", star_count)) == star_count
+            and (mode != "weekly" or config.get("weekly_key") == week_key)
+            and verify_recommendation_anchor(db, run)
         ):
             return run
     return None
@@ -87,6 +126,7 @@ def _mark_simple_run(
     run_uuid: str,
     mode: str,
     star_count: int,
+    week_key: str | None = None,
 ) -> dict[str, Any]:
     run = db.scalar(select(GenerationRun).where(GenerationRun.run_uuid == run_uuid))
     if run is None:
@@ -97,9 +137,32 @@ def _mark_simple_run(
             "simple_interface": True,
             "simple_mode": mode,
             "star_count": star_count,
-            "method_revision": SIMPLE_METHOD_REVISION,
+            "method_revision": _method_revision(mode),
         }
     )
+    if mode == "weekly":
+        first_ticket = run.tickets[0] if run.tickets else None
+        pools: dict[str, list[int]] = defaultdict(list)
+        if first_ticket is not None:
+            for number in first_ticket.numbers:
+                pools[number.pool_code].append(int(number.number_value))
+        weekly_numbers = {
+            pool: numbers for pool, numbers in sorted(pools.items())
+        }
+        config.update(
+            {
+                "weekly_key": week_key,
+                "weekly_single": True,
+                "coverage_target_hits": 1,
+                "weekly_number_anchor": canonical_hash(
+                    {
+                        "game_id": run.game_id,
+                        "week": week_key,
+                        "numbers": weekly_numbers,
+                    }
+                ),
+            }
+        )
     run.config_json = config
     run.config_hash = canonical_hash(config)
     db.commit()
@@ -222,8 +285,8 @@ def _create_wheel_run(
         config_json=config,
         config_hash=canonical_hash(config),
         app_version=__version__,
-        locked=True,
-        locked_at=now,
+        locked=False,
+        locked_at=None,
         started_at=now,
         completed_at=now,
         status="completed",
@@ -250,7 +313,7 @@ def _create_wheel_run(
         )
     )
     db.commit()
-    payload = serialize_generation_run(db, run.run_uuid)
+    payload = lock_generation_run(db, run.run_uuid)
     payload["wheel_numbers"] = wheel_numbers
     payload["combination_count"] = combination_count
     return payload
@@ -264,6 +327,7 @@ def create_simple_recommendation(
     if not latest_draws:
         raise GenerationError("NO_DATA", "此彩種尚無可用資料")
     latest = latest_draws[-1]
+    week_key = _current_week_key() if request.mode == "weekly" else None
     if not request.refresh:
         existing = _recent_simple_run(
             db,
@@ -271,6 +335,20 @@ def create_simple_recommendation(
             latest.id,
             request.mode,
             request.star_count,
+            week_key,
+        )
+        if existing is not None:
+            payload = serialize_generation_run(db, existing.run_uuid)
+            payload["reused"] = True
+            return payload
+    elif request.mode == "weekly":
+        existing = _recent_simple_run(
+            db,
+            game.id,
+            latest.id,
+            request.mode,
+            request.star_count,
+            week_key,
         )
         if existing is not None:
             payload = serialize_generation_run(db, existing.run_uuid)
@@ -278,12 +356,87 @@ def create_simple_recommendation(
             return payload
     seed = request.random_seed
     if seed is None:
-        seed = _seed_for(game.game_code, latest.id, request.mode)
-        if request.refresh:
+        seed = _seed_for(
+            game.game_code,
+            week_key if week_key is not None else latest.id,
+            request.mode,
+        )
+        if request.refresh and request.mode != "weekly":
             seed += int(datetime.now(UTC).timestamp() * 1000)
+    if request.mode == "weekly":
+        recent_draws = _draws_for_game(db, game, 100)
+        prior_week_draws = [
+            draw
+            for draw in recent_draws
+            if _week_key(
+                datetime.combine(
+                    draw.draw_date,
+                    datetime.min.time(),
+                    tzinfo=TAIPEI,
+                )
+            )
+            != week_key
+        ]
+        cutoff = prior_week_draws[-1] if prior_week_draws else latest
+        payload = create_generation_run(
+            db,
+            GenerationRequest(
+                game_code=game.game_code,
+                ticket_count=1,
+                lookback_count=20,
+                random_seed=seed,
+                preset_code="VIDEO_FIVE_STEP_V1",
+                target_draw_no=_next_draw_no(latest.draw_no),
+                cutoff_draw_no=cutoff.draw_no,
+                max_overlap=None,
+                star_count=request.star_count,
+            ),
+        )
+        return _mark_simple_run(
+            db,
+            str(payload["run_uuid"]),
+            request.mode,
+            request.star_count,
+            week_key,
+        )
     if request.mode.startswith("wheel"):
         wheel_size = int(request.mode.removeprefix("wheel"))
         return _create_wheel_run(db, game, ruleset, wheel_size, seed)
+    primary_pick = (
+        request.star_count
+        if game.game_type == "high_frequency"
+        else int(ruleset.config_json["pools"][0]["pick_count"])
+    )
+    if request.mode == "coverage":
+        target_hits = recommended_coverage_target(
+            game.game_type,
+            primary_pick,
+        )
+        payload = create_generation_run(
+            db,
+            GenerationRequest(
+                game_code=game.game_code,
+                ticket_count=request.ticket_count,
+                lookback_count=20,
+                random_seed=seed,
+                preset_code="COVERAGE_OPTIMIZED_V1",
+                max_overlap=max(0, target_hits - 1),
+                star_count=request.star_count,
+                allowed_odd_counts=list(range(primary_pick + 1)),
+                allowed_high_counts=list(range(primary_pick + 1)),
+                ac_min=None,
+                ac_max=None,
+                selection_strategy="coverage",
+                coverage_target_hits=target_hits,
+                use_temperature_preference=False,
+            ),
+        )
+        return _mark_simple_run(
+            db,
+            str(payload["run_uuid"]),
+            request.mode,
+            request.star_count,
+        )
     max_overlap = 5 if game.game_type == "high_frequency" else 3
     payload = create_generation_run(
         db,
@@ -315,18 +468,20 @@ def _sync_available_evaluations(db: Session, game: Game) -> int:
     )
     synced = 0
     for run in runs:
+        if not verify_recommendation_anchor(db, run):
+            continue
         exists = db.scalar(
             select(EvaluationRun.id).where(EvaluationRun.generation_run_id == run.id)
         )
         if exists is not None:
             continue
-        draw_exists = db.scalar(
-            select(Draw.id).where(
+        draw = db.scalar(
+            select(Draw).where(
                 Draw.game_id == game.id,
                 Draw.draw_no == run.target_draw_no,
             )
         )
-        if draw_exists is not None:
+        if draw is not None and draw_arrived_after_lock(run, draw):
             evaluate_generation_run(db, run.run_uuid)
             synced += 1
     return synced
@@ -335,6 +490,7 @@ def _sync_available_evaluations(db: Session, game: Game) -> int:
 def _empty_performance_bucket() -> dict[str, int]:
     return {
         "evaluated_runs": 0,
+        "target_hit_draws": 0,
         "tickets": 0,
         "tickets_with_hit": 0,
         "exact_tickets": 0,
@@ -348,6 +504,7 @@ def _add_performance_results(
     bucket: dict[str, int],
     results: list[TicketResult],
     pick_count: int,
+    target_hits: int,
 ) -> None:
     bucket["evaluated_runs"] += 1
     bucket["tickets"] += len(results)
@@ -360,6 +517,8 @@ def _add_performance_results(
             bucket["tickets_with_hit"] += 1
         if hits >= pick_count:
             bucket["exact_tickets"] += 1
+    if results and max(int(result.main_hit_count) for result in results) >= target_hits:
+        bucket["target_hit_draws"] += 1
 
 
 def _merge_performance(
@@ -368,6 +527,7 @@ def _merge_performance(
 ) -> None:
     for key in (
         "evaluated_runs",
+        "target_hit_draws",
         "tickets",
         "tickets_with_hit",
         "exact_tickets",
@@ -388,6 +548,11 @@ def _performance_rates(bucket: dict[str, int]) -> dict[str, Any]:
     )
     return {
         **bucket,
+        "target_hit_rate": (
+            round(bucket["target_hit_draws"] / bucket["evaluated_runs"] * 100, 2)
+            if bucket["evaluated_runs"]
+            else None
+        ),
         # Keep the original key for API compatibility. The explicit alias prevents
         # the value from being mistaken for the percentage of correct numbers.
         "ticket_hit_rate": any_hit_ticket_rate,
@@ -410,6 +575,7 @@ def _add_replay_distribution(
     bucket: dict[str, int],
     distribution: dict[str, Any],
     pick_count: int,
+    target_hits: int,
 ) -> None:
     parsed = {int(hits): int(count) for hits, count in distribution.items()}
     tickets = sum(parsed.values())
@@ -423,23 +589,71 @@ def _add_replay_distribution(
         count for hits, count in parsed.items() if hits >= pick_count
     )
     bucket["hit_numbers"] += sum(hits * count for hits, count in parsed.items())
+    if parsed and max(parsed) >= target_hits:
+        bucket["target_hit_draws"] += 1
     if parsed:
         bucket["best_hit"] = max(bucket["best_hit"], max(parsed))
+
+
+def _theoretical_uniform_rates(
+    db: Session,
+    game: Game,
+    pick_count: int,
+    target_hits: int,
+    tickets_per_draw: int,
+) -> dict[str, float]:
+    ruleset = db.scalar(
+        select(Ruleset)
+        .where(Ruleset.game_id == game.id)
+        .order_by(Ruleset.id.desc())
+    )
+    if ruleset is None:
+        return {}
+    pool = dict(ruleset.config_json["pools"][0])
+    if game.game_type == "ordered_digits":
+        batch_rate = min(1.0, tickets_per_draw / (10**pick_count))
+        return {
+            "target_hit_rate": round(batch_rate * 100, 2),
+            "number_accuracy": 10.0,
+        }
+    population = int(pool["max"]) - int(pool["min"]) + 1
+    drawn = int(pool["draw_count"])
+    denominator = math.comb(population, pick_count)
+    single_target_rate = sum(
+        math.comb(drawn, hits)
+        * math.comb(population - drawn, pick_count - hits)
+        / denominator
+        for hits in range(target_hits, min(drawn, pick_count) + 1)
+        if pick_count - hits <= population - drawn
+    )
+    batch_rate = 1 - (1 - single_target_rate) ** tickets_per_draw
+    return {
+        "target_hit_rate": round(batch_rate * 100, 2),
+        "number_accuracy": round(drawn / population * 100, 2),
+    }
 
 
 def _replay_performance_payload(
     db: Session,
     game: Game,
 ) -> dict[str, Any] | None:
-    replay = db.scalar(
-        select(ReplayRun)
-        .join(GenerationPreset, ReplayRun.preset_id == GenerationPreset.id)
-        .where(
-            ReplayRun.game_id == game.id,
-            ReplayRun.status == "completed",
-            GenerationPreset.preset_code == "VIDEO_FIVE_STEP_V1",
-        )
-        .order_by(ReplayRun.completed_at.desc(), ReplayRun.id.desc())
+    replay = next(
+        (
+            candidate
+            for candidate in db.scalars(
+            select(ReplayRun)
+            .join(GenerationPreset, ReplayRun.preset_id == GenerationPreset.id)
+            .where(
+                ReplayRun.game_id == game.id,
+                ReplayRun.status == "completed",
+                GenerationPreset.preset_code == "VIDEO_FIVE_STEP_V1",
+            )
+            .order_by(ReplayRun.completed_at.desc(), ReplayRun.id.desc())
+            )
+            if candidate.tickets_per_draw == 1
+            and candidate.config_json.get("cadence") == "week"
+        ),
+        None,
     )
     if replay is None:
         return None
@@ -454,21 +668,113 @@ def _replay_performance_payload(
     weekly_buckets: dict[str, dict[str, int]] = defaultdict(
         _empty_performance_bucket
     )
+    weekly_meta: dict[str, dict[str, Any]] = defaultdict(
+        lambda: {
+            "draw_dates": [],
+            "period_anchors": [],
+            "anchor_created_at": [],
+        }
+    )
     overall = _empty_performance_bucket()
     uniform_overall = _empty_performance_bucket()
     structured_overall = _empty_performance_bucket()
     periods: list[dict[str, Any]] = []
+    weekly_samples: dict[str, dict[str, Any]] = {}
+    replay_pick_count = 1
+    replay_target_hits = 1
+    anchors_changed = False
+    retrospective_anchor_time = datetime.now(UTC).isoformat()
     for result, draw in rows:
         detail = dict(result.result_json or {})
+        predicted_tickets = list(detail.get("predicted_tickets") or [])
+        fixed_prediction = (
+            [int(number) for number in predicted_tickets[0]]
+            if predicted_tickets
+            else [int(number) for number in detail.get("predicted_numbers", [])]
+        )
+        actual_numbers = [
+            int(number) for number in detail.get("actual_numbers", [])
+        ]
+        if game.game_type == "ordered_digits":
+            hit_positions = [
+                index
+                for index, (predicted, actual) in enumerate(
+                    zip(fixed_prediction, actual_numbers, strict=False)
+                )
+                if predicted == actual
+            ]
+            comparison_hits = [
+                fixed_prediction[index] for index in hit_positions
+            ]
+        else:
+            hit_positions = []
+            comparison_hits = sorted(
+                set(fixed_prediction) & set(actual_numbers)
+            )
+        detail.update(
+            {
+                "predicted_numbers": fixed_prediction,
+                "display_ticket_index": 1,
+                "comparison_hit_numbers": comparison_hits,
+                "comparison_hit_positions": hit_positions,
+                "comparison_hit_count": len(comparison_hits),
+                "comparison_number_count": len(fixed_prediction),
+                "comparison_hit_rate": (
+                    round(len(comparison_hits) / len(fixed_prediction) * 100, 2)
+                    if fixed_prediction
+                    else None
+                ),
+                "prediction_source": "每週唯一1組無未來資料回測",
+            }
+        )
+        calculated_anchor = calculate_walk_forward_anchor(
+            replay,
+            result,
+            detail,
+        )
+        stored_anchor = detail.get("walk_forward_anchor")
+        if stored_anchor is None:
+            detail.update(
+                {
+                    "walk_forward_anchor": calculated_anchor,
+                    "walk_forward_anchor_version": WALK_FORWARD_ANCHOR_VERSION,
+                    "walk_forward_anchor_scope": WALK_FORWARD_ANCHOR_SCOPE,
+                    "walk_forward_anchor_created_at": retrospective_anchor_time,
+                }
+            )
+            result.result_json = detail
+            stored_anchor = calculated_anchor
+            anchors_changed = True
+        anchor_valid = (
+            stored_anchor == calculated_anchor
+            and detail.get("walk_forward_anchor_version")
+            == WALK_FORWARD_ANCHOR_VERSION
+            and detail.get("walk_forward_anchor_scope")
+            == WALK_FORWARD_ANCHOR_SCOPE
+        )
+        if not anchor_valid:
+            continue
         pick_count = int(detail.get("comparison_number_count") or 1)
+        target_hits = int(
+            detail.get("coverage_target_hits")
+            or 1
+        )
+        replay_pick_count = pick_count
+        replay_target_hits = target_hits
         period_stats = _empty_performance_bucket()
         _add_replay_distribution(
             period_stats,
             dict(result.hit_distribution_json or {}),
             pick_count,
+            target_hits,
         )
         iso = draw.draw_date.isocalendar()
         week = f"{iso.year}-W{iso.week:02d}"
+        weekly_meta[week]["draw_dates"].append(draw.draw_date.isoformat())
+        weekly_meta[week]["period_anchors"].append(stored_anchor)
+        weekly_meta[week]["anchor_created_at"].append(
+            detail.get("walk_forward_anchor_created_at")
+        )
         _merge_performance(weekly_buckets[week], period_stats)
         _merge_performance(overall, period_stats)
         baseline_distributions = dict(result.baseline_distribution_json or {})
@@ -476,44 +782,99 @@ def _replay_performance_payload(
             uniform_overall,
             dict(baseline_distributions.get("uniform") or {}),
             pick_count,
+            target_hits,
         )
         _add_replay_distribution(
             structured_overall,
             dict(baseline_distributions.get("structured") or {}),
             pick_count,
+            target_hits,
         )
-        periods.append(
-            {
-                "draw_no": draw.draw_no,
-                "draw_date": draw.draw_date.isoformat(),
-                "run_uuid": replay.run_uuid,
-                "prediction_mode": detail.get("prediction_mode", "replay"),
-                "prediction_source": detail.get(
-                    "prediction_source",
-                    "影片五步法逐期回放第1組",
-                ),
-                "predicted_numbers": detail.get("predicted_numbers", []),
-                "actual_numbers": detail.get("actual_numbers", []),
-                "actual_special_numbers": detail.get(
-                    "actual_special_numbers",
-                    [],
-                ),
-                "comparison_hit_numbers": detail.get(
-                    "comparison_hit_numbers",
-                    [],
-                ),
-                "comparison_hit_positions": detail.get(
-                    "comparison_hit_positions",
-                    [],
-                ),
-                "comparison_hit_count": detail.get("comparison_hit_count", 0),
-                "comparison_number_count": pick_count,
-                "comparison_hit_rate": detail.get("comparison_hit_rate"),
-                **_performance_rates(period_stats),
-            }
-        )
+        period_payload = {
+            "draw_no": draw.draw_no,
+            "draw_date": draw.draw_date.isoformat(),
+            "run_uuid": replay.run_uuid,
+            "prediction_mode": detail.get("prediction_mode", "replay"),
+            "prediction_source": detail.get(
+                "prediction_source",
+                "影片五步法逐期回放第1組",
+            ),
+            "predicted_numbers": detail.get("predicted_numbers", []),
+            "actual_numbers": detail.get("actual_numbers", []),
+            "actual_special_numbers": detail.get(
+                "actual_special_numbers",
+                [],
+            ),
+            "comparison_hit_numbers": detail.get(
+                "comparison_hit_numbers",
+                [],
+            ),
+            "comparison_hit_positions": detail.get(
+                "comparison_hit_positions",
+                [],
+            ),
+            "comparison_hit_count": detail.get("comparison_hit_count", 0),
+            "comparison_number_count": pick_count,
+            "comparison_hit_rate": detail.get("comparison_hit_rate"),
+            "coverage_target_hits": target_hits,
+            "target_achieved": bool(
+                detail.get("target_achieved")
+                if "target_achieved" in detail
+                else period_stats["target_hit_draws"]
+            ),
+            "walk_forward_anchor": stored_anchor,
+            "walk_forward_anchor_created_at": detail.get(
+                "walk_forward_anchor_created_at"
+            ),
+            "walk_forward_anchor_scope": WALK_FORWARD_ANCHOR_SCOPE,
+            **_performance_rates(period_stats),
+        }
+        periods.append(period_payload)
+        weekly_samples[week] = period_payload
+    if anchors_changed:
+        db.commit()
     weekly = [
-        {"week": week, **_performance_rates(weekly_buckets[week])}
+        {
+            "week": week,
+            "first_draw_date": min(weekly_meta[week]["draw_dates"]),
+            "last_draw_date": max(weekly_meta[week]["draw_dates"]),
+            "walk_forward_anchor": canonical_hash(
+                {
+                    "anchor_version": WALK_FORWARD_ANCHOR_VERSION,
+                    "scope": WALK_FORWARD_ANCHOR_SCOPE,
+                    "game_code": game.game_code,
+                    "week": week,
+                    "period_anchors": sorted(
+                        weekly_meta[week]["period_anchors"]
+                    ),
+                }
+            ),
+            "anchor_created_at": max(
+                value
+                for value in weekly_meta[week]["anchor_created_at"]
+                if value
+            ),
+            "anchor_scope": WALK_FORWARD_ANCHOR_SCOPE,
+            "future_data_used": False,
+            "sample_draw_no": weekly_samples[week]["draw_no"],
+            "sample_draw_date": weekly_samples[week]["draw_date"],
+            "predicted_numbers": weekly_samples[week]["predicted_numbers"],
+            "actual_numbers": weekly_samples[week]["actual_numbers"],
+            "actual_special_numbers": weekly_samples[week][
+                "actual_special_numbers"
+            ],
+            "comparison_hit_numbers": weekly_samples[week][
+                "comparison_hit_numbers"
+            ],
+            "comparison_hit_positions": weekly_samples[week][
+                "comparison_hit_positions"
+            ],
+            "sample_hit_count": weekly_samples[week]["comparison_hit_count"],
+            "sample_number_count": weekly_samples[week][
+                "comparison_number_count"
+            ],
+            **_performance_rates(weekly_buckets[week]),
+        }
         for week in sorted(weekly_buckets, reverse=True)[:10]
     ]
     recent_periods = list(reversed(periods[-10:]))
@@ -535,6 +896,19 @@ def _replay_performance_payload(
     method_rates = _performance_rates(overall)
     uniform_rates = _performance_rates(uniform_overall)
     structured_rates = _performance_rates(structured_overall)
+    tickets_per_draw = (
+        round(overall["tickets"] / overall["evaluated_runs"])
+        if overall["evaluated_runs"]
+        else 10
+    )
+    theoretical_uniform = _theoretical_uniform_rates(
+        db,
+        game,
+        replay_pick_count,
+        replay_target_hits,
+        tickets_per_draw,
+    )
+    uniform_rates.update(theoretical_uniform)
     return {
         "weekly": weekly,
         "recent_periods": recent_periods,
@@ -555,13 +929,33 @@ def _replay_performance_payload(
                 method_rates["any_hit_ticket_rate"],
                 uniform_rates["any_hit_ticket_rate"],
             ),
+            "target_hit_rate_delta_vs_random": _rate_delta(
+                method_rates["target_hit_rate"],
+                uniform_rates["target_hit_rate"],
+            ),
             "same_ticket_count": method_rates["tickets"]
             == uniform_rates["tickets"]
             == structured_rates["tickets"],
+            "uniform_rate_source": "exact_combinatorial_probability",
         },
-        "source": "VIDEO_FIVE_STEP_V1_REPLAY",
+        "source": str(
+            dict(replay.result_summary_json or {}).get(
+                "calculation_method",
+                "VIDEO_FIVE_STEP_V1",
+            )
+        ),
         "replay_run_uuid": replay.run_uuid,
         "future_data_used": False,
+        "anchor_version": WALK_FORWARD_ANCHOR_VERSION,
+        "anchor_scope": WALK_FORWARD_ANCHOR_SCOPE,
+        "anchor_created_at": max(
+            (
+                period.get("walk_forward_anchor_created_at")
+                for period in periods
+                if period.get("walk_forward_anchor_created_at")
+            ),
+            default=None,
+        ),
     }
 
 
@@ -589,7 +983,7 @@ def _comparison_payload(
             if first_ticket is not None
             else []
         )
-        prediction_source = "推薦第1組"
+        prediction_source = "每週唯一定錨組合"
     actual_main = [
         int(number.number_value)
         for number in sorted(
@@ -645,9 +1039,6 @@ def _comparison_payload(
 
 
 def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
-    replay_payload = _replay_performance_payload(db, game)
-    if replay_payload is not None:
-        return replay_payload
     evaluations = list(
         db.scalars(
             select(EvaluationRun)
@@ -659,18 +1050,53 @@ def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
             .order_by(EvaluationRun.id.desc())
         )
     )
+    # A user can generate several recommendations for the same target draw.
+    # Counting the best or newest one after the result is known would be
+    # cherry-picking, so only the earliest valid pre-draw anchor is eligible.
+    canonical_by_draw: dict[int, tuple[EvaluationRun, GenerationRun, Draw]] = {}
+    for evaluation in evaluations:
+        run = db.get(GenerationRun, evaluation.generation_run_id)
+        actual_draw = db.get(Draw, evaluation.actual_draw_id)
+        if (
+            run is None
+            or actual_draw is None
+            or run.config_json.get("simple_mode") != "weekly"
+            or actual_draw.draw_no != run.target_draw_no
+            or not verify_recommendation_anchor(db, run)
+            or not draw_arrived_after_lock(run, actual_draw)
+        ):
+            continue
+        evaluated_at = as_utc(evaluation.evaluated_at)
+        draw_ingested_at = as_utc(actual_draw.created_at)
+        if (
+            evaluated_at is None
+            or draw_ingested_at is None
+            or evaluated_at < draw_ingested_at
+        ):
+            continue
+        current = canonical_by_draw.get(actual_draw.id)
+        if current is None:
+            canonical_by_draw[actual_draw.id] = (evaluation, run, actual_draw)
+            continue
+        current_run = current[1]
+        run_key = (as_utc(run.locked_at) or datetime.max.replace(tzinfo=UTC), run.id)
+        current_key = (
+            as_utc(current_run.locked_at) or datetime.max.replace(tzinfo=UTC),
+            current_run.id,
+        )
+        if run_key < current_key:
+            canonical_by_draw[actual_draw.id] = (evaluation, run, actual_draw)
+
     weekly_buckets: dict[str, dict[str, int]] = defaultdict(
         _empty_performance_bucket
     )
-    period_buckets: dict[str, dict[str, Any]] = {}
+    periods: list[dict[str, Any]] = []
     overall = _empty_performance_bucket()
-    for evaluation in evaluations:
-        run = db.get(GenerationRun, evaluation.generation_run_id)
-        if run is None:
-            continue
-        actual_draw = db.get(Draw, evaluation.actual_draw_id)
-        if actual_draw is None or actual_draw.draw_no != run.target_draw_no:
-            continue
+    ordered_evaluations = sorted(
+        canonical_by_draw.values(),
+        key=lambda item: (item[2].draw_date, item[2].draw_no),
+    )
+    for evaluation, run, actual_draw in ordered_evaluations:
         iso = actual_draw.draw_date.isocalendar()
         week = f"{iso.year}-W{iso.week:02d}"
         ruleset = db.get(Ruleset, evaluation.ruleset_id)
@@ -679,28 +1105,54 @@ def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
             pick_count = int(ruleset.config_json["pools"][0]["pick_count"])
         if game.game_type == "high_frequency":
             pick_count = int(run.config_json.get("star_count", pick_count))
+        target_hits = int(
+            run.config_json.get("coverage_target_hits")
+            or recommended_coverage_target(game.game_type, pick_count)
+        )
         results = list(
             db.scalars(
                 select(TicketResult).where(TicketResult.evaluation_run_id == evaluation.id)
             )
         )
-        _add_performance_results(weekly_buckets[week], results, pick_count)
-        _add_performance_results(overall, results, pick_count)
-        period = period_buckets.setdefault(
-            actual_draw.draw_no,
+        _add_performance_results(
+            weekly_buckets[week],
+            results,
+            pick_count,
+            target_hits,
+        )
+        _add_performance_results(overall, results, pick_count, target_hits)
+        period_stats = _empty_performance_bucket()
+        _add_performance_results(
+            period_stats,
+            results,
+            pick_count,
+            target_hits,
+        )
+        locked_at = as_utc(run.locked_at)
+        draw_ingested_at = as_utc(actual_draw.created_at)
+        periods.append(
             {
                 "draw_no": actual_draw.draw_no,
                 "draw_date": actual_draw.draw_date.isoformat(),
-                "stats": _empty_performance_bucket(),
-                "comparison": _comparison_payload(
+                **_comparison_payload(
                     run,
                     actual_draw,
                     ruleset,
                     game,
                 ),
+                **_performance_rates(period_stats),
+                "coverage_target_hits": target_hits,
+                "target_achieved": bool(period_stats["target_hit_draws"]),
+                "best_hit_count": period_stats["best_hit"],
+                "recommendation_anchor": run.config_json.get(
+                    "recommendation_anchor"
+                ),
+                "locked_at": locked_at.isoformat() if locked_at else None,
+                "draw_ingested_at": (
+                    draw_ingested_at.isoformat() if draw_ingested_at else None
+                ),
             },
         )
-        _add_performance_results(period["stats"], results, pick_count)
 
     weekly: list[dict[str, Any]] = []
     for week in sorted(weekly_buckets, reverse=True)[:10]:
@@ -710,24 +1162,18 @@ def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
                 **_performance_rates(weekly_buckets[week]),
             }
         )
-    recent_periods: list[dict[str, Any]] = []
-    sorted_periods = sorted(
-        period_buckets.values(),
-        key=lambda item: (str(item["draw_date"]), str(item["draw_no"])),
-        reverse=True,
-    )
     recent_10 = _empty_performance_bucket()
-    for period in sorted_periods[:10]:
-        stats = period["stats"]
-        _merge_performance(recent_10, stats)
-        recent_periods.append(
+    recent_periods = list(reversed(periods[-10:]))
+    for period in periods[-10:]:
+        stats = _empty_performance_bucket()
+        stats.update(
             {
-                "draw_no": period["draw_no"],
-                "draw_date": period["draw_date"],
-                **period["comparison"],
-                **_performance_rates(stats),
+                key: int(period[key])
+                for key in stats
+                if period.get(key) is not None
             }
         )
+        _merge_performance(recent_10, stats)
     latest_week = weekly[0] if weekly else {
         "week": None,
         **_performance_rates(_empty_performance_bucket()),
@@ -740,7 +1186,11 @@ def _performance_payload(db: Session, game: Game) -> dict[str, Any]:
             "latest_week": latest_week,
             "overall": _performance_rates(overall),
         },
-        "source": "LOCKED_RECOMMENDATION_EVALUATION",
+        "baselines": None,
+        "source": "ANCHORED_POST_DRAW_EVALUATION",
+        "replay_run_uuid": None,
+        "future_data_used": False,
+        "anchored_sample_count": overall["evaluated_runs"],
     }
 
 
@@ -780,13 +1230,19 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
             GenerationRun.locked.is_(True),
         )
         .order_by(GenerationRun.id.desc())
-        .limit(8)
+        .limit(50)
     )
     if official_count:
         runs_statement = runs_statement.where(Draw.source_status == "official")
-    runs = list(db.scalars(runs_statement))
+    runs = [
+        run
+        for run in db.scalars(runs_statement)
+        if verify_recommendation_anchor(db, run)
+    ][:8]
     records: list[dict[str, Any]] = []
     for run in runs:
+        if run.config_json.get("simple_mode") != "weekly":
+            continue
         payload = serialize_generation_run(db, run.run_uuid)
         evaluation = get_evaluation(db, run.run_uuid)
         if (
@@ -805,26 +1261,23 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
             record
             for record in records
             if record["config"].get("simple_interface") is True
-            and latest is not None
-            and record["cutoff_draw_no"] == latest.draw_no
+            and record["config"].get("simple_mode") == "weekly"
+            and record["config"].get("weekly_key") == _current_week_key()
         ),
         None,
     )
     primary_pick = int(ruleset.config_json["pools"][0]["pick_count"])
-    wheel_modes = [
-        size
-        for size in (7, 8, 9)
-        if game.game_type in {"unordered_unique_numbers", "derived_game"}
-        and size > primary_pick
-        and math.comb(size, primary_pick) <= 100
-    ]
+    default_coverage_target = 1
+    wheel_modes: list[int] = []
     performance = _performance_payload(db, game)
+    historical_review = _replay_performance_payload(db, game)
     return {
         "game": {
             "game_code": game.game_code,
             "display_name": game.display_name_zh_tw,
             "game_type": game.game_type,
             "primary_pick_count": primary_pick,
+            "coverage_target_hits": default_coverage_target,
             "wheel_modes": wheel_modes,
             "ruleset_verified": ruleset.verified,
         },
@@ -843,23 +1296,65 @@ def simple_dashboard(db: Session, game_code: str) -> dict[str, Any]:
         "performance_baselines": performance.get("baselines"),
         "performance_source": performance.get("source"),
         "performance_replay_run_uuid": performance.get("replay_run_uuid"),
+        "anchored_sample_count": performance.get("anchored_sample_count", 0),
+        "future_data_used": performance.get("future_data_used", False),
+        "historical_weekly_review": {
+            "available": historical_review is not None,
+            "weeks": historical_review["weekly"] if historical_review else [],
+            "summary": historical_review["summary"] if historical_review else None,
+            "replay_run_uuid": (
+                historical_review.get("replay_run_uuid")
+                if historical_review
+                else None
+            ),
+            "anchor_version": (
+                historical_review.get("anchor_version")
+                if historical_review
+                else None
+            ),
+            "anchor_scope": (
+                historical_review.get("anchor_scope")
+                if historical_review
+                else None
+            ),
+            "anchor_created_at": (
+                historical_review.get("anchor_created_at")
+                if historical_review
+                else None
+            ),
+            "future_data_used": (
+                historical_review.get("future_data_used")
+                if historical_review
+                else False
+            ),
+            "note": (
+                "近10週每週只固定1組號碼，並只使用該週開始前的資料重建推薦；"
+                "預測組合與輸入資料"
+                "已建立回測定錨；定錨建立時間晚於歷史開獎，因此只代表可重現的"
+                "無未來資料回測，不冒充當時已存在的實戰鎖定。每週會隨官方資料"
+                "更新向前滾動，且不計入上方實戰達標率。"
+            ),
+        },
         "metric_definitions": {
+            "target_hit_rate": (
+                "有命中期數 ÷ 開獎後已驗證的每週唯一組合；"
+                "有命中＝該組至少命中1個主要號碼"
+            ),
             "number_accuracy": (
-                "10組單式命中主要號碼總數 ÷ 10組全部檢查號碼數"
+                "每週唯一組合命中的主要號碼總數 ÷ 該組全部檢查號碼數"
             ),
             "any_hit_ticket_rate": (
-                "至少命中1個主要號碼的單式數 ÷ 全部單式數"
+                "至少命中1個主要號碼的週組合數 ÷ 全部已驗證週組合數"
             ),
             "period_comparison": (
-                "逐期表第1組命中主要號碼數 ÷ 第1組號碼數"
+                "每週表只顯示開獎前鎖定的唯一1組，絕不在開獎後換號"
             ),
         },
         "metric_note": (
-            "週更以影片五步法逐期回放計算，每一期只使用該期以前資料。"
-            "號碼命中率＝10組單式命中主要號碼總數除以全部檢查號碼數；"
-            "至少中1碼單式＝10組中命中至少1個主要號碼的單式比例。"
-            "逐期表顯示第1組，右側為該組命中數除以該組號碼數。"
-            "隨機基準使用相同期數與相同注數，差值以百分點表示。"
-            "近10期、最新一週與累計數字都是歷史紀錄，不是未來中獎機率。"
+            "這裡只顯示實戰定錨紀錄，不混入歷史回放。推薦產生時會把目標期別、"
+            "資料截止期、鎖定時間與每週唯一1組寫入 SHA-256 定錨；只有開獎資料在"
+            "鎖定後才寫入、定錨驗證成功且期別完全相同，才會計分。"
+            "同一週固定後不能換號；有命中率＝唯一1組至少命中1碼的實戰比例。"
+            "尚未累積合格樣本時一律顯示「等待驗證」，不以回放數字代替。"
         ),
     }

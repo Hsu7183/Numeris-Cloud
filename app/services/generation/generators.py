@@ -3,7 +3,10 @@ from __future__ import annotations
 import hashlib
 import itertools
 import json
+import math
 from abc import ABC, abstractmethod
+from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -135,6 +138,141 @@ def _select_diverse(
     return selected
 
 
+def recommended_coverage_target(game_type: str, pick_count: int) -> int:
+    """Return the transparent analysis threshold used by coverage mode.
+
+    The value is a comparison target, not a claim that every game awards a
+    prize at that threshold. Ordered digit games require an exact positional
+    match; unordered games use a low-tier coverage target.
+    """
+    if game_type == "ordered_digits":
+        return pick_count
+    if game_type == "high_frequency":
+        return {
+            1: 1,
+            2: 2,
+            3: 3,
+            4: 3,
+            5: 3,
+            6: 4,
+            7: 4,
+            8: 4,
+            9: 5,
+            10: 5,
+        }.get(pick_count, max(1, (pick_count + 1) // 2))
+    if pick_count >= 6:
+        return 3
+    if pick_count >= 5:
+        return 2
+    return pick_count
+
+
+def _coverage_keys(numbers: list[int], target_hits: int) -> set[tuple[int, ...]]:
+    return {
+        tuple(int(number) for number in subset)
+        for subset in itertools.combinations(sorted(numbers), target_hits)
+    }
+
+
+def _select_max_coverage(
+    candidates: list[Candidate],
+    count: int,
+    max_overlap: int,
+    pool_size: int,
+    target_hits: int,
+) -> tuple[list[Candidate], dict[str, Any]]:
+    """Greedily maximize distinct target-sized subsets across the ticket batch."""
+    if not candidates:
+        return [], {}
+    remaining = sorted(
+        candidates,
+        key=lambda item: (-item.preference_score, item.ticket_hash),
+    )
+    selected: list[Candidate] = []
+    covered_numbers: set[int] = set()
+    covered_targets: set[tuple[int, ...]] = set()
+    overlap_limit = max(0, max_overlap)
+    relaxed_to = overlap_limit
+
+    while remaining and len(selected) < count:
+        scored: list[tuple[tuple[float, ...], Candidate, set[tuple[int, ...]]]] = []
+        for candidate in remaining:
+            numbers = set(candidate.primary_numbers)
+            overlaps = [
+                len(numbers & set(other.primary_numbers))
+                for other in selected
+            ]
+            maximum_overlap = max(overlaps, default=0)
+            if selected and maximum_overlap > relaxed_to:
+                continue
+            keys = _coverage_keys(candidate.primary_numbers, target_hits)
+            marginal = len(keys - covered_targets)
+            new_numbers = len(numbers - covered_numbers)
+            minimum_distance = min(
+                (
+                    1
+                    - jaccard_similarity(
+                        candidate.primary_numbers,
+                        other.primary_numbers,
+                    )
+                    for other in selected
+                ),
+                default=1.0,
+            )
+            score = (
+                float(marginal),
+                float(new_numbers),
+                minimum_distance,
+                -float(maximum_overlap),
+                candidate.preference_score,
+            )
+            scored.append((score, candidate, keys))
+        if not scored:
+            relaxed_to += 1
+            continue
+        _, best, best_keys = max(
+            scored,
+            key=lambda item: (item[0], item[1].ticket_hash),
+        )
+        if selected:
+            best.diversity_score = round(
+                min(
+                    1
+                    - jaccard_similarity(
+                        best.primary_numbers,
+                        other.primary_numbers,
+                    )
+                    for other in selected
+                ),
+                6,
+            )
+        selected.append(best)
+        remaining.remove(best)
+        covered_numbers.update(best.primary_numbers)
+        covered_targets.update(best_keys)
+
+    theoretical_maximum = (
+        len(selected) * math.comb(len(selected[0].primary_numbers), target_hits)
+        if selected
+        else 0
+    )
+    return selected, {
+        "selection_strategy": "maximum_target_coverage",
+        "coverage_target_hits": target_hits,
+        "covered_target_subsets": len(covered_targets),
+        "theoretical_target_subsets": theoretical_maximum,
+        "target_subset_efficiency": (
+            round(len(covered_targets) / theoretical_maximum, 6)
+            if theoretical_maximum
+            else 0.0
+        ),
+        "requested_max_overlap": overlap_limit,
+        "effective_max_overlap": relaxed_to,
+        "covered_numbers": len(covered_numbers),
+        "pool_size": pool_size,
+    }
+
+
 class UnorderedCombinationGenerator(CandidateGenerator):
     def generate(  # type: ignore[override]
         self,
@@ -154,6 +292,8 @@ class UnorderedCombinationGenerator(CandidateGenerator):
         temperature_constraint: bool = True,
         use_temperature_preference: bool = True,
         include_ac: bool = True,
+        selection_strategy: str = "preference",
+        coverage_target_hits: int | None = None,
     ) -> tuple[list[Candidate], dict[str, Any]]:
         pick_count = int(pool["pick_count"])
         minimum, maximum = int(pool["min"]), int(pool["max"])
@@ -198,7 +338,11 @@ class UnorderedCombinationGenerator(CandidateGenerator):
         candidates: dict[str, Candidate] = {}
         attempts = 0
         # 差異化選擇不需保存龐大候選池；較小批次可讓本機及coverage環境快速完成。
-        desired_candidates = max(count * 12, 40)
+        desired_candidates = (
+            max(count * 60, 300)
+            if selection_strategy == "coverage"
+            else max(count * 12, 40)
+        )
         while attempts < max_attempts and len(candidates) < desired_candidates:
             attempts += 1
             selected = list(include)
@@ -277,9 +421,35 @@ class UnorderedCombinationGenerator(CandidateGenerator):
             )
             candidates[candidate.ticket_hash] = candidate
 
-        selected_candidates = _select_diverse(
-            list(candidates.values()), count, overlap_limit, maximum - minimum + 1
-        )
+        coverage_diagnostics: dict[str, Any] = {}
+        if selection_strategy == "coverage":
+            target_hits = int(
+                coverage_target_hits
+                if coverage_target_hits is not None
+                else recommended_coverage_target(
+                    "high_frequency" if not include_ac else "unordered_unique_numbers",
+                    pick_count,
+                )
+            )
+            if target_hits < 1 or target_hits > pick_count:
+                raise GenerationError(
+                    "GEN_COVERAGE_TARGET",
+                    "覆蓋門檻必須介於1與每組選號數之間",
+                )
+            selected_candidates, coverage_diagnostics = _select_max_coverage(
+                list(candidates.values()),
+                count,
+                min(overlap_limit, max(0, target_hits - 1)),
+                maximum - minimum + 1,
+                target_hits,
+            )
+        else:
+            selected_candidates = _select_diverse(
+                list(candidates.values()),
+                count,
+                overlap_limit,
+                maximum - minimum + 1,
+            )
         diagnostics: dict[str, Any] = {
             "attempts": attempts,
             "candidate_count": len(candidates),
@@ -289,6 +459,7 @@ class UnorderedCombinationGenerator(CandidateGenerator):
             "temperature_constraint": temperature_constraint,
             "temperature_preference": use_temperature_preference,
             "constraints_relaxed": False,
+            **coverage_diagnostics,
         }
         if len(selected_candidates) < count:
             diagnostics["suggestion"] = "可考慮增加最大重疊數、關閉AC限制或調整奇偶與大小條件"
@@ -311,6 +482,7 @@ class MultiPoolGenerator(CandidateGenerator):
         previous_by_pool: dict[str, list[int]] | None = None,
         **kwargs: Any,
     ) -> tuple[list[Candidate], dict[str, Any]]:
+        coverage_mode = kwargs.get("selection_strategy") == "coverage"
         primary_pool = pools[0]
         base_generator = UnorderedCombinationGenerator(self.seed)
         primary, diagnostics = base_generator.generate(
@@ -323,10 +495,20 @@ class MultiPoolGenerator(CandidateGenerator):
         secondary_pool = pools[1]
         secondary_choices = list(range(int(secondary_pool["min"]), int(secondary_pool["max"]) + 1))
         secondary_code = str(secondary_pool["code"])
-        for candidate in primary:
-            value = int(self.rng.choice(secondary_choices))
+        secondary_offset = int(self.rng.integers(0, len(secondary_choices)))
+        for index, candidate in enumerate(primary):
+            value = (
+                int(secondary_choices[(secondary_offset + index) % len(secondary_choices)])
+                if coverage_mode
+                else int(self.rng.choice(secondary_choices))
+            )
             candidate.pools[secondary_code] = [value]
             candidate.explanation["message"] += f" 第二區為{value:02d}。"
+        if coverage_mode:
+            diagnostics["secondary_pool_strategy"] = "round_robin_coverage"
+            diagnostics["secondary_pool_coverage"] = len(
+                {candidate.pools[secondary_code][0] for candidate in primary}
+            )
         _add_batch_metrics(primary, int(primary_pool["max"]) - int(primary_pool["min"]) + 1)
         return primary, diagnostics
 
@@ -341,6 +523,8 @@ class OrderedDigitGenerator(CandidateGenerator):
         metrics_by_position: list[list[dict[str, Any]]] | None = None,
         use_temperature_preference: bool = True,
         max_overlap: int | None = None,
+        selection_strategy: str = "preference",
+        coverage_target_hits: int | None = None,
         **_kwargs: Any,
     ) -> tuple[list[Candidate], dict[str, Any]]:
         digit_count = int(pool["pick_count"])
@@ -356,7 +540,25 @@ class OrderedDigitGenerator(CandidateGenerator):
             for metrics in position_metrics
         ]
         candidates: list[Candidate] = []
-        for digits_tuple in itertools.product(range(10), repeat=digit_count):
+        total_combinations = 10**digit_count
+        digit_tuples: Iterable[tuple[int, ...]]
+        if selection_strategy == "coverage":
+            candidate_budget = min(
+                total_combinations,
+                max(300, count * 60),
+            )
+            sampled_values = self.rng.choice(
+                total_combinations,
+                size=candidate_budget,
+                replace=False,
+            )
+            digit_tuples = (
+                tuple(int(char) for char in f"{int(value):0{digit_count}d}")
+                for value in sampled_values
+            )
+        else:
+            digit_tuples = itertools.product(range(10), repeat=digit_count)
+        for digits_tuple in digit_tuples:
             digits = list(digits_tuple)
             structure = ordered_digit_structure(digits, previous_numbers)
             repeat_preference = (
@@ -420,12 +622,18 @@ class OrderedDigitGenerator(CandidateGenerator):
         selected = _select_ordered_diverse(candidates, count, max_overlap or digit_count - 1)
         _add_batch_metrics(selected, 10 * digit_count)
         return selected, {
-            "attempts": 10**digit_count,
+            "attempts": len(candidates),
             "candidate_count": len(candidates),
             "requested_count": count,
             "generated_count": len(selected),
             "position_temperature_analysis": len(position_metrics) == digit_count,
             "temperature_preference": use_temperature_preference,
+            "selection_strategy": (
+                "maximum_distinct_position_coverage"
+                if selection_strategy == "coverage"
+                else "preference"
+            ),
+            "coverage_target_hits": coverage_target_hits,
             "constraints_relaxed": False,
         }
 
@@ -524,7 +732,3 @@ def _add_batch_metrics(candidates: list[Candidate], pool_size: int) -> None:
     }
     for candidate in candidates:
         candidate.explanation["batch_metrics"] = batch
-
-
-# 僅供內部使用；放在檔案末端避免讓演算法主流程被資料結構細節干擾。
-from collections import Counter  # noqa: E402

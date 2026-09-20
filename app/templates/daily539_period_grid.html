@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>今彩539｜期數格表</title>
+  <link rel="stylesheet" href="/static/css/daily539_period_grid.css?v={{ app_version }}-2">
+  <link rel="stylesheet" href="/static/css/daily539_period_grid_neutral.css?v={{ app_version }}-3">
+</head>
+<body>
+  <main class="period-grid-page">
+    <header>
+      <a href="/539">← 返回統計</a>
+      <div><strong>今彩 539 期數格表</strong><span id="grid-meta">請先在統計頁抓取球號</span></div>
+    </header>
+    <p class="grid-note">每列由左到右都有淡灰欄位數字；每個格位只顯示 1 個黑色空心圈：計算範圍出現 1 次為無字、2 次寫 1、3 次寫 2，依序類推。</p>
+    <section id="winning-draws" class="winning-draws hidden" aria-live="polite"></section>
+    <section id="period-grid-list" class="period-grid-list"></section>
+  </main>
+  <script src="/static/js/daily539_period_grid.js?v={{ app_version }}-12"></script>
+</body>
+</html>

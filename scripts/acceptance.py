@@ -91,17 +91,6 @@ def main() -> None:
             "max_overlap": 3,
         },
     )
-    bingo = post(
-        "/api/generation/run",
-        {
-            "game_code": "TW_BINGO",
-            "ticket_count": 10,
-            "lookback_count": 20,
-            "random_seed": 802026,
-            "max_overlap": 5,
-            "star_count": 10,
-        },
-    )
     leading_zero = any(ticket["pools"]["digits"][0] == 0 for ticket in pick3["tickets"])
     if not leading_zero:
         raise RuntimeError("3星彩驗收未產生前導0組合")
@@ -187,14 +176,6 @@ def main() -> None:
             "leading_zero": pick4_leading_zero,
             "ordered_digits": all(
                 len(ticket["pools"]["digits"]) == 4 for ticket in pick4["tickets"]
-            ),
-        },
-        "bingo": {
-            "run_uuid": bingo["run_uuid"],
-            "valid_10_star": all(
-                len(ticket["pools"]["main"]) == 10
-                and len(set(ticket["pools"]["main"])) == 10
-                for ticket in bingo["tickets"]
             ),
         },
         "replay": replay_status,

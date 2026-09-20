@@ -77,30 +77,27 @@ def test_simple_recommendation_ui_flow() -> None:
             page.on("pageerror", lambda error: page_errors.append(str(error)))
             page.goto(base_url)
             page.get_by_role("heading", name="選擇商品／彩種").wait_for()
-            page.get_by_text("步驟 2 · 影片五步法選號", exact=True).wait_for()
-            page.get_by_text("近10期號碼命中率", exact=True).wait_for()
-            page.get_by_text("累計號碼命中率", exact=True).wait_for()
+            page.get_by_text("步驟 2 · 每週固定唯一1組", exact=True).wait_for()
+            page.locator("#recent-metric-title").wait_for()
+            page.locator("#overall-metric-title").wait_for()
+            assert page.locator("#recent-metric-title").inner_text() in {
+                "近10週平均號碼命中率",
+                "近10週實戰號碼命中率",
+            }
+            page.locator("[data-mode='weekly']").wait_for()
+            assert page.locator("#game-select option[value='TW_BINGO']").count() == 0
             page.locator("#game-select").select_option("TW_LOTTO649")
             page.locator("#choice-title").filter(has_text="大樂透").wait_for(
                 timeout=30000
             )
-            page.locator("#open-combinations").wait_for(timeout=30000)
-            page.locator("#open-combinations").click()
-            page.locator("#result-title").filter(has_text="大樂透").wait_for()
-            page.locator(".ticket").first.wait_for(state="visible")
-            assert page.locator(".ticket").count() == 10
-            assert "/api/exports/generation/" in (
-                page.locator("#export-csv").get_attribute("href") or ""
-            )
-
-            page.locator("#close-combinations").click()
+            page.locator(".summary-ball").first.wait_for(timeout=30000)
+            assert page.locator(".summary-ball").count() == 6
+            assert page.locator("#open-combinations").count() == 0
+            page.get_by_text("唯一 1 組", exact=False).wait_for()
             page.locator("#game-select").select_option("HK_MARKSIX")
-            page.locator("[data-mode='wheel7']").wait_for(state="visible")
-            page.locator("[data-mode='wheel7']").click()
             page.locator("#generate").click()
-            page.locator("#open-combinations").click()
-            page.locator("#wheel-core").wait_for(state="visible", timeout=30000)
-            assert page.locator(".ticket").count() == 7
+            page.get_by_text("本週固定後不更換", exact=True).wait_for(timeout=30000)
+            assert page.locator("[data-mode='weekly']").count() == 1
             assert page.locator(".sidebar").count() == 0
             page.set_viewport_size({"width": 1920, "height": 1080})
             desktop_metrics = page.evaluate(
@@ -138,10 +135,7 @@ def test_simple_recommendation_ui_flow() -> None:
             )
             assert compact_metrics["scrollWidth"] == compact_metrics["clientWidth"]
             assert compact_metrics["scrollHeight"] == compact_metrics["clientHeight"]
-            assert page.locator(".ticket").count() == 6
-            page.locator("#ticket-next").click()
-            assert page.locator("#ticket-page").inner_text() == "第 2／2 頁"
-            assert page.locator(".ticket").count() == 1
+            assert page.locator(".summary-ball").count() == 6
             assert not page_errors
             browser.close()
     finally:

@@ -227,8 +227,32 @@ def run_update_job(job_uuid: str) -> None:
             job.progress_current = index
             job.message = f"已完成 {index}/{len(steps)} 個官方來源檢查"
             db.commit()
+        job.message = "官方資料完成，正在檢查近10週回測定錨"
+        db.commit()
+        try:
+            from scripts.rebuild_weekly import main as rebuild_weekly
+            from scripts.rebuild_weekly import needs_rebuild
+
+            if needs_rebuild():
+                rebuild_weekly()
+                results["weekly_review"] = {
+                    "status": "completed",
+                    "message": "近10週回測定錨已隨最新開獎資料更新",
+                }
+            else:
+                results["weekly_review"] = {
+                    "status": "current",
+                    "message": "近10週回測定錨已是最新",
+                }
+        except Exception as exc:
+            LOGGER.exception("近10週回測定錨更新失敗")
+            results["weekly_review"] = {
+                "status": "failed",
+                "error": str(exc),
+                "message": "官方獎號已更新，但近10週回測整理失敗，可稍後重試",
+            }
         job.status = "completed"
-        job.message = "官方來源檢查完成"
+        job.message = "官方來源與近10週定錨檢查完成"
         job.result_json = results
         job.completed_at = datetime.now(UTC)
         db.commit()
@@ -634,8 +658,11 @@ def _update_taiwan_current(
             }
         )
 
-    bingo_results = _update_taiwan_current_bingo(db, sources, stamp, base_url)
-    parsed_draws += int(bingo_results["parsed_draws"])
+    bingo_results: dict[str, object] = {
+        "status": "disabled",
+        "reason": "BINGO商品已停用",
+        "parsed_draws": 0,
+    }
     return {
         "month": current_month,
         "traditional": results,

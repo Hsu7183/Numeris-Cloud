@@ -9,7 +9,7 @@ from sqlalchemy import func, select
 from app.core.database import SessionLocal
 from app.core.paths import REPORT_DIR
 from app.models.api_models import ReplayRequest
-from app.models.database_models import Draw, Game
+from app.models.database_models import Draw, Game, GenerationPreset, ReplayRun
 from app.services.replay.service import (
     create_replay_job,
     get_replay,
@@ -20,7 +20,6 @@ GAME_CODES = (
     "HK_MARKSIX",
     "TW_39MATCH",
     "TW_49MATCH",
-    "TW_BINGO",
     "TW_DAILY539",
     "TW_LOTTO649",
     "TW_PICK3",
@@ -30,7 +29,60 @@ GAME_CODES = (
 
 
 def _seed(game_code: str) -> int:
-    return int(hashlib.sha256(f"weekly|{game_code}|v1".encode()).hexdigest()[:10], 16)
+    return int(
+        hashlib.sha256(
+            f"weekly|{game_code}|single-fixed-v1".encode()
+        ).hexdigest()[:10],
+        16,
+    )
+
+
+def needs_rebuild() -> bool:
+    with SessionLocal() as db:
+        for game_code in GAME_CODES:
+            game = db.scalar(select(Game).where(Game.game_code == game_code))
+            if game is None:
+                continue
+            data_game = game
+            if game.parent_game_code:
+                parent = db.scalar(
+                    select(Game).where(Game.game_code == game.parent_game_code)
+                )
+                if parent is not None:
+                    data_game = parent
+            latest_draw_id = db.scalar(
+                select(Draw.id)
+                .where(
+                    Draw.game_id == data_game.id,
+                    Draw.source_status == "official",
+                )
+                .order_by(Draw.draw_date.desc(), Draw.draw_no.desc())
+                .limit(1)
+            )
+            latest_replay_end_id = next(
+                (
+                    replay.end_draw_id
+                    for replay in db.scalars(
+                select(ReplayRun)
+                .join(
+                    GenerationPreset,
+                    ReplayRun.preset_id == GenerationPreset.id,
+                )
+                .where(
+                    ReplayRun.game_id == game.id,
+                    ReplayRun.status == "completed",
+                    GenerationPreset.preset_code == "VIDEO_FIVE_STEP_V1",
+                )
+                .order_by(ReplayRun.completed_at.desc(), ReplayRun.id.desc())
+                    )
+                    if replay.tickets_per_draw == 1
+                    and replay.config_json.get("cadence") == "week"
+                ),
+                None,
+            )
+            if latest_draw_id is not None and latest_replay_end_id != latest_draw_id:
+                return True
+    return False
 
 
 def main() -> None:
@@ -80,9 +132,12 @@ def main() -> None:
                 start_index=draw_count - replay_periods,
                 end_index=draw_count - 1,
                 lookback_count=lookback,
-                tickets_per_draw=10,
+                tickets_per_draw=1,
                 random_seed=_seed(game_code),
                 baseline_repetitions=20,
+                strategy="video",
+                cadence="week",
+                star_count=6,
             )
             created = create_replay_job(db, request)
             run_uuid = str(created["run_uuid"])
@@ -105,7 +160,7 @@ def main() -> None:
 
     payload = {
         "generated_at": datetime.now(UTC).isoformat(),
-        "method": "VIDEO_FIVE_STEP_V1",
+        "method": "WEEKLY_SINGLE_FIXED_V1",
         "future_data_used": False,
         "results": results,
     }

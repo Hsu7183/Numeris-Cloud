@@ -63,9 +63,13 @@ def _game_payload(
 @router.get("/api/games")
 def list_games(
     include_stats: bool = True,
+    include_inactive: bool = False,
     db: Session = Depends(get_db),
 ) -> list[dict[str, object]]:
-    games = list(db.scalars(select(Game).order_by(Game.market_code, Game.id)))
+    statement = select(Game).order_by(Game.market_code, Game.id)
+    if not include_inactive:
+        statement = statement.where(Game.active.is_(True))
+    games = list(db.scalars(statement))
     if not include_stats:
         return [_game_payload(db, game, load_stats=False) for game in games]
     draw_counts = {

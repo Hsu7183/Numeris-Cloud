@@ -1,0 +1,15 @@
+.month-row td.winning-cell {
+  background: #fff6d8;
+  color: #263d32;
+  font-size: .8rem;
+}
+
+.month-row td.winning-cell b {
+  display: block;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.month-row:nth-child(even) td.winning-cell {
+  background: #f7edcf;
+}

@@ -1,0 +1,44 @@
+/* 最右側「相鄰統計」：依亮燈次數上色，0 次為灰色。 */
+.summary-count > strong { font-weight: 900; }
+.summary-count-0 > strong { color: #66756c; }
+.summary-count-0 .summary-ball { border-color: #aab6ae; background: #e4e9e5; color: #526158; box-shadow: none; }
+.summary-count-1 > strong { color: #177145; }
+.summary-count-1 .summary-ball { border-color: #398b5b; background: #bdf26a; color: #083c24; }
+.summary-count-2 > strong { color: #00777b; }
+.summary-count-2 .summary-ball { border-color: #007c81; background: #73e5df; color: #003e41; }
+.summary-count-3 > strong { color: #b15d00; }
+.summary-count-3 .summary-ball { border-color: #bd6800; background: #ffbc36; color: #4a2900; }
+.summary-count-4 > strong { color: #b82032; }
+.summary-count-4 .summary-ball { border-color: #9d2030; background: #ff878d; color: #53000a; }
+.summary-count-5 > strong { color: #6e3fa0; }
+.summary-count-5 .summary-ball { border-color: #7044a0; background: #d1a9ff; color: #34105c; }
+.summary-count-6 > strong { color: #225cab; }
+.summary-count-6 .summary-ball { border-color: #2762b1; background: #9cc7ff; color: #082e66; }
+.summary-count-7 > strong { color: #70400a; }
+.summary-count-7 .summary-ball { border-color: #7b480d; background: #e6bd79; color: #3d2100; }
+
+/* 六欄並排時，主統計每個次數群組必須維持單列且不能被裁切。 */
+.ball {
+  font-family: "Arial Narrow", Arial, "Microsoft JhengHei", sans-serif;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: 0;
+  transform: none;
+}
+
+.ball-number {
+  display: block;
+  transform: scaleX(.88);
+  transform-origin: center;
+}
+
+.comparison-panel:not(.adjacent-summary-panel) .frequency-group {
+  grid-template-columns: 21px minmax(0, 1fr);
+  gap: 1px;
+}
+
+.comparison-panel:not(.adjacent-summary-panel) .ball {
+  width: 12px;
+  height: 12px;
+}

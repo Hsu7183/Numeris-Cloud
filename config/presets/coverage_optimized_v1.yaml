@@ -1,0 +1,10 @@
+{
+  "preset_code": "COVERAGE_OPTIMIZED_V1",
+  "display_name": "覆蓋率優先 V1",
+  "version": "1.0.0",
+  "ticket_count": 10,
+  "selection_strategy": "maximum_target_coverage",
+  "temperature_bias": "none",
+  "forbid_duplicates": true,
+  "description": "在固定注數下減少組合重疊，優先涵蓋最多目標子組合；不預測開獎號碼。"
+}

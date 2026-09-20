@@ -1,15 +1,47 @@
 @echo off
-setlocal
+setlocal EnableExtensions
 cd /d "%~dp0"
 echo [Numeris] Checking Python...
 set "PYTHON_CMD="
+py -3.13 -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)" >nul 2>&1
+if not errorlevel 1 set "PYTHON_CMD=py -3.13"
+if defined PYTHON_CMD goto python_found
 py -3.12 --version >nul 2>&1
 if not errorlevel 1 set "PYTHON_CMD=py -3.12"
+if defined PYTHON_CMD goto python_found
+py -3 -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)" >nul 2>&1
+if not errorlevel 1 set "PYTHON_CMD=py -3"
+if defined PYTHON_CMD goto python_found
+python -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)" >nul 2>&1
+if not errorlevel 1 set "PYTHON_CMD=python"
+if defined PYTHON_CMD goto python_found
+python3 -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)" >nul 2>&1
+if not errorlevel 1 set "PYTHON_CMD=python3"
+if defined PYTHON_CMD goto python_found
+
+for %%P in (
+  "%LocalAppData%\Programs\Python\Python314\python.exe"
+  "%LocalAppData%\Programs\Python\Python313\python.exe"
+  "%LocalAppData%\Programs\Python\Python312\python.exe"
+  "%ProgramFiles%\Python314\python.exe"
+  "%ProgramFiles%\Python313\python.exe"
+  "%ProgramFiles%\Python312\python.exe"
+) do (
+  if not defined PYTHON_CMD if exist "%%~P" set PYTHON_CMD="%%~P"
+)
 if not defined PYTHON_CMD (
-  python --version >nul 2>&1
-  if errorlevel 1 goto :no_python
-  set "PYTHON_CMD=python"
-  echo [Numeris] Python 3.12 is unavailable; using the compatible installed Python.
+  goto no_python
+)
+
+:python_found
+if exist ".venv\Scripts\python.exe" (
+  ".venv\Scripts\python.exe" -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)" >nul 2>&1
+  if errorlevel 1 (
+    echo [Numeris] The copied virtual environment belongs to another computer.
+    echo [Numeris] Removing the invalid environment so it can be rebuilt locally...
+    rmdir /s /q ".venv"
+    if exist ".venv" goto failed
+  )
 )
 if not exist ".venv\Scripts\python.exe" (
   echo [Numeris] Creating the project virtual environment...
@@ -42,6 +74,8 @@ exit /b 0
 
 :no_python
 echo [Numeris] Python 3.12 or newer was not found.
+echo [Numeris] Install 64-bit Python from https://www.python.org/downloads/windows/
+echo [Numeris] Then run setup.bat again.
 endlocal
 exit /b 1
 

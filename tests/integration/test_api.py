@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 from app.core.database import SessionLocal
 from app.main import app
-from app.models.database_models import GenerationRun
+from app.models.database_models import Draw, DrawNumber, GenerationRun
 
 
 def test_health_games_draws_and_analytics() -> None:
@@ -15,7 +17,8 @@ def test_health_games_draws_and_analytics() -> None:
         assert health.json()["status"] == "ok"
         games = client.get("/api/games")
         assert games.status_code == 200
-        assert len(games.json()) == 9
+        assert len(games.json()) == 8
+        assert all(game["game_code"] != "TW_BINGO" for game in games.json())
         draws = client.get("/api/draws", params={"game_code": "TW_LOTTO649"})
         assert draws.status_code == 200
         assert draws.json()["total"] >= 30
@@ -56,12 +59,11 @@ def test_generation_reproducibility_lock_and_exports() -> None:
         assert json_export.status_code == 200
 
 
-def test_multi_pool_ordered_and_bingo_generation() -> None:
+def test_multi_pool_ordered_and_unordered_generation() -> None:
     cases = [
         ("TW_SUPER_LOTTO638", {"first": 6, "second": 1}),
         ("TW_PICK3", {"digits": 3}),
         ("TW_PICK4", {"digits": 4}),
-        ("TW_BINGO", {"main": 6}),
         ("HK_MARKSIX", {"main": 6}),
         ("TW_DAILY539", {"main": 5}),
     ]
@@ -82,9 +84,75 @@ def test_multi_pool_ordered_and_bingo_generation() -> None:
                 for pool_code, count in expected.items():
                     assert len(ticket["pools"][pool_code]) == count
 
+        inactive = client.post(
+            "/api/generation/run",
+            json={
+                "game_code": "TW_BINGO",
+                "ticket_count": 5,
+                "lookback_count": 20,
+                "random_seed": 999,
+            },
+        )
+        assert inactive.status_code == 400
+        assert inactive.json()["error_code"] == "GAME_NOT_FOUND"
+
 
 def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
     with TestClient(app) as client:
+        weekly = client.post(
+            "/api/simple/generate",
+            json={
+                "game_code": "HK_MARKSIX",
+                "mode": "weekly",
+                "ticket_count": 10,
+                "random_seed": 87999,
+                "refresh": True,
+            },
+        )
+        assert weekly.status_code == 200, weekly.text
+        weekly_payload = weekly.json()
+        assert weekly_payload["generated_ticket_count"] == 1
+        assert weekly_payload["config"]["simple_mode"] == "weekly"
+        assert weekly_payload["config"]["weekly_single"] is True
+        assert weekly_payload["config"]["coverage_target_hits"] == 1
+        assert weekly_payload["config"]["weekly_number_anchor"]
+        repeated_weekly = client.post(
+            "/api/simple/generate",
+            json={
+                "game_code": "HK_MARKSIX",
+                "mode": "weekly",
+                "ticket_count": 1,
+                "random_seed": 123456,
+                "refresh": True,
+            },
+        )
+        assert repeated_weekly.status_code == 200
+        assert repeated_weekly.json()["run_uuid"] == weekly_payload["run_uuid"]
+        assert repeated_weekly.json()["tickets"] == weekly_payload["tickets"]
+
+        coverage = client.post(
+            "/api/simple/generate",
+            json={
+                "game_code": "HK_MARKSIX",
+                "mode": "coverage",
+                "ticket_count": 10,
+                "random_seed": 88000,
+                "refresh": True,
+            },
+        )
+        assert coverage.status_code == 200, coverage.text
+        coverage_payload = coverage.json()
+        assert coverage_payload["generated_ticket_count"] == 10
+        assert coverage_payload["config"]["selection_strategy"] == "coverage"
+        assert coverage_payload["config"]["coverage_target_hits"] == 3
+        assert coverage_payload["recommendation_anchor"]
+        assert coverage_payload["config"]["anchor_version"] == (
+            "NUMERIS_RECOMMENDATION_V1"
+        )
+        assert (
+            coverage_payload["diagnostics"]["target_subset_efficiency"] == 1.0
+        )
+
         single = client.post(
             "/api/simple/generate",
             json={
@@ -98,6 +166,7 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
         assert single.status_code == 200, single.text
         assert single.json()["locked"] is True
         assert single.json()["generated_ticket_count"] == 10
+        assert single.json()["recommendation_anchor"]
 
         wheel = client.post(
             "/api/simple/generate",
@@ -111,6 +180,7 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
         assert wheel.status_code == 200, wheel.text
         wheel_payload = wheel.json()
         assert wheel_payload["generated_ticket_count"] == 7
+        assert wheel_payload["recommendation_anchor"]
         assert wheel_payload["config"]["lookback_count"] == 20
         assert wheel_payload["config"]["structure_lookback_count"] >= 20
         assert wheel_payload["config"]["method_revision"].startswith(
@@ -124,27 +194,111 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
         )
 
         with SessionLocal() as db:
-            run = db.scalar(
+            tampered_run = db.scalar(
                 select(GenerationRun).where(
                     GenerationRun.run_uuid == single.json()["run_uuid"]
                 )
             )
-            assert run is not None
-            run.target_draw_no = "F0060"
+            assert tampered_run is not None
+            tampered_run.target_draw_no = "F0060"
             db.commit()
-        evaluated = client.post(
+        tampered = client.post(
             f"/api/generation/runs/{single.json()['run_uuid']}/evaluate",
             params={"actual_draw_no": "F0060"},
+        )
+        assert tampered.status_code == 400
+        assert tampered.json()["error_code"] == "RUN_NOT_ANCHORED"
+
+        old_target = client.post(
+            "/api/generation/run",
+            json={
+                "game_code": "HK_MARKSIX",
+                "target_draw_no": "F0060",
+                "ticket_count": 10,
+                "lookback_count": 20,
+                "random_seed": 88003,
+            },
+        )
+        assert old_target.status_code == 200, old_target.text
+        old_target_uuid = old_target.json()["run_uuid"]
+        anchored_old_target = client.post(
+            f"/api/generation/runs/{old_target_uuid}/lock"
+        )
+        assert anchored_old_target.status_code == 200
+        preexisting_draw = client.post(
+            f"/api/generation/runs/{old_target_uuid}/evaluate"
+        )
+        assert preexisting_draw.status_code == 400
+        assert preexisting_draw.json()["error_code"] == "DRAW_PRECEDES_LOCK"
+
+        with SessionLocal() as db:
+            previous = db.scalar(
+                select(Draw).where(Draw.draw_no == "F0060")
+            )
+            assert previous is not None
+            future_draw = Draw(
+                game_id=previous.game_id,
+                ruleset_id=previous.ruleset_id,
+                draw_no=weekly_payload["target_draw_no"],
+                draw_date=previous.draw_date + timedelta(days=1),
+                draw_datetime_utc=datetime.now(UTC),
+                local_timezone=previous.local_timezone,
+                source_artifact_id=previous.source_artifact_id,
+                source_status="official",
+                verification_status="verified",
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
+            )
+            db.add(future_draw)
+            db.flush()
+            for number in previous.numbers:
+                db.add(
+                    DrawNumber(
+                        draw_id=future_draw.id,
+                        pool_code=number.pool_code,
+                        draw_order=number.draw_order,
+                        sorted_order=number.sorted_order,
+                        number_value=number.number_value,
+                        is_special=number.is_special,
+                    )
+                )
+            db.commit()
+
+        evaluated = client.post(
+            f"/api/generation/runs/{weekly_payload['run_uuid']}/evaluate",
         )
         assert evaluated.status_code == 200, evaluated.text
         dashboard = client.get("/api/simple/dashboard/HK_MARKSIX")
         assert dashboard.status_code == 200
         payload = dashboard.json()
-        assert payload["game"]["wheel_modes"] == [7, 8, 9]
+        assert payload["game"]["wheel_modes"] == []
+        assert payload["game"]["coverage_target_hits"] == 1
+        assert payload["latest_recommendation"]["run_uuid"] == weekly_payload["run_uuid"]
+        next_recommendation = client.post(
+            "/api/simple/generate",
+            json={
+                "game_code": "HK_MARKSIX",
+                "mode": "weekly",
+                "ticket_count": 1,
+                "random_seed": 88004,
+            },
+        )
+        assert next_recommendation.status_code == 200
+        dashboard = client.get("/api/simple/dashboard/HK_MARKSIX")
+        assert dashboard.status_code == 200
+        payload = dashboard.json()
+        assert payload["latest_recommendation"]["config"]["simple_mode"] == "weekly"
+        assert payload["latest_recommendation"]["generated_ticket_count"] == 1
         assert payload["records"]
         assert payload["weekly_performance"]
+        assert payload["performance_source"] == "ANCHORED_POST_DRAW_EVALUATION"
+        assert payload["performance_replay_run_uuid"] is None
+        assert payload["future_data_used"] is False
+        assert payload["anchored_sample_count"] == 1
         recent_period = next(
-            item for item in payload["recent_periods"] if item["draw_no"] == "F0060"
+            item
+            for item in payload["recent_periods"]
+            if item["draw_no"] == weekly_payload["target_draw_no"]
         )
         assert len(recent_period["predicted_numbers"]) == 6
         assert len(recent_period["actual_numbers"]) == 6
@@ -171,21 +325,24 @@ def test_simple_dashboard_single_wheel_and_weekly_evaluation() -> None:
             == payload["performance_summary"]["latest_week"]["ticket_hit_rate"]
         )
         assert payload["performance_summary"]["overall"]["number_accuracy"] is not None
-        baselines = payload["performance_baselines"]
-        if baselines is not None:
-            assert baselines["same_ticket_count"] is True
-            assert baselines["number_accuracy_delta_vs_random"] == round(
-                baselines["method"]["number_accuracy"]
-                - baselines["uniform_random"]["number_accuracy"],
-                2,
-            )
-        assert "10組單式" in payload["metric_definitions"]["number_accuracy"]
-        assert "逐期表第1組" in payload["metric_definitions"]["period_comparison"]
-        assert "不是未來中獎機率" in payload["metric_note"]
+        assert payload["performance_baselines"] is None
+        assert "每週唯一組合" in payload["metric_definitions"]["number_accuracy"]
+        assert "有命中期數" in payload["metric_definitions"]["target_hit_rate"]
+        assert "唯一1組" in payload["metric_definitions"]["period_comparison"]
+        assert "不混入歷史回放" in payload["metric_note"]
 
 
 def test_simple_dashboard_uses_official_history_when_available() -> None:
     with TestClient(app) as client:
+        generated = client.post(
+            "/api/simple/generate",
+            json={
+                "game_code": "TW_LOTTO649",
+                "mode": "weekly",
+                "ticket_count": 1,
+            },
+        )
+        assert generated.status_code == 200, generated.text
         dashboard = client.get("/api/simple/dashboard/TW_LOTTO649")
         assert dashboard.status_code == 200
         payload = dashboard.json()

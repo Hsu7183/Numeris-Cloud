@@ -16,6 +16,10 @@ from app.models.database_models import (
     Ruleset,
     TicketResult,
 )
+from app.services.generation.anchor import (
+    draw_arrived_after_lock,
+    verify_recommendation_anchor,
+)
 
 
 def evaluate_generation_run(
@@ -31,11 +35,27 @@ def evaluate_generation_run(
     game = db.get(Game, run.game_id)
     if game is None:
         raise NumerisError("GAME_NOT_FOUND", "找不到推薦紀錄所屬彩種")
+    if not verify_recommendation_anchor(db, run):
+        raise NumerisError(
+            "RUN_NOT_ANCHORED",
+            "這份推薦沒有開獎前定錨，不能列入實戰命中率",
+            {"run_uuid": run_uuid},
+        )
+    requested_draw_no = actual_draw_no or run.target_draw_no
+    if requested_draw_no != run.target_draw_no:
+        raise NumerisError(
+            "TARGET_DRAW_MISMATCH",
+            "只能核對推薦鎖定時指定的目標期別",
+            {
+                "target_draw_no": run.target_draw_no,
+                "requested_draw_no": requested_draw_no,
+            },
+        )
     draw = db.scalar(
         select(Draw)
         .where(
             Draw.game_id == game.id,
-            Draw.draw_no == (actual_draw_no or run.target_draw_no),
+            Draw.draw_no == requested_draw_no,
         )
         .options(selectinload(Draw.numbers))
     )
@@ -44,6 +64,18 @@ def evaluate_generation_run(
             "DRAW_NOT_FOUND",
             "尚未找到目標期開獎資料",
             {"target_draw_no": actual_draw_no or run.target_draw_no},
+        )
+    if not draw_arrived_after_lock(run, draw):
+        raise NumerisError(
+            "DRAW_PRECEDES_LOCK",
+            "開獎資料早於推薦鎖定時間，可能使用到未來資料，禁止計分",
+            {
+                "target_draw_no": run.target_draw_no,
+                "locked_at": run.locked_at.isoformat() if run.locked_at else None,
+                "draw_ingested_at": (
+                    draw.created_at.isoformat() if draw.created_at else None
+                ),
+            },
         )
     ruleset = db.get(Ruleset, draw.ruleset_id)
     evaluation = EvaluationRun(

@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+from datetime import date
+from types import SimpleNamespace
+
 import pytest
 
-from app.services.replay.service import replay_input_draws
+from app.services.replay.service import (
+    replay_input_draws,
+    weekly_replay_input_draws,
+)
 
 
 def test_replay_never_includes_target_or_future() -> None:
@@ -19,3 +25,17 @@ def test_replay_uses_available_history_only() -> None:
         replay_input_draws(list(range(10)), 0, 5)
     with pytest.raises(ValueError):
         replay_input_draws(list(range(10)), 10, 5)
+
+
+def test_weekly_replay_excludes_all_draws_from_target_week() -> None:
+    draws = [
+        SimpleNamespace(draw_date=date(2026, 7, 10)),
+        SimpleNamespace(draw_date=date(2026, 7, 14)),
+        SimpleNamespace(draw_date=date(2026, 7, 16)),
+        SimpleNamespace(draw_date=date(2026, 7, 21)),
+        SimpleNamespace(draw_date=date(2026, 7, 23)),
+    ]
+
+    inputs = weekly_replay_input_draws(draws, target_index=2, lookback=20)
+
+    assert [draw.draw_date for draw in inputs] == [date(2026, 7, 10)]

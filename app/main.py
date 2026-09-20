@@ -174,3 +174,48 @@ def home(request: Request):
         "index.html",
         {"app_version": __version__},
     )
+
+
+@app.get("/539")
+def daily539(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "daily539.html",
+        {"app_version": __version__},
+    )
+
+
+@app.get("/539/output")
+def daily539_output(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "daily539_output.html",
+        {"app_version": __version__},
+    )
+
+
+@app.get("/539/period-grid")
+def daily539_period_grid(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "daily539_period_grid.html",
+        {"app_version": __version__},
+    )
+
+
+@app.get("/539/pattern-grid")
+def daily539_pattern_grid(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "daily539_pattern_grid.html",
+        {"app_version": __version__},
+    )
+
+
+@app.get("/539/pattern-template")
+def daily539_pattern_template(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "daily539_pattern_template.html",
+        {"app_version": __version__},
+    )

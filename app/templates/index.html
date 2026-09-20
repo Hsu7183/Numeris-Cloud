@@ -7,7 +7,7 @@
   <meta name="description" content="選擇彩種，直接查看下期推薦、包牌組合、上一期命中與每週歷史表現。">
   <title>Numeris｜下期彩球組合</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/css/app.css?v={{ app_version }}-visual-polish-7">
+  <link rel="stylesheet" href="/static/css/app.css?v={{ app_version }}-viewport-fill-3">
 </head>
 <body>
   <header class="site-header">
@@ -16,6 +16,7 @@
       <span><strong>Numeris</strong><small>數序計畫</small></span>
     </a>
     <nav aria-label="頁面導覽">
+      <a href="/539">539 統計</a>
       <a href="#next">下期組合</a>
       <a href="#weekly">每週表現</a>
       <a href="#history">過往紀錄</a>
@@ -46,16 +47,16 @@
       <article class="choice-card">
         <div class="card-heading">
           <div>
-            <p class="kicker">步驟 2 · 影片五步法選號</p>
+            <p class="kicker">步驟 2 · 每週固定唯一1組</p>
             <h2 id="choice-title">香港六合彩</h2>
           </div>
           <span class="saved-chip">自動保存</span>
         </div>
 
-        <div class="mode-picker" id="mode-picker" role="radiogroup" aria-label="組合方式">
-          <button class="mode active" data-mode="single" role="radio" aria-checked="true">
-            <strong>精選10組</strong>
-            <span>差異化單式</span>
+        <div class="mode-picker" id="mode-picker" aria-label="週更方式">
+          <button class="mode active" data-mode="weekly" type="button">
+            <strong>本週唯一號碼</strong>
+            <span>只定錨1組 · 同週不換號</span>
           </button>
         </div>
 
@@ -71,9 +72,9 @@
         </label>
 
         <button id="generate" class="primary-action">
-          <span>產生／查看下期組合</span><b>→</b>
+          <span>查看本週固定號碼</span><b>→</b>
         </button>
-        <p class="small-note">影片五步法：近20期冷熱與遺漏 → 奇偶、大小、區間 → 歷史AC → 差異化組合。包牌為完整展開，不保證中獎。</p>
+        <p class="small-note">每個彩種每週只產生並定錨1組；同一週重新開啟系統仍會顯示相同號碼，下一週才重新計算。</p>
       </article>
 
       <article class="summary-card" id="run-summary">
@@ -115,34 +116,43 @@
     <section class="performance-section" id="weekly">
       <div class="section-heading">
         <div>
-          <p class="kicker">步驟 3 · 開獎後自動核對</p>
-          <h2>歷史命中表現</h2>
-          <p>近10期、最新一週與累計；每期只使用開獎前資料回放。</p>
+          <p id="performance-kicker" class="kicker">步驟 3 · 過去10週定錨回測</p>
+          <h2 id="performance-title">近10週唯一組命中表現</h2>
+          <p id="performance-description">每週只用當週開始前的資料定錨1組，再與已開獎號碼核對。</p>
         </div>
         <button id="reload-dashboard" class="secondary-action">重新整理</button>
       </div>
 
       <div class="performance-cards">
         <article>
-          <span>近10期號碼命中率</span>
+          <span id="recent-metric-title">近10週平均號碼命中率</span>
           <strong id="recent-hit-rate">—</strong>
-          <small>至少中1碼單式 <b id="recent-number-accuracy">—</b></small>
+          <small>已驗證 <b id="recent-sample-count">0期</b> · 至少中1碼 <b id="recent-number-accuracy">—</b></small>
         </article>
         <article>
-          <span>最新一週號碼命中率</span>
+          <span id="weekly-metric-title">最新一週號碼命中率</span>
           <strong id="weekly-hit-rate">—</strong>
-          <small><b id="latest-week-label">尚無週資料</b> · 至少中1碼單式 <b id="weekly-number-accuracy">—</b></small>
+          <small><b id="latest-week-label">尚無週資料</b> · 已驗證 <b id="weekly-sample-count">0期</b> · 至少中1碼 <b id="weekly-number-accuracy">—</b></small>
         </article>
         <article>
-          <span>累計號碼命中率</span>
+          <span id="overall-metric-title">累計回測號碼命中率</span>
           <strong id="overall-hit-rate">—</strong>
-          <small>隨機基準 <b id="overall-random-rate">—</b> · 差 <b id="overall-random-delta">—</b></small>
+          <small><span id="overall-source-label">每週無未來資料回測</span> · 已驗證 <b id="overall-sample-count">0期</b></small>
         </article>
       </div>
 
       <div class="period-card-wrap">
+        <div class="performance-view-tabs" role="tablist" aria-label="驗證資料">
+          <button id="view-history" class="active" role="tab">
+            近10週唯一組 <b id="view-history-count">0週</b>
+          </button>
+          <button id="view-live" role="tab">
+            實戰週更 <b id="view-live-count">0期</b>
+          </button>
+          <span>兩者分開統計</span>
+        </div>
         <div id="weekly-table" class="period-grid"></div>
-        <div id="weekly-empty" class="table-empty hidden">目前尚無足夠歷史資料可進行逐期回放。</div>
+        <div id="weekly-empty" class="table-empty hidden">目前沒有「先定錨、後開獎」的合格紀錄；等目標期開獎並更新資料後才會開始統計。</div>
         <div id="period-pager" class="period-pager hidden" aria-label="最近10期分頁">
           <button id="period-prev" class="secondary-action">← 前5期</button>
           <strong id="period-page">第 1／2 頁</strong>
@@ -181,6 +191,6 @@
     <span>歷史開獎結果不代表未來結果，產生的號碼不構成中獎保證。未滿18歲不得購買或兌領彩券，請量力而為。</span>
   </footer>
 
-  <script src="/static/js/app.js?v={{ app_version }}-five-step-audit-9"></script>
+  <script src="/static/js/app.js?v={{ app_version }}-one-page-4"></script>
 </body>
 </html>

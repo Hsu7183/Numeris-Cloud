@@ -104,6 +104,29 @@ def test_structure_only_baseline_disables_temperature_preference(
     assert diagnostics["temperature_preference"] is False
 
 
+def test_coverage_strategy_maximizes_distinct_three_number_subsets(
+    pool49: dict[str, object], metrics49: list[dict[str, object]]
+) -> None:
+    candidates, diagnostics = UnorderedCombinationGenerator(20260724).generate(
+        10,
+        pool=pool49,
+        metrics=metrics49,
+        temperature_constraint=False,
+        use_temperature_preference=False,
+        selection_strategy="coverage",
+        coverage_target_hits=3,
+        allowed_odd_counts=list(range(7)),
+        allowed_high_counts=list(range(7)),
+        max_overlap=2,
+        max_attempts=50000,
+    )
+    assert len(candidates) == 10
+    assert diagnostics["coverage_target_hits"] == 3
+    assert diagnostics["covered_target_subsets"] == 200
+    assert diagnostics["target_subset_efficiency"] == 1.0
+    assert diagnostics["effective_max_overlap"] == 2
+
+
 def test_include_exclude_and_invalid_conditions(
     pool49: dict[str, object], metrics49: list[dict[str, object]]
 ) -> None:

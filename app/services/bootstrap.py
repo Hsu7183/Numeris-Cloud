@@ -41,7 +41,7 @@ def initialize_catalog(db: Session) -> dict[str, int]:
                 display_name_en=config["display_name_en"],
                 game_type=config["game_type"],
                 parent_game_code=config.get("parent_game_code"),
-                active=True,
+                active=bool(config.get("active", True)),
                 supports_ac=config["supports_ac"],
                 supports_special_ball=config["supports_special_ball"],
                 supports_multiple_pools=config["supports_multiple_pools"],
@@ -49,6 +49,8 @@ def initialize_catalog(db: Session) -> dict[str, int]:
             )
             db.add(game)
             db.flush()
+        else:
+            game.active = bool(config.get("active", True))
         ruleset = db.scalar(
             select(Ruleset).where(Ruleset.game_id == game.id, Ruleset.version == "1.0.0")
         )

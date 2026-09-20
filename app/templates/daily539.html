@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="今彩539近20期獎號、出現次數與期次順序統計。">
+  <title>今彩539｜近20期獎號統計</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/daily539.css?v={{ app_version }}-xlsx-output-link-2">
+  <link rel="stylesheet" href="/static/css/daily539_adjacent.css?v={{ app_version }}-7">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="hero">
+      <a class="brand" href="/" aria-label="回到 Numeris 首頁">NUMERIS</a>
+      <p class="eyebrow">台灣彩券 · DAILY 539</p>
+      <h1>今彩 539 <em>期數統計比較</em></h1>
+      <p class="lead">同時比較 1–39 號在近 20、50、100、200 期的出現次數與期次順序。</p>
+      <button id="fetch-draws" class="fetch-button" type="button">
+        <span aria-hidden="true">↓</span> 抓取近 20 期獎號
+      </button>
+      <p id="status" class="status" role="status" aria-live="polite">尚未抓取資料</p>
+    </header>
+
+    <section id="results" class="results hidden" aria-live="polite">
+      <div class="result-header">
+        <div>
+          <p class="eyebrow">資料範圍</p>
+          <h2 id="range-title">四種期數統計比較</h2>
+        </div>
+        <div class="output-actions">
+          <a id="xlsx-output-link" class="xlsx-output-link hidden" href="/539/output">開啟 XLSX 表格</a>
+          <a id="period-grid-link" class="xlsx-output-link hidden" href="/539/period-grid">開啟期數格表</a>
+          <a id="historical-period-grid-link" class="xlsx-output-link hidden" href="/539/period-grid?from=2023-06-26&amp;to=2023-07-18">開啟 112 年期數格表</a>
+          <a id="pattern-grid-link" class="xlsx-output-link hidden" href="/539/pattern-grid">開啟 Excel 組合表</a>
+          <a id="pattern-template-link" class="xlsx-output-link hidden" href="/539/pattern-template">開啟 Excel 空白範本表</a>
+          <div class="latest"><span>最新一期</span><strong id="latest-draw">—</strong></div>
+        </div>
+      </div>
+      <p id="highlight-legend" class="highlight-legend hidden"></p>
+      <div id="comparison-list" class="comparison-list"></div>
+    </section>
+  </main>
+  <footer>統計僅呈現歷史資料，不代表未來開獎機率。</footer>
+  <script src="/static/js/daily539.js?v={{ app_version }}-adjacent-colors-1"></script>
+</body>
+</html>

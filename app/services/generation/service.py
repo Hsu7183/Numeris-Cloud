@@ -28,6 +28,10 @@ from app.services.analytics.core import (
     calculate_ac,
 )
 from app.services.bootstrap import canonical_hash
+from app.services.generation.anchor import (
+    RECOMMENDATION_ANCHOR_VERSION,
+    calculate_recommendation_anchor,
+)
 from app.services.generation.generators import (
     BingoGenerator,
     Candidate,
@@ -38,7 +42,12 @@ from app.services.generation.generators import (
 
 
 def get_game_and_ruleset(db: Session, game_code: str) -> tuple[Game, Ruleset]:
-    game = db.scalar(select(Game).where(Game.game_code == game_code))
+    game = db.scalar(
+        select(Game).where(
+            Game.game_code == game_code,
+            Game.active.is_(True),
+        )
+    )
     if game is None:
         raise GenerationError("GAME_NOT_FOUND", "找不到指定彩種", {"game_code": game_code})
     ruleset = db.scalar(
@@ -161,6 +170,22 @@ def create_generation_run(db: Session, request: GenerationRequest) -> dict[str, 
     all_draws = _draws_for_game(db, game, max(request.lookback_count, 100))
     if not all_draws:
         raise GenerationError("NO_DATA", "此彩種尚無可用資料；請先匯入官方檔案或fixture")
+    if request.cutoff_draw_no is not None:
+        cutoff_index = next(
+            (
+                index
+                for index, draw in enumerate(all_draws)
+                if draw.draw_no == request.cutoff_draw_no
+            ),
+            None,
+        )
+        if cutoff_index is None:
+            raise GenerationError(
+                "CUTOFF_DRAW_NOT_FOUND",
+                "找不到指定的資料截止期",
+                {"cutoff_draw_no": request.cutoff_draw_no},
+            )
+        all_draws = all_draws[: cutoff_index + 1]
     selected_draws = all_draws[-request.lookback_count :]
     primary_pool = dict(ruleset.config_json["pools"][0])
     if game.game_type == "high_frequency":
@@ -192,7 +217,12 @@ def create_generation_run(db: Session, request: GenerationRequest) -> dict[str, 
         raise GenerationError("PRESET_NOT_FOUND", "找不到指定選號模式")
 
     ac_min, ac_max = request.ac_min, request.ac_max
-    if game.supports_ac and ac_min is None and ac_max is None:
+    if (
+        game.supports_ac
+        and request.selection_strategy != "coverage"
+        and ac_min is None
+        and ac_max is None
+    ):
         ac_min, ac_max = _historical_ac_range(
             all_draws, str(primary_pool["code"]), int(primary_pool["pick_count"])
         )
@@ -207,6 +237,9 @@ def create_generation_run(db: Session, request: GenerationRequest) -> dict[str, 
         "ac_max": ac_max,
         "max_overlap": request.max_overlap,
         "max_attempts": request.max_attempts,
+        "selection_strategy": request.selection_strategy,
+        "coverage_target_hits": request.coverage_target_hits,
+        "use_temperature_preference": request.use_temperature_preference,
     }
     if game.game_type == "multi_pool":
         generator = MultiPoolGenerator(request.random_seed)
@@ -234,6 +267,9 @@ def create_generation_run(db: Session, request: GenerationRequest) -> dict[str, 
                 ordered_draw_nos,
             ),
             max_overlap=request.max_overlap,
+            use_temperature_preference=request.use_temperature_preference,
+            selection_strategy=request.selection_strategy,
+            coverage_target_hits=request.coverage_target_hits,
         )
     elif game.game_type == "high_frequency":
         generator = BingoGenerator(request.random_seed)
@@ -343,6 +379,10 @@ def serialize_generation_run(db: Session, run_uuid: str) -> dict[str, Any]:
         "generated_ticket_count": run.generated_ticket_count,
         "locked": run.locked,
         "locked_at": run.locked_at.isoformat() if run.locked_at else None,
+        "recommendation_anchor": dict(run.config_json or {}).get(
+            "recommendation_anchor"
+        ),
+        "anchor_version": dict(run.config_json or {}).get("anchor_version"),
         "status": run.status,
         "config": run.config_json,
         "config_hash": run.config_hash,
@@ -380,18 +420,46 @@ def list_generation_runs(db: Session, limit: int = 50) -> list[dict[str, Any]]:
 
 
 def lock_generation_run(db: Session, run_uuid: str) -> dict[str, Any]:
-    run = db.scalar(select(GenerationRun).where(GenerationRun.run_uuid == run_uuid))
+    run = db.scalar(
+        select(GenerationRun)
+        .where(GenerationRun.run_uuid == run_uuid)
+        .options(
+            selectinload(GenerationRun.tickets).selectinload(
+                GeneratedTicket.numbers
+            )
+        )
+    )
     if run is None:
         raise GenerationError("RUN_NOT_FOUND", "找不到推薦紀錄")
     if not run.locked:
         run.locked = True
         run.locked_at = datetime.now(UTC)
+        config = dict(run.config_json or {})
+        config.update(
+            {
+                "anchor_version": RECOMMENDATION_ANCHOR_VERSION,
+                "anchor_locked_at": run.locked_at.isoformat(),
+                "anchor_cutoff_draw_id": run.cutoff_draw_id,
+            }
+        )
+        run.config_json = config
+        anchor = calculate_recommendation_anchor(db, run)
+        config = dict(run.config_json)
+        config["recommendation_anchor"] = anchor
+        run.config_json = config
+        run.config_hash = canonical_hash(config)
         db.add(
             AuditLog(
                 action="generation.locked",
                 entity_type="generation_run",
                 entity_id=run_uuid,
-                detail_json={"locked_at": run.locked_at.isoformat()},
+                detail_json={
+                    "locked_at": run.locked_at.isoformat(),
+                    "recommendation_anchor": anchor,
+                    "anchor_version": RECOMMENDATION_ANCHOR_VERSION,
+                    "cutoff_draw_id": run.cutoff_draw_id,
+                    "target_draw_no": run.target_draw_no,
+                },
             )
         )
         db.commit()

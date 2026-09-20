@@ -6,9 +6,10 @@
     gameCode: "HK_MARKSIX",
     dashboard: null,
     run: null,
-    mode: "single",
+    mode: "weekly",
     ticketPage: 0,
     periodPage: 0,
+    performanceView: "history",
     combinationsOpen: false,
     busy: false,
   };
@@ -49,7 +50,9 @@
   }
 
   function modeLabel(mode) {
-    if (mode === "single") return "精選10組";
+    if (mode === "weekly") return "每週唯一1組";
+    if (mode === "coverage") return "覆蓋率優先10組";
+    if (mode === "single") return "影片法10組";
     return `${mode.replace("wheel", "")}碼包牌`;
   }
 
@@ -68,6 +71,18 @@
 
   function rateText(value) {
     return value === null || value === undefined ? "—" : `${value}%`;
+  }
+
+  function verifiedRate(bucket) {
+    return Number(bucket?.evaluated_runs || 0) > 0
+      ? rateText(bucket.target_hit_rate)
+      : "等待驗證";
+  }
+
+  function verifiedAccuracy(bucket) {
+    return Number(bucket?.evaluated_runs || 0) > 0
+      ? rateText(bucket.number_accuracy)
+      : "等待驗證";
   }
 
   function comparisonBalls(row, numbers, { special = false } = {}) {
@@ -91,7 +106,7 @@
   function renderQuickGames() {
     const preferred = [
       "HK_MARKSIX", "TW_LOTTO649", "TW_SUPER_LOTTO638",
-      "TW_DAILY539", "TW_BINGO",
+      "TW_DAILY539",
     ];
     $("#quick-games").innerHTML = preferred
       .map((code) => state.games.find((game) => game.game_code === code))
@@ -111,30 +126,18 @@
   function renderModes() {
     const game = state.dashboard.game;
     const modes = [{
-      code: "single",
-      title: "精選10組",
-      detail: game.game_type === "high_frequency" ? "依所選星數" : "差異化單式",
+      code: "weekly",
+      title: "本週唯一號碼",
+      detail: "只定錨1組 · 同週不換號",
     }];
-    for (const size of game.wheel_modes) {
-      modes.push({
-        code: `wheel${size}`,
-        title: `${size}碼包牌`,
-        detail: `完整 ${combinationCount(size, game.primary_pick_count)} 組`,
-      });
-    }
-    if (!modes.some((item) => item.code === state.mode)) state.mode = "single";
+    if (!modes.some((item) => item.code === state.mode)) state.mode = "weekly";
+    $("#mode-picker").classList.add("weekly-only");
     $("#mode-picker").innerHTML = modes.map((mode) => `
       <button class="mode ${mode.code === state.mode ? "active" : ""}"
               data-mode="${mode.code}" role="radio"
               aria-checked="${mode.code === state.mode}">
         <strong>${esc(mode.title)}</strong><span>${esc(mode.detail)}</span>
       </button>`).join("");
-    $("#mode-picker").querySelectorAll(".mode").forEach((button) => {
-      button.addEventListener("click", () => {
-        state.mode = button.dataset.mode;
-        renderModes();
-      });
-    });
     $("#star-control").classList.toggle("hidden", game.game_type !== "high_frequency");
   }
 
@@ -167,22 +170,22 @@
         `<span class="summary-ball ${group.groupIndex ? "secondary" : ""}">${String(number).padStart(2, "0")}</span>`
       )).join("")
     )).join('<span class="pool-separator">＋</span>');
-    const mode = run.config?.simple_mode || "single";
+    const mode = run.config?.simple_mode || "weekly";
+    const anchor = run.recommendation_anchor || run.config?.recommendation_anchor || "";
+    const weeklyAnchor = run.config?.weekly_number_anchor || anchor;
+    const weeklyKey = run.config?.weekly_key || "本週";
     summary.innerHTML = `
       <div class="summary-top">
-        <div><span>目標期別</span><strong>${esc(run.target_draw_no)}</strong></div>
-        <span class="summary-status">${run.locked ? "已保存鎖定" : "已保存"}</span>
+        <div><span>適用週別</span><strong>${esc(weeklyKey)}</strong></div>
+        <span class="summary-status">${anchor ? "開獎前已定錨" : "尚未定錨"}</span>
       </div>
-      <p class="summary-label">${esc(modeLabel(mode))} · 第1組預覽</p>
+      <p class="summary-label">${esc(modeLabel(mode))} · 本週固定號碼</p>
       <div class="summary-balls">${balls}</div>
       <div class="summary-foot">
-        <span>資料截至 ${esc(run.cutoff_draw_no)}</span>
-        <span>共 ${run.generated_ticket_count} 組</span>
+        <span>資料截至 ${esc(run.cutoff_draw_no)}${weeklyAnchor ? ` · 週錨 ${esc(weeklyAnchor.slice(0, 10))}…` : ""}</span>
+        <span>唯一 1 組 · 驗證期 ${esc(run.target_draw_no)}</span>
       </div>
-      <button id="open-combinations" class="summary-open">
-        查看完整 ${run.generated_ticket_count} 組 <b>→</b>
-      </button>`;
-    $("#open-combinations").addEventListener("click", () => setCombinationsOpen(true));
+      <span class="summary-open weekly-locked">本週固定後不更換</span>`;
   }
 
   function renderRun(run) {
@@ -193,7 +196,7 @@
       setCombinationsOpen(false);
       return;
     }
-    const mode = run.config?.simple_mode || "single";
+    const mode = run.config?.simple_mode || "weekly";
     state.mode = mode;
     if (state.dashboard) renderModes();
     $("#result-section").classList.toggle("hidden", !state.combinationsOpen);
@@ -240,72 +243,148 @@
   }
 
   function renderWeekly() {
-    const summary = state.dashboard.performance_summary || {};
+    const periods = state.dashboard.recent_periods || [];
+    const historicalReview = state.dashboard.historical_weekly_review || {};
+    const historicalWeeks = historicalReview.weeks || [];
+    if (state.performanceView === "history" && !historicalWeeks.length) {
+      state.performanceView = "live";
+    }
+    const showingHistory = state.performanceView === "history";
+    const summary = (
+      showingHistory && historicalReview.summary
+        ? historicalReview.summary
+        : state.dashboard.performance_summary
+    ) || {};
     const recent = summary.recent_10 || {};
     const latestWeek = summary.latest_week || {};
     const overall = summary.overall || {};
-    const baselines = state.dashboard.performance_baselines || {};
-    const randomBaseline = baselines.uniform_random || {};
-    const periods = state.dashboard.recent_periods || [];
+    const rows = showingHistory ? historicalWeeks : periods;
+    const sampleUnit = showingHistory ? "週" : "期";
     const isHighFrequency = state.dashboard?.game?.game_type === "high_frequency";
-    const periodPageSize = window.innerHeight <= 800
-      ? (isHighFrequency ? 2 : 3)
-      : 5;
-    const periodPageCount = Math.max(1, Math.ceil(periods.length / periodPageSize));
+    const periodPageSize = window.innerWidth >= 861
+      ? 10
+      : window.innerHeight <= 700
+        ? (showingHistory ? 2 : (isHighFrequency ? 1 : 2))
+        : window.innerHeight <= 800
+          ? (showingHistory ? 3 : (isHighFrequency ? 2 : 3))
+          : 5;
+    const periodPageCount = Math.max(1, Math.ceil(rows.length / periodPageSize));
     state.periodPage = Math.min(state.periodPage, periodPageCount - 1);
-    const visiblePeriods = periods.slice(
+    const visibleRows = rows.slice(
       state.periodPage * periodPageSize,
       state.periodPage * periodPageSize + periodPageSize,
     );
-    $("#recent-hit-rate").textContent = rateText(recent.number_accuracy);
-    $("#recent-number-accuracy").textContent = rateText(
-      recent.any_hit_ticket_rate ?? recent.ticket_hit_rate,
-    );
-    $("#weekly-hit-rate").textContent = rateText(latestWeek.number_accuracy);
-    $("#weekly-number-accuracy").textContent = rateText(
-      latestWeek.any_hit_ticket_rate ?? latestWeek.ticket_hit_rate,
-    );
+    $("#performance-kicker").textContent = showingHistory
+      ? "步驟 3 · 過去10週定錨回測"
+      : "步驟 3 · 定錨後等待開獎";
+    $("#performance-title").textContent = showingHistory
+      ? "近10週唯一組命中表現"
+      : "實戰定錨驗證";
+    $("#performance-description").textContent = showingHistory
+      ? "每週只用當週開始前的資料定錨1組，再與已開獎號碼核對。"
+      : "不混入歷史回放；只有開獎前已鎖定的組合才會計分。";
+    $("#recent-metric-title").textContent = showingHistory
+      ? "近10週平均號碼命中率"
+      : "近10週實戰號碼命中率";
+    $("#weekly-metric-title").textContent = "最新一週號碼命中率";
+    $("#overall-metric-title").textContent = showingHistory
+      ? "累計回測號碼命中率"
+      : "累計實戰號碼命中率";
+    $("#overall-source-label").textContent = showingHistory
+      ? "每週無未來資料回測"
+      : "只計開獎後實戰";
+    $("#recent-hit-rate").textContent = verifiedAccuracy(recent);
+    $("#recent-number-accuracy").textContent = recent.evaluated_runs
+      ? rateText(recent.target_hit_rate)
+      : "尚無";
+    $("#recent-sample-count").textContent = `${recent.evaluated_runs || 0}${sampleUnit}`;
+    $("#weekly-hit-rate").textContent = verifiedAccuracy(latestWeek);
+    $("#weekly-number-accuracy").textContent = latestWeek.evaluated_runs
+      ? rateText(latestWeek.target_hit_rate)
+      : "尚無";
+    $("#weekly-sample-count").textContent = `${latestWeek.evaluated_runs || 0}${sampleUnit}`;
     $("#latest-week-label").textContent = latestWeek.week || "尚無週資料";
-    $("#overall-hit-rate").textContent = rateText(overall.number_accuracy);
-    $("#overall-random-rate").textContent = rateText(randomBaseline.number_accuracy);
-    const randomDelta = baselines.number_accuracy_delta_vs_random;
-    $("#overall-random-delta").textContent = randomDelta === null
-      || randomDelta === undefined
-      ? "—"
-      : `${randomDelta >= 0 ? "+" : ""}${randomDelta}百分點`;
-    $("#weekly-table").innerHTML = visiblePeriods.map((row) => {
-      const predicted = comparisonBalls(row, row.predicted_numbers);
-      const actual = comparisonBalls(row, row.actual_numbers);
-      const special = comparisonBalls(
-        row,
-        row.actual_special_numbers,
-        { special: true },
-      );
-      return `<article class="period-card">
-        <div class="period-id">
-          <span>${esc(row.draw_date)}</span>
-          <strong>${esc(row.draw_no)}</strong>
-        </div>
-        <div class="compare-group">
-          <span>第1組</span><div>${predicted}</div>
-        </div>
-        <div class="compare-group actual">
-          <span>開獎</span><div>${actual}${special ? `<i>＋</i>${special}` : ""}</div>
-        </div>
-        <div class="period-rate">
-          <strong>${rateText(row.comparison_hit_rate)}</strong>
-          <small>命中 ${row.comparison_hit_count}/${row.comparison_number_count}</small>
-        </div>
-      </article>`;
-    }).join("");
-    $("#weekly-empty").classList.toggle("hidden", periods.length > 0);
+    $("#overall-hit-rate").textContent = verifiedAccuracy(overall);
+    $("#overall-sample-count").textContent = `${overall.evaluated_runs || 0}${sampleUnit}`;
+    $("#view-live-count").textContent = `${periods.length}期`;
+    $("#view-history-count").textContent = `${historicalWeeks.length}週`;
+    $("#view-live").classList.toggle("active", !showingHistory);
+    $("#view-history").classList.toggle("active", showingHistory);
+    $("#weekly-table").innerHTML = showingHistory
+      ? visibleRows.map((row) => {
+        const predicted = comparisonBalls(row, row.predicted_numbers);
+        const actual = comparisonBalls(row, row.actual_numbers);
+        const special = comparisonBalls(
+          row,
+          row.actual_special_numbers,
+          { special: true },
+        );
+        return `<article class="period-card weekly-ball-card">
+          <div class="period-id">
+            <span>${esc(row.week)} · ${esc(row.sample_draw_date)}</span>
+            <strong>
+              ${esc(row.sample_draw_no)}
+              <small>定錨 ${esc((row.walk_forward_anchor || "").slice(0, 6))}</small>
+            </strong>
+          </div>
+          <div class="compare-group">
+            <span>定錨</span><div>${predicted}</div>
+          </div>
+          <div class="compare-group actual">
+            <span>開獎</span><div>${actual}${special ? `<i>＋</i>${special}` : ""}</div>
+          </div>
+          <div class="period-rate weekly-rate">
+            <strong>${rateText(row.number_accuracy)}</strong>
+            <small>
+              本週中 ${row.target_hit_draws || 0}/${row.evaluated_runs || 0}期 ·
+              命中 ${row.sample_hit_count || 0}/${row.sample_number_count || 0}碼
+            </small>
+          </div>
+        </article>`;
+      }).join("")
+      : visibleRows.map((row) => {
+        const predicted = comparisonBalls(row, row.predicted_numbers);
+        const actual = comparisonBalls(row, row.actual_numbers);
+        const special = comparisonBalls(
+          row,
+          row.actual_special_numbers,
+          { special: true },
+        );
+        return `<article class="period-card">
+          <div class="period-id">
+            <span>${esc(row.draw_date)}</span>
+            <strong>${esc(row.draw_no)}</strong>
+          </div>
+          <div class="compare-group">
+            <span>唯一組</span><div>${predicted}</div>
+          </div>
+          <div class="compare-group actual">
+            <span>開獎</span><div>${actual}${special ? `<i>＋</i>${special}` : ""}</div>
+          </div>
+          <div class="period-rate">
+            <strong>${rateText(row.comparison_hit_rate)}</strong>
+            <small class="${row.target_achieved ? "target-pass" : "target-miss"}">
+              命中 ${row.comparison_hit_count || 0}/${row.comparison_number_count || 0}碼 ·
+              定錨 ${esc((row.recommendation_anchor || "").slice(0, 8))}
+            </small>
+          </div>
+        </article>`;
+      }).join("");
+    const empty = rows.length === 0;
+    $("#weekly-empty").textContent = showingHistory
+      ? "尚未建立近10週無未來資料回測；完成週更整理後會顯示在這裡。"
+      : "目前沒有「先定錨、後開獎」的合格紀錄；等目標期開獎並更新資料後才會開始統計。";
+    $("#weekly-empty").classList.toggle("hidden", !empty);
     $("#period-pager").classList.toggle("hidden", periodPageCount <= 1);
     $("#period-page").textContent = `第 ${state.periodPage + 1}／${periodPageCount} 頁`;
-    $("#period-prev").textContent = `← 前${periodPageSize}期`;
-    $("#period-next").textContent = `後${periodPageSize}期 →`;
+    const unit = showingHistory ? "週" : "期";
+    $("#period-prev").textContent = `← 前${periodPageSize}${unit}`;
+    $("#period-next").textContent = `後${periodPageSize}${unit} →`;
     $("#period-prev").disabled = state.periodPage === 0;
     $("#period-next").disabled = state.periodPage >= periodPageCount - 1;
-    $("#metric-note").textContent = state.dashboard.metric_note;
+    $("#metric-note").textContent = showingHistory
+      ? historicalReview.note
+      : state.dashboard.metric_note;
   }
 
   function historyPreview(record) {
@@ -334,7 +413,7 @@
         : "等待開獎";
       const detail = checked
         ? `已核對 ${evaluation.actual_draw_no || record.target_draw_no}`
-        : `目標 ${record.target_draw_no}`;
+        : `目標 ${record.target_draw_no} · 定錨 ${(record.recommendation_anchor || "").slice(0, 8)}`;
       return `<article class="history-card">
         <div class="history-period">
           <span>${esc(record.game_name)}</span>
@@ -374,9 +453,10 @@
       if ($("#game-select").value !== gameCode) return;
     }
     state.gameCode = gameCode;
-    state.mode = "single";
+    state.mode = "weekly";
     state.run = null;
     state.periodPage = 0;
+    state.performanceView = "history";
     setCombinationsOpen(false);
     renderQuickGames();
     $("#run-summary").innerHTML = `
@@ -402,7 +482,7 @@
         body: JSON.stringify({
           game_code: state.gameCode,
           mode: state.mode,
-          ticket_count: 10,
+          ticket_count: 1,
           star_count: Number($("#star-count").value),
           refresh,
         }),
@@ -412,13 +492,13 @@
       renderDataStatus();
       renderWeekly();
       renderHistory();
-      notice(refresh ? "已換一組並保存新紀錄" : "下期組合已保存");
+      notice("本週唯一1組已定錨保存；同週不會換號");
     } catch (error) {
       notice(error.message, true);
     } finally {
       state.busy = false;
       button.disabled = false;
-      button.querySelector("span").textContent = "產生／查看下期組合";
+      button.querySelector("span").textContent = "查看本週固定號碼";
     }
   }
 
@@ -454,6 +534,16 @@
   });
   $("#period-next").addEventListener("click", () => {
     state.periodPage += 1;
+    renderWeekly();
+  });
+  $("#view-live").addEventListener("click", () => {
+    state.performanceView = "live";
+    state.periodPage = 0;
+    renderWeekly();
+  });
+  $("#view-history").addEventListener("click", () => {
+    state.performanceView = "history";
+    state.periodPage = 0;
     renderWeekly();
   });
   $("#ticket-prev").addEventListener("click", () => {
