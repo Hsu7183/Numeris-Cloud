@@ -196,6 +196,7 @@
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.message || "資料暫時無法取得");
       render(payload);
+      localStorage.setItem("daily539OutputData", JSON.stringify(payload));
       const updatedAt = payload.generated_at ? new Date(payload.generated_at).toLocaleString("zh-TW", { timeZone: "Asia/Taipei", hour12: false }) : "—";
       status.textContent = `已取得 ${payload.draw_count} 期資料 · 最新：${payload.latest_draw_date} · 資料更新：${updatedAt}`;
     } catch (error) {

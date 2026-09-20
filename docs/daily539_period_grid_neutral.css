@@ -1,0 +1,70 @@
+/* 期數格表統一使用單一球色，不再以近幾期區分顏色。 */
+.grid-ball.recent-ball {
+  background: transparent;
+  border-color: #111;
+  color: #111;
+}
+
+/* 每張期數格表最底部的欄位數字浮水印。 */
+.period-panel tfoot th,
+.period-panel tfoot td {
+  height: 15px;
+  border-color: #d5ddd4;
+  background: #f8faf6;
+  color: #bac2ba;
+  font-size: 7px;
+  font-weight: 400;
+}
+
+/* 每一行都重複顯示欄位號碼；中獎圈會置於浮水印上方。 */
+.period-panel tbody td {
+  position: relative;
+}
+
+.cell-watermark {
+  color: #c2cac2;
+  font-size: 7px;
+  font-weight: 400;
+}
+
+.winning-number .cell-watermark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.winning-number .grid-ball {
+  position: relative;
+  z-index: 1;
+}
+
+.hidden { display: none; }
+.winning-draws {
+  margin: 9px 0 12px;
+  padding: 8px 10px;
+  border: 1px solid #b8c8b9;
+  background: #fbfcf8;
+}
+.winning-draws h2 {
+  margin: 0 0 6px;
+  color: #075c45;
+  font-size: .76rem;
+}
+.winning-draw-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 12px;
+}
+.winning-draw-list article {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 5px;
+  align-items: center;
+  padding: 2px 0;
+  border-bottom: 1px solid #e0e7df;
+  font-size: .57rem;
+}
+.winning-draw-list strong { color: #718277; }
+.winning-draw-list span { color: #5a6d60; }
+.winning-draw-list b { color: #102d20; font-family: Arial, sans-serif; font-size: .62rem; letter-spacing: .03em; }
