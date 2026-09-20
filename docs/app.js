@@ -196,7 +196,8 @@
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.message || "資料暫時無法取得");
       render(payload);
-      status.textContent = `已取得 ${payload.draw_count} 期資料 · 最新：${payload.latest_draw_date}`;
+      const updatedAt = payload.generated_at ? new Date(payload.generated_at).toLocaleString("zh-TW", { timeZone: "Asia/Taipei", hour12: false }) : "—";
+      status.textContent = `已取得 ${payload.draw_count} 期資料 · 最新：${payload.latest_draw_date} · 資料更新：${updatedAt}`;
     } catch (error) {
       status.textContent = error.message || "抓取失敗，請稍後再試";
       status.classList.add("error");
