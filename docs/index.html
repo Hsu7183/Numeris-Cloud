@@ -10,20 +10,22 @@
 <body>
   <main class="page-shell">
     <header class="hero">
-      <p class="brand">NUMERIS <span>台灣彩券 · DAILY 539</span></p>
+      <p class="brand">NUMERIS</p><p class="eyebrow">台灣彩券 · DAILY 539</p>
       <h1>今彩539 <em>期數統計比較</em></h1>
-      <p class="lead">比較 1–39 號在近 20、50、100、200 期的出現次數。</p>
-      <p id="status" class="status" role="status">載入資料中…</p>
+      <p class="lead">同時比較 1–39 號在近 20、50、100、200 期的出現次數與期次順序。</p>
+      <button id="fetch-draws" class="fetch-button" type="button"><span aria-hidden="true">↓</span> 重新載入統計</button>
+      <p id="status" class="status" role="status" aria-live="polite">正在載入已更新資料</p>
     </header>
     <section id="results" class="results hidden" aria-live="polite">
       <div class="result-header">
-        <div><p class="eyebrow">資料範圍</p><h2>1–39 號 · 20 / 50 / 100 / 200 期比較</h2></div>
+        <div><p class="eyebrow">資料範圍</p><h2 id="range-title">四種期數統計比較</h2></div>
         <div class="latest"><span>最新一期</span><strong id="latest-draw">—</strong></div>
       </div>
+      <p id="highlight-legend" class="highlight-legend hidden"></p>
       <div id="comparison-list" class="comparison-list"></div>
-      <p class="notice">資料由 GitHub Actions 手動更新；統計僅呈現歷史資料，不代表未來開獎機率。</p>
     </section>
   </main>
+  <footer>資料由 GitHub Actions 手動更新；統計僅呈現歷史資料，不代表未來開獎機率。</footer>
   <script src="app.js"></script>
 </body>
 </html>
