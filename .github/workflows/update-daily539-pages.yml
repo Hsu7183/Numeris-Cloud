@@ -6,9 +6,12 @@ on:
     paths:
       - "docs/data/.gitkeep"
       - "scripts/export_daily539_static.py"
+      - ".github/workflows/update-daily539-pages.yml"
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: update-daily539-pages
@@ -34,3 +37,10 @@ jobs:
           git diff --cached --quiet && exit 0
           git commit -m "chore(data): update Daily 539 statistics"
           git push
+      - name: 發布更新後的看板
+        uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deployment
+        uses: actions/deploy-pages@v4
