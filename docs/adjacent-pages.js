@@ -40,14 +40,16 @@
     return { adjacent, connected };
   }
   function renderSummary(highlights) {
-    const values = [...highlights.adjacent].sort((a,b) => a-b);
-    return `<section class="panel summary"><header><p>近 ${limit} 期</p><h1>相鄰<small>球號</small></h1></header>${values.length ? `<p class="group-note">上下左右亮燈的球號</p><article class="frequency-group"><strong>${values.length}<small>個</small></strong><div>${values.map((number) => ball(number, "adjacent")).join("")}</div></article>` : '<p class="summary-empty">本範圍沒有相鄰亮燈球號。</p>'}</section>`;
+    const selected = new Set([...highlights.adjacent, ...highlights.connected]);
+    const on = [...selected].sort((a, b) => a - b);
+    const off = Array.from({ length:39 }, (_, index) => index + 1).filter((number) => !selected.has(number));
+    return `<section class="panel summary"><header><p>跨期</p><h1>相鄰<small>統計</small></h1><span>近 ${limit} 期累計</span></header><p class="group-note">含 0 次；上下左右亮燈的球號列為 1 次</p><div class="frequency-groups"><article class="frequency-group summary-on"><strong>1<small>次</small></strong><div>${on.map((number) => ball(number, "adjacent")).join("")}</div></article><article class="frequency-group summary-off"><strong>0<small>次</small></strong><div>${off.map((number) => ball(number)).join("")}</div></article></div></section>`;
   }
   async function load() {
     try {
       const response = await fetch("data/daily539.json", { cache:"no-store" }); if (!response.ok) throw new Error("無法讀取開獎資料");
       const payload = await response.json(); const draws = payload.draws.slice(0, limit); const drawn = new Set(draws[0]?.numbers || []);
-      document.querySelector("#adjacent-results").innerHTML = `<div class="period-layout">${frequencyPanel(draws, drawn)}<div class="summary-slot"></div></div>`;
+      document.querySelector("#adjacent-results").innerHTML = `<div class="hidden-analysis">${frequencyPanel(draws, drawn)}</div><div class="summary-slot"></div>`;
       const highlights = findAdjacency(document.querySelector(".source"), drawn);
       document.querySelectorAll(".source .ball").forEach((element) => { const number = Number(element.dataset.number); if (highlights.connected.has(number)) element.classList.add("connected"); else if (highlights.adjacent.has(number)) element.classList.add("adjacent"); });
       document.querySelector(".summary-slot").innerHTML = renderSummary(highlights);
