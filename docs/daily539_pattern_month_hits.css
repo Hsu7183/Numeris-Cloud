@@ -14,22 +14,6 @@
   background: #f7edcf;
 }
 
-/* The 01–39 header row uses lottery balls; occurrence values stay in their cells. */
-.number-header .number-ball {
-  display: inline-flex;
-  width: 20px;
-  height: 20px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #0a5947;
-  border-radius: 50%;
-  background: #c7f451;
-  color: #073a30;
-  font-size: .62rem;
-  font-weight: 900;
-  line-height: 1;
-}
-
 .month-row td.winning-cell .count-ball {
   display: inline-flex;
   width: 21px;

@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   const numbers = Array.from({ length: 39 }, (_, index) => index + 1);
-  const headers = () => `<tr class="number-header"><th></th>${numbers.map((number) => `<th><span class="number-ball">${number}</span></th>`).join("")}</tr>`;
+  const headers = () => `<tr class="number-header"><th></th>${numbers.map((number) => `<th>${number}</th>`).join("")}</tr>`;
   const rows = (draws, offset) => Array.from({ length: 9 }, (_, index) => {
     const row = index + 1;
     const draw = draws[offset + index];
