@@ -50,6 +50,9 @@
 
   function renderPanels(draws, splitAt) {
     document.querySelector("#comparison-list").innerHTML = [
+      renderColumn(6, draws),
+      renderColumn(12, draws),
+      renderColumn(18, draws),
       renderColumn(20, draws),
       renderColumn(50, draws),
       renderColumn(100, draws),
@@ -136,7 +139,7 @@
         groups.set(count, values);
       });
     return `<section class="comparison-panel adjacent-summary-panel">
-      <header><p>跨期</p><h2>相鄰<small>統計</small></h2><span>20／50／100／200 累計</span></header>
+      <header><p>跨期</p><h2>相鄰<small>統計</small></h2><span>6／12／18／20／50／100／200 累計</span></header>
       <p class="group-note">含 0 次；各次數以不同顏色區隔</p>
       <div class="frequency-groups">${[...groups.entries()].map(([count, numbers]) => `
         <article class="frequency-group summary-count summary-count-${Math.min(count, 7)}">
@@ -149,7 +152,7 @@
   function render(payload) {
     const latestNumbers = payload.draws[0].numbers;
     drawnNumbers = new Set(latestNumbers);
-    document.querySelector("#range-title").textContent = `1–39 號 · 20 / 50 / 100 / 200（前後段）比較`;
+    document.querySelector("#range-title").textContent = `1–39 號 · 6 / 12 / 18 / 20 / 50 / 100 / 200（前後段）比較`;
     document.querySelector("#latest-draw").textContent = `${payload.latest_draw_no}期 · ${payload.latest_draw_date}`;
     const all200Groups = summarize(payload.draws.slice(0, 200)).filter((item) => item.count > 0);
     const distinct200Counts = [...new Set(all200Groups.map((item) => item.count))];
@@ -161,10 +164,13 @@
       chartAdjacency([panels[0]]),
       chartAdjacency([panels[1]]),
       chartAdjacency([panels[2]]),
-      chartAdjacency([panels[3], panels[4]]),
+      chartAdjacency([panels[3]]),
+      chartAdjacency([panels[4]]),
+      chartAdjacency([panels[5]]),
+      chartAdjacency([panels[6], panels[7]]),
     ];
     panels.forEach((panel, index) => {
-      const highlights = panelHighlights[Math.min(index, 3)];
+      const highlights = panelHighlights[Math.min(index, 6)];
       panel.querySelectorAll(".ball").forEach((element) => {
         const number = Number(element.textContent);
         if (highlights.connectedDrawn.has(number)) {
@@ -174,7 +180,7 @@
         }
       });
     });
-    adjacentNumbers = panelHighlights[0].adjacent;
+    adjacentNumbers = panelHighlights[3].adjacent;
     document.querySelector("#comparison-list").insertAdjacentHTML(
       "beforeend",
       renderAdjacentSummary(panelHighlights),

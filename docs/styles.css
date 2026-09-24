@@ -20,5 +20,3 @@
 .comparison-panel:not(.adjacent-summary-panel) .ball-number { transform:scaleX(.95); }
 .adjacent-summary-panel .summary-ball { width:16px; height:16px; font-size:11px; }
 .adjacent-summary-panel .summary-ball .ball-number { transform:scaleX(.95); }
-
-.adjacent-page-links { display:flex; flex:none; align-items:center; justify-content:center; gap:8px; padding:8px 0 0; }.adjacent-page-links span { color:var(--deep); font-size:.72rem; font-weight:900; }.adjacent-page-links a { padding:5px 12px; border:1px solid #0b7658; border-radius:6px; color:#075a44; background:#fbfcf8; font-size:.66rem; font-weight:900; text-decoration:none; }.adjacent-page-links a:hover { background:#dff0c5; }
