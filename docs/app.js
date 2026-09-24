@@ -157,19 +157,12 @@
     adjacentNumbers = new Set();
     renderPanels(payload.draws, splitAt);
     const panels = [...document.querySelectorAll(".comparison-panel")];
-    const shortRangeLayer = document.createElement("div");
-    shortRangeLayer.className = "comparison-list adjacent-analysis-layer";
-    shortRangeLayer.innerHTML = [renderColumn(6, payload.draws), renderColumn(12, payload.draws), renderColumn(18, payload.draws)].join("");
-    document.body.append(shortRangeLayer);
-    const shortRangePanels = [...shortRangeLayer.querySelectorAll(".comparison-panel")];
     const panelHighlights = [
       chartAdjacency([panels[0]]),
       chartAdjacency([panels[1]]),
       chartAdjacency([panels[2]]),
       chartAdjacency([panels[3], panels[4]]),
     ];
-    const shortRangeHighlights = shortRangePanels.map((panel) => chartAdjacency([panel]));
-    shortRangeLayer.remove();
     panels.forEach((panel, index) => {
       const highlights = panelHighlights[Math.min(index, 3)];
       panel.querySelectorAll(".ball").forEach((element) => {
@@ -184,12 +177,7 @@
     adjacentNumbers = panelHighlights[0].adjacent;
     document.querySelector("#comparison-list").insertAdjacentHTML(
       "beforeend",
-      [
-        renderAdjacentSummary(panelHighlights),
-        renderAdjacentSummary([shortRangeHighlights[0]], "近 6 期"),
-        renderAdjacentSummary([shortRangeHighlights[1]], "近 12 期"),
-        renderAdjacentSummary([shortRangeHighlights[2]], "近 18 期"),
-      ].join(""),
+      renderAdjacentSummary(panelHighlights),
     );
     const legend = document.querySelector("#highlight-legend");
     const formatNumbers = (numbers) => [...numbers].sort((a, b) => a - b)
