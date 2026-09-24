@@ -18,3 +18,5 @@
 .summary-count-7 > strong { color:#70400a; }.summary-count-7 .summary-ball { border-color:#7b480d; background:#e6bd79; color:#3d2100; }
 .comparison-panel:not(.adjacent-summary-panel) .ball { width:16px; height:16px; font-size:11px; }
 .comparison-panel:not(.adjacent-summary-panel) .ball-number { transform:scaleX(.95); }
+.adjacent-summary-panel .summary-ball { width:16px; height:16px; font-size:11px; }
+.adjacent-summary-panel .summary-ball .ball-number { transform:scaleX(.95); }
