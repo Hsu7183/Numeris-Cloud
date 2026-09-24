@@ -9,7 +9,7 @@
       const row = index + 1;
       const occurrences = draws[index]?.occurrences || {};
       const cells = headers.map((value) => value !== "" && occurrences[value]
-        ? `<td class="winning-cell" title="第 ${row} 期開獎號碼 ${pad(value)}，第 ${occurrences[value]} 次出現"><b>${occurrences[value]}</b></td>`
+        ? `<td class="winning-cell" title="第 ${row} 期開獎號碼 ${pad(value)}，第 ${occurrences[value]} 次出現"><b class="count-ball count-ball-${Math.min(occurrences[value], 4)}">${occurrences[value]}</b></td>`
         : `<td><span>${row}</span></td>`).join("");
       return `<tr><th>${row}</th>${cells}</tr>`;
     }).join("");

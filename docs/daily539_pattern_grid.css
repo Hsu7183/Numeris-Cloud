@@ -3,3 +3,4 @@
 
 /* The lottery-number headers are balls; the compact Excel grid stays unchanged. */
 .pattern-board thead .number-ball { display:inline-flex; width:10px; height:10px; align-items:center; justify-content:center; border:1px solid #0a5947; border-radius:50%; background:#c7f451; color:#073a30; font-size:.31rem; font-weight:900; line-height:1; vertical-align:middle; }
+.pattern-board td.winning-cell .count-ball { display:inline-flex; width:14px; height:14px; align-items:center; justify-content:center; border:1px solid rgba(6,69,54,.6); border-radius:50%; color:#092f28; font-size:.48rem; font-weight:900; line-height:1; vertical-align:middle; }.pattern-board .count-ball-1 { background:#bdf24b; }.pattern-board .count-ball-2 { background:#56ddd5; }.pattern-board .count-ball-3 { background:#ffbd36; }.pattern-board .count-ball-4 { background:#ee6b6b; color:#fff; }.pattern-board td.winning-cell { background:transparent !important; }.pattern-board tbody tr { height:16px; }
