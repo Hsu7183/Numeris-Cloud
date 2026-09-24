@@ -1,13 +1,13 @@
 (() => {
   "use strict";
   const numbers = Array.from({ length: 39 }, (_, index) => index + 1);
-  const headers = () => `<tr class="number-header"><th></th>${numbers.map((number) => `<th>${number}</th>`).join("")}</tr>`;
+  const headers = () => `<tr class="number-header"><th></th>${numbers.map((number) => `<th><span class="number-ball">${number}</span></th>`).join("")}</tr>`;
   const rows = (draws, offset) => Array.from({ length: 9 }, (_, index) => {
     const row = index + 1;
     const draw = draws[offset + index];
     const occurrences = draw?.occurrences || {};
     const cells = numbers.map((number) => occurrences[number]
-      ? `<td class="winning-cell" title="${draw.draw_date}：${String(number).padStart(2, "0")} 第 ${occurrences[number]} 次"><b class="count-ball count-ball-${Math.min(occurrences[number], 4)}">${occurrences[number]}</b></td>`
+      ? `<td class="winning-cell" title="${draw.draw_date}：${String(number).padStart(2, "0")} 第 ${occurrences[number]} 次"><b>${occurrences[number]}</b></td>`
       : "<td></td>").join("");
     return `<tr class="month-row"><th>${row}</th>${cells}</tr>`;
   }).join("");

@@ -4,12 +4,12 @@
   const bottomHeaders = [[1, 5, 9, 13, 17, 21, 25, 29, 33, 37], [2, 6, 10, 14, 18, 22, 26, 30, 34, 38], [3, 7, 11, 15, 19, 23, 27, 31, 35, 39], [4, 8, 12, 16, 20, 24, 28, 32, 36, ""]];
   const pad = (value) => value === "" ? "" : String(value).padStart(2, "0");
   function board(headers, draws) {
-    const header = headers.map((value) => `<th>${pad(value)}</th>`).join("");
+    const header = headers.map((value) => `<th>${value === "" ? "" : `<span class="number-ball">${pad(value)}</span>`}</th>`).join("");
     const rows = Array.from({ length: 20 }, (_, index) => {
       const row = index + 1;
       const occurrences = draws[index]?.occurrences || {};
       const cells = headers.map((value) => value !== "" && occurrences[value]
-        ? `<td class="winning-cell" title="第 ${row} 期開獎號碼 ${pad(value)}，第 ${occurrences[value]} 次出現"><b class="count-ball count-ball-${Math.min(occurrences[value], 4)}">${occurrences[value]}</b></td>`
+        ? `<td class="winning-cell" title="第 ${row} 期開獎號碼 ${pad(value)}，第 ${occurrences[value]} 次出現"><b>${occurrences[value]}</b></td>`
         : `<td><span>${row}</span></td>`).join("");
       return `<tr><th>${row}</th>${cells}</tr>`;
     }).join("");
