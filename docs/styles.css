@@ -20,3 +20,5 @@
 .comparison-panel:not(.adjacent-summary-panel) .ball-number { transform:scaleX(.95); }
 .adjacent-summary-panel .summary-ball { width:16px; height:16px; font-size:11px; }
 .adjacent-summary-panel .summary-ball .ball-number { transform:scaleX(.95); }
+
+.adjacent-analysis-layer { position:absolute; left:-10000px; top:0; width:900px; visibility:hidden; pointer-events:none; }

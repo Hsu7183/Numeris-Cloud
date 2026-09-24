@@ -50,9 +50,6 @@
 
   function renderPanels(draws, splitAt) {
     document.querySelector("#comparison-list").innerHTML = [
-      renderColumn(6, draws),
-      renderColumn(12, draws),
-      renderColumn(18, draws),
       renderColumn(20, draws),
       renderColumn(50, draws),
       renderColumn(100, draws),
@@ -120,7 +117,7 @@
     return result;
   }
 
-  function renderAdjacentSummary(panelHighlights) {
+  function renderAdjacentSummary(panelHighlights, label = "20／50／100／200 累計") {
     // 1–39 全部列入，未曾亮燈的球號也會顯示為 0 次。
     const counts = new Map(Array.from({ length: 39 }, (_, index) => [index + 1, 0]));
     panelHighlights.forEach((highlight) => {
@@ -139,7 +136,7 @@
         groups.set(count, values);
       });
     return `<section class="comparison-panel adjacent-summary-panel">
-      <header><p>跨期</p><h2>相鄰<small>統計</small></h2><span>6／12／18／20／50／100／200 累計</span></header>
+      <header><p>跨期</p><h2>相鄰<small>統計</small></h2><span>${label}</span></header>
       <p class="group-note">含 0 次；各次數以不同顏色區隔</p>
       <div class="frequency-groups">${[...groups.entries()].map(([count, numbers]) => `
         <article class="frequency-group summary-count summary-count-${Math.min(count, 7)}">
@@ -152,7 +149,7 @@
   function render(payload) {
     const latestNumbers = payload.draws[0].numbers;
     drawnNumbers = new Set(latestNumbers);
-    document.querySelector("#range-title").textContent = `1–39 號 · 6 / 12 / 18 / 20 / 50 / 100 / 200（前後段）比較`;
+    document.querySelector("#range-title").textContent = `1–39 號 · 20 / 50 / 100 / 200（前後段）比較`;
     document.querySelector("#latest-draw").textContent = `${payload.latest_draw_no}期 · ${payload.latest_draw_date}`;
     const all200Groups = summarize(payload.draws.slice(0, 200)).filter((item) => item.count > 0);
     const distinct200Counts = [...new Set(all200Groups.map((item) => item.count))];
@@ -160,17 +157,21 @@
     adjacentNumbers = new Set();
     renderPanels(payload.draws, splitAt);
     const panels = [...document.querySelectorAll(".comparison-panel")];
+    const shortRangeLayer = document.createElement("div");
+    shortRangeLayer.className = "comparison-list adjacent-analysis-layer";
+    shortRangeLayer.innerHTML = [renderColumn(6, payload.draws), renderColumn(12, payload.draws), renderColumn(18, payload.draws)].join("");
+    document.body.append(shortRangeLayer);
+    const shortRangePanels = [...shortRangeLayer.querySelectorAll(".comparison-panel")];
     const panelHighlights = [
       chartAdjacency([panels[0]]),
       chartAdjacency([panels[1]]),
       chartAdjacency([panels[2]]),
-      chartAdjacency([panels[3]]),
-      chartAdjacency([panels[4]]),
-      chartAdjacency([panels[5]]),
-      chartAdjacency([panels[6], panels[7]]),
+      chartAdjacency([panels[3], panels[4]]),
     ];
+    const shortRangeHighlights = shortRangePanels.map((panel) => chartAdjacency([panel]));
+    shortRangeLayer.remove();
     panels.forEach((panel, index) => {
-      const highlights = panelHighlights[Math.min(index, 6)];
+      const highlights = panelHighlights[Math.min(index, 3)];
       panel.querySelectorAll(".ball").forEach((element) => {
         const number = Number(element.textContent);
         if (highlights.connectedDrawn.has(number)) {
@@ -180,10 +181,15 @@
         }
       });
     });
-    adjacentNumbers = panelHighlights[3].adjacent;
+    adjacentNumbers = panelHighlights[0].adjacent;
     document.querySelector("#comparison-list").insertAdjacentHTML(
       "beforeend",
-      renderAdjacentSummary(panelHighlights),
+      [
+        renderAdjacentSummary(panelHighlights),
+        renderAdjacentSummary([shortRangeHighlights[0]], "近 6 期"),
+        renderAdjacentSummary([shortRangeHighlights[1]], "近 12 期"),
+        renderAdjacentSummary([shortRangeHighlights[2]], "近 18 期"),
+      ].join(""),
     );
     const legend = document.querySelector("#highlight-legend");
     const formatNumbers = (numbers) => [...numbers].sort((a, b) => a - b)
