@@ -13,3 +13,23 @@
 .month-row:nth-child(even) td.winning-cell {
   background: #f7edcf;
 }
+
+/* The occurrence number is rendered as a ball without changing the sheet grid. */
+.month-row td.winning-cell .count-ball {
+  display: inline-flex;
+  width: 21px;
+  height: 21px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(6, 69, 54, .5);
+  border-radius: 50%;
+  color: #092f28;
+  font-size: .72rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.month-row .count-ball-1 { background: #bdf24b; }
+.month-row .count-ball-2 { background: #56ddd5; }
+.month-row .count-ball-3 { background: #ffbd36; }
+.month-row .count-ball-4 { background: #ee6b6b; color: #fff; }
