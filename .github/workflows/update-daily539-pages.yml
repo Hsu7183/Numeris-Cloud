@@ -2,6 +2,9 @@ name: 更新今彩539 GitHub Pages 資料
 
 on:
   workflow_dispatch:
+  # 今彩539週一至週六約 20:35 開獎；22:00（台灣時間）後更新。
+  schedule:
+    - cron: "0 14 * * 1-6"
   push:
     paths:
       - "docs/data/.gitkeep"
