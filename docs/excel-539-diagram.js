@@ -12,13 +12,22 @@
       const cells = Array.from({ length: 20 }, (_, index) => {
         const number = index + 1;
         const marked = label === 1 && drawn.has(number);
-        return `<td>${marked ? `<span class="diagram-circle">${pad(number)}</span>` : ""}</td>`;
+        return `<td>${marked ? `<span class="diagram-circle" aria-label="${pad(number)} 開出"></span>` : ""}</td>`;
       }).join("");
       return `<tr><th>${label}</th>${cells}</tr>`;
     }).join("");
-    const resultRows = Array.from({ length: 5 }, (_, index) => {
-      const number = draw.numbers?.[index];
-      return `<tr><th>${index + 1}</th><td>${number ? `<span class="result-value">${pad(number)}</span>` : ""}</td></tr>`;
+    const adjacentRows = [20, 50, 100, 200].map((limit) => {
+      const counts = new Map(Array.from({ length: 39 }, (_, index) => [index + 1, 0]));
+      window.latestDraws.slice(0, limit).forEach((item) => {
+        (item.numbers || []).forEach((number) => {
+          [number - 1, number + 1].forEach((neighbor) => {
+            if (neighbor >= 1 && neighbor <= 39) counts.set(neighbor, counts.get(neighbor) + 1);
+          });
+        });
+      });
+      const top = [...counts.entries()].filter(([, count]) => count > 0)
+        .sort((first, second) => second[1] - first[1] || first[0] - second[0]).slice(0, 8);
+      return `<article class="adjacent-row"><strong>近 ${limit} 期</strong><div>${top.map(([number, count]) => `<span class="adjacent-number" title="相鄰出現 ${count} 次">${pad(number)}<small>${count}</small></span>`).join("")}</div></article>`;
     }).join("");
     target.innerHTML = `
       <section class="diagram-sheet" aria-label="今彩539號碼格表">
@@ -32,12 +41,12 @@
             <table><thead><tr><th>次數</th>${headers}</tr></thead><tbody>${gridRows}</tbody></table>
             <div class="blank-strips" aria-hidden="true"><i></i><i></i><i></i></div>
           </section>
-          <section class="results-board">
-            <header><strong>539</strong><span>本期開獎號碼</span></header>
-            <table><thead><tr><th>順序</th><th>號碼</th></tr></thead><tbody>${resultRows}</tbody></table>
+          <section class="results-board adjacent-board">
+            <header><strong>相鄰</strong><span>相鄰統計號碼</span></header>
+            <div class="adjacent-list">${adjacentRows}</div>
           </section>
         </div>
-        <p>紅圈：此號碼於最新一期開出。01–20 顯示在左側位置格，其餘號碼列在右側。</p>
+        <p>空白紅圈：此號碼於最新一期開出。右側列出 20／50／100／200 期的相鄰統計號碼。</p>
       </section>`;
   }
 
@@ -48,6 +57,7 @@
       const payload = await response.json();
       const draw = payload.draws?.[0];
       if (!draw) throw new Error("沒有開獎資料");
+      window.latestDraws = payload.draws || [];
       render(draw);
       status.textContent = `已填入最新一期：${draw.draw_no}期 · ${draw.draw_date}`;
     } catch (error) {
