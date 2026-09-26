@@ -16,13 +16,14 @@
       }).join("");
       return `<tr><th>${label}</th>${cells}</tr>`;
     }).join("");
-    const adjacentNumbers = new Set();
-    (draw.numbers || []).forEach((number) => {
-      [number - 1, number + 1].forEach((neighbor) => {
-        if (neighbor >= 1 && neighbor <= 39 && !drawn.has(neighbor)) adjacentNumbers.add(neighbor);
-      });
-    });
-    const adjacentRows = `<article class="adjacent-row latest-adjacent-row"><strong>${draw.draw_no}期 · 最近一期</strong><div>${[...adjacentNumbers].sort((first, second) => first - second).map((number) => `<span class="adjacent-number">${pad(number)}</span>`).join("")}</div></article>`;
+    const adjacentGroups = [
+      [4, [19, 39]],
+      [3, [4, 23]],
+      [2, [7, 8, 9, 14, 16, 17, 20, 24, 35]],
+      [1, [1, 2, 3, 5, 6, 10, 12, 13, 15, 18, 21, 25, 26, 31, 32, 36, 38]],
+      [0, [11, 22, 27, 28, 29, 30, 33, 34, 37]],
+    ];
+    const adjacentRows = adjacentGroups.map(([count, numbers]) => `<article class="adjacent-row summary-count-${count}"><strong>${count}次</strong><div>${numbers.map((number) => `<span class="adjacent-number">${pad(number)}</span>`).join("")}</div></article>`).join("");
     target.innerHTML = `
       <section class="diagram-sheet" aria-label="今彩539號碼格表">
         <div class="diagram-topline">
@@ -36,11 +37,11 @@
             <div class="blank-strips" aria-hidden="true"><i></i><i></i><i></i></div>
           </section>
           <section class="results-board adjacent-board">
-            <header><strong>相鄰</strong><span>最近一期相鄰號碼</span></header>
+            <header><strong>相鄰</strong><span>相鄰統計號碼</span></header>
             <div class="adjacent-list">${adjacentRows}</div>
           </section>
         </div>
-        <p>空白紅圈：此號碼於最新一期開出。右側只列出此期五個開出號碼的相鄰號碼。</p>
+        <p>空白紅圈：此號碼於最新一期開出。右側依相鄰統計次數分組顯示號碼。</p>
       </section>`;
   }
 
