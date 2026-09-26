@@ -20,9 +20,9 @@
       const response = await fetch("data/daily539.json", { cache:"no-store" });
       if (!response.ok) throw new Error("資料讀取失敗");
       const payload = await response.json();
-      const draws = (payload.draws || []).slice(0, 20).reverse();
+      const draws = (payload.draws || []).slice(0, 1);
       document.querySelector("#excel539-grids").innerHTML = ranges.map(([start, end]) => grid(start, end, draws)).join("");
-      status.textContent = `已填入最近 ${draws.length} 期：第 1 列最早（${draws[0]?.draw_date || "—"}），第 ${draws.length} 列最新（${draws.at(-1)?.draw_date || "—"}）`;
+      status.textContent = `已填入最新一期：${draws[0]?.draw_no || "—"}期 · ${draws[0]?.draw_date || "—"}`;
     } catch (error) { status.textContent = "開獎資料讀取失敗，請重新整理後再試。"; }
   }
   load();
