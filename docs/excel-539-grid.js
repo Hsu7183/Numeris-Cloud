@@ -9,11 +9,11 @@
     const rows = draws.map((draw, index) => {
       const values = new Set(draw.numbers || []);
       const cells = numbers.map((number) => values.has(number)
-        ? `<td title="${draw.draw_no}期 · ${draw.draw_date} · ${pad(number)}"><span class="draw-mark">○</span></td>`
+        ? `<td title="${draw.draw_no}期 · ${draw.draw_date} · ${pad(number)}"><span class="draw-mark">${pad(number)}</span></td>`
         : "<td></td>").join("");
       return `<tr><th class="row-label">${index + 1}</th>${cells}</tr>`;
     }).join("");
-    return `<section class="excel539-block"><header><strong>539</strong><span>${pad(start)}–${pad(end)} 號</span></header><table class="excel539-table"><thead><tr><th class="row-label">期</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="excel539-note">紅圈表示該期開出號碼</p></section>`;
+    return `<section class="excel539-block"><header><strong>539</strong><span>${pad(start)}–${pad(end)} 號圖示格</span></header><table class="excel539-table"><thead><tr><th class="row-label">期</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="excel539-note">紅色球圖示表示該期開出號碼</p></section>`;
   };
   const resultsGrid = (draw) => {
     const numbers = draw?.numbers || [];
