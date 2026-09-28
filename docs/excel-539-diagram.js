@@ -11,8 +11,12 @@
     const gridRows = rowLabels.map((label) => {
       const cells = Array.from({ length: 20 }, (_, index) => {
         const number = index + 1;
-        const marked = label === 1 && drawn.has(number);
-        return `<td>${marked ? `<span class="diagram-circle" aria-label="${pad(number)} 開出"></span>` : ""}</td>`;
+        const watermark = label === 3 || label === 1
+          ? `<span style="color:#cfd6d1;font-family:Georgia,serif;font-size:.9rem;font-weight:700">${number}</span>`
+          : "";
+        const marked = label === 4 && drawn.has(number);
+        const circle = marked ? `<span class="diagram-circle" aria-label="${pad(number)} 開出">○</span>` : "";
+        return `<td>${watermark}${circle}</td>`;
       }).join("");
       return `<tr><th>${label}</th>${cells}</tr>`;
     }).join("");
@@ -27,21 +31,22 @@
     target.innerHTML = `
       <section class="diagram-sheet" aria-label="今彩539號碼格表">
         <div class="diagram-topline">
-          <div class="date-box"><b>年</b><b>月</b><b>日</b></div>
+          <div class="date-box" style="grid-template-columns:2fr 1fr 1fr"><b style="font-size:.7rem;white-space:nowrap">○加兩倍</b><b></b><b></b></div>
           <div class="diagram-title">539</div>
           <div class="diagram-caption">最新一期位置格</div>
         </div>
-        <div class="diagram-content">
+        <div class="diagram-content" style="grid-template-columns:minmax(0,1fr) 520px">
           <section class="number-board">
             <table><thead><tr><th>次數</th>${headers}</tr></thead><tbody>${gridRows}</tbody></table>
             <div class="blank-strips" aria-hidden="true"><i></i><i></i><i></i></div>
           </section>
           <section class="results-board adjacent-board">
-            <header><strong>相鄰</strong><span>相鄰統計號碼</span></header>
+            <header style="grid-template-columns:105px 1fr"><strong style="display:grid;place-items:center;border-right:2px solid var(--grid);font-family:Georgia,serif;font-size:2rem">相鄰</strong><span>相鄰統計號碼</span></header>
+            <p style="margin:0;padding:8px 10px;border-bottom:1px solid #cbd7cd;color:#596b61;font-size:.68rem;line-height:1.55"><strong>計算規則：</strong>以紅圈號碼為中心，計入左、右、上、下相鄰格；各號碼依出現次數分組，未出現者列為 0 次。</p>
             <div class="adjacent-list">${adjacentRows}</div>
           </section>
         </div>
-        <p>空白紅圈：此號碼於最新一期開出。右側依相鄰統計次數分組顯示號碼。</p>
+        <p>紅色圈號：此號碼於最新一期開出。右側依相鄰統計次數分組顯示號碼。</p>
       </section>`;
   }
 

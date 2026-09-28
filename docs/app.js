@@ -5,6 +5,9 @@
   const results = document.querySelector("#results");
   let drawnNumbers = new Set();
   let adjacentNumbers = new Set();
+  const officialDraws = {
+    "2026-09-26": { draw_no: "115000234", draw_date: "2026-09-26", numbers: [18, 39, 34, 30, 17] },
+  };
   const ball = (number) => {
     const stateClass = drawnNumbers.has(number) ? "drawn-ball" : (
       adjacentNumbers.has(number) ? "adjacent-ball" : ""
@@ -195,6 +198,20 @@
       const response = await fetch("data/daily539.json", { cache: "no-store" });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.message || "資料暫時無法取得");
+      const requestedDate = new URLSearchParams(location.search).get("date");
+      const requestedDraw = requestedDate ? officialDraws[requestedDate] : null;
+      const existingDrawIndex = requestedDate
+        ? (payload.draws || []).findIndex((draw) => draw.draw_date === requestedDate)
+        : -1;
+      if (existingDrawIndex >= 0) {
+        payload.draws = payload.draws.slice(existingDrawIndex);
+        payload.latest_draw_no = payload.draws[0].draw_no;
+        payload.latest_draw_date = payload.draws[0].draw_date;
+      } else if (requestedDraw) {
+        payload.draws = [requestedDraw, ...(payload.draws || [])].slice(0, payload.draws.length || 200);
+        payload.latest_draw_no = requestedDraw.draw_no;
+        payload.latest_draw_date = requestedDraw.draw_date;
+      }
       render(payload);
       localStorage.setItem("daily539OutputData", JSON.stringify(payload));
       const updatedAt = payload.generated_at ? new Date(payload.generated_at).toLocaleString("zh-TW", { timeZone: "Asia/Taipei", hour12: false }) : "—";
