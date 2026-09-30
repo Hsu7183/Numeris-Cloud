@@ -6,6 +6,19 @@
   document.querySelector("#today-date").textContent = `畫面日期：${new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit", weekday: "long" }).format(new Date())}`;
   let loadedDataVersion = "";
 
+  const taipeiDateString = () => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit",
+    }).formatToParts(new Date());
+    const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+    return `${values.year}-${values.month}-${values.day}`;
+  };
+  const shiftDate = (date, amount) => {
+    const value = new Date(`${date}T00:00:00Z`);
+    value.setUTCDate(value.getUTCDate() + amount);
+    return value.toISOString().slice(0, 10);
+  };
+
   const readDataVersion = async () => {
     const response = await fetch(`data/daily539.json?check=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error("無法檢查最新資料");
@@ -88,11 +101,12 @@
     source.appendChild(frame);
   });
 
-  const renderPanel = (days, dates, dailyCells) => {
-    const selectedDates = dates.slice(-days);
-    const label = `${selectedDates[0].replaceAll("-", "/")}～${selectedDates.at(-1).replaceAll("-", "/")}`;
+  const renderPanel = (days, endDate, datedCells) => {
+    const startDate = shiftDate(endDate, -(days - 1));
+    const selected = datedCells.filter(({ date }) => date >= startDate && date <= endDate);
+    const label = `${startDate.replaceAll("-", "/")}～${endDate.replaceAll("-", "/")}`;
     const counts = new Map();
-    dailyCells.slice(-days).flat().forEach((key) => counts.set(key, (counts.get(key) || 0) + 1));
+    selected.flatMap(({ cells }) => cells).forEach((key) => counts.set(key, (counts.get(key) || 0) + 1));
     const headers = Array.from({ length: 20 }, (_, index) => `<th>${index + 1}</th>`).join("");
     const rows = [4, 3, 2, 1, 0].map((rowLabel) => {
       const cells = Array.from({ length: 20 }, (_, index) => {
@@ -108,7 +122,7 @@
       }).join("");
       return `<tr><th>${rowLabel}</th>${cells}</tr>`;
     }).join("");
-    return `<section class="overlay-panel"><header><strong>${days} 天疊加</strong><span>${label}</span></header><table><thead><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="overlay-note">共 ${days} 個開獎日；紅圈內數字為該框格累計出現次數。</p></section>`;
+    return `<section class="overlay-panel"><header><strong>近 ${days} 日疊加</strong><span>${label}</span></header><table><thead><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="overlay-note">近 ${days} 個日曆日內共有 ${selected.length} 個開獎日；紅圈內數字為累計出現次數。</p></section>`;
   };
 
   async function load() {
@@ -116,16 +130,20 @@
       const response = await fetch(`data/daily539.json?load=${Date.now()}`, { cache: "no-store" });
       if (!response.ok) throw new Error("開獎資料讀取失敗");
       const payload = await response.json();
-      const dates = (payload.draws || []).slice(0, 18).map((draw) => draw.draw_date).reverse();
-      if (dates.length < 18) throw new Error("不足 18 個開獎日資料");
-      status.textContent = `正在載入最新 18 個開獎日（截至 ${dates.at(-1)}）…`;
+      const endDate = taipeiDateString();
+      const startDate = shiftDate(endDate, -17);
+      const dates = (payload.draws || []).map((draw) => draw.draw_date)
+        .filter((date) => date >= startDate && date <= endDate).reverse();
+      if (!dates.length) throw new Error("近 18 日沒有開獎資料");
+      status.textContent = `正在載入近 18 日資料（${startDate}～${endDate}）…`;
       const dailyCells = await Promise.all(dates.map(loadMappedCells));
-      document.querySelector("#overlay-panels").innerHTML = rangeDays.map((days) => renderPanel(days, dates, dailyCells)).join("");
+      const datedCells = dates.map((date, index) => ({ date, cells: dailyCells[index] }));
+      document.querySelector("#overlay-panels").innerHTML = rangeDays.map((days) => renderPanel(days, endDate, datedCells)).join("");
       const adjacentDate = dates.at(-1);
       document.querySelector("#adjacent-table").innerHTML = await loadAdjacentTable(adjacentDate);
       document.querySelector("#adjacent-date").textContent = `${adjacentDate.replaceAll("-", "/")} 本期相鄰`;
-      document.querySelector(".overlay-header span").textContent = `依最新 18 個實際開獎日累加紅圈位置（截至 ${adjacentDate}）`;
-      status.textContent = `已更新至 ${adjacentDate} · 6、12、18 個開獎日疊加 · 每日自動更新已開啟。`;
+      document.querySelector(".overlay-header span").textContent = `依近 6／12／18 個日曆日累加紅圈位置（截至 ${endDate}）`;
+      status.textContent = `已計算至 ${endDate} · 最新開獎資料 ${adjacentDate} · 每日自動更新已開啟。`;
       enableAutomaticUpdates();
     } catch (error) {
       status.textContent = `疊加資料載入失敗：${error.message}`;
