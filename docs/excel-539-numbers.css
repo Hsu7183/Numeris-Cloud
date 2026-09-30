@@ -6,3 +6,23 @@
   font-size: .72rem;
   font-weight: 900;
 }
+
+/* 相鄰統計固定為 20 欄，每個球各自佔一格。 */
+.adjacent-table-wrap { overflow-x: auto; }
+.adjacent-table { min-width: 620px; table-layout: fixed; }
+.adjacent-table th,
+.adjacent-table td { height: 43px; padding: 0; }
+.adjacent-table thead th { height: 32px; background: var(--soft); font-family: Georgia, serif; font-size: .65rem; }
+.adjacent-table thead th:first-child,
+.adjacent-table tbody th { width: 48px; }
+.adjacent-table tbody th { background: #f2f4f0; font-size: .7rem; white-space: nowrap; }
+.adjacent-table .summary-count-4 > th { color: #b82032; }
+.adjacent-table .summary-count-3 > th { color: #b15d00; }
+.adjacent-table .summary-count-2 > th { color: #00777b; }
+.adjacent-table .summary-count-1 > th { color: #177145; }
+.adjacent-table .summary-count-0 > th { color: #66756c; }
+.adjacent-table .adjacent-number { width: 22px; height: 22px; }
+
+@media (max-width: 1100px) {
+  .diagram-content { grid-template-columns: 1fr !important; }
+}
