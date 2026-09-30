@@ -1,15 +1,6 @@
 (() => {
   "use strict";
-  const dates = [
-    "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12",
-    "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19",
-    "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25", "2026-09-26",
-  ];
-  const ranges = [
-    { days: 6, label: "2026/09/07～2026/09/12" },
-    { days: 12, label: "2026/09/07～2026/09/19" },
-    { days: 18, label: "2026/09/07～2026/09/26" },
-  ];
+  const rangeDays = [6, 12, 18];
   const status = document.querySelector("#overlay-status");
   const source = document.querySelector("#overlay-source");
   document.querySelector("#today-date").textContent = `畫面日期：${new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit", weekday: "long" }).format(new Date())}`;
@@ -52,7 +43,7 @@
     const timeout = window.setTimeout(() => {
       frame.remove();
       reject(new Error(`${date} 載入逾時`));
-    }, 10000);
+    }, 30000);
     frame.addEventListener("load", () => {
       const check = window.setInterval(() => {
         const documentRef = frame.contentDocument;
@@ -79,7 +70,7 @@
     const timeout = window.setTimeout(() => {
       frame.remove();
       reject(new Error(`${date} 相鄰表格載入逾時`));
-    }, 10000);
+    }, 30000);
     frame.addEventListener("load", () => {
       const check = window.setInterval(() => {
         const documentRef = frame.contentDocument;
@@ -97,9 +88,11 @@
     source.appendChild(frame);
   });
 
-  const renderPanel = ({ days, label }, dailyCells) => {
+  const renderPanel = (days, dates, dailyCells) => {
+    const selectedDates = dates.slice(-days);
+    const label = `${selectedDates[0].replaceAll("-", "/")}～${selectedDates.at(-1).replaceAll("-", "/")}`;
     const counts = new Map();
-    dailyCells.slice(0, days).flat().forEach((key) => counts.set(key, (counts.get(key) || 0) + 1));
+    dailyCells.slice(-days).flat().forEach((key) => counts.set(key, (counts.get(key) || 0) + 1));
     const headers = Array.from({ length: 20 }, (_, index) => `<th>${index + 1}</th>`).join("");
     const rows = [4, 3, 2, 1, 0].map((rowLabel) => {
       const cells = Array.from({ length: 20 }, (_, index) => {
@@ -118,14 +111,25 @@
     return `<section class="overlay-panel"><header><strong>${days} 天疊加</strong><span>${label}</span></header><table><thead><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="overlay-note">共 ${days} 個開獎日；紅圈內數字為該框格累計出現次數。</p></section>`;
   };
 
-  Promise.all(dates.map(loadMappedCells)).then(async (dailyCells) => {
-    document.querySelector("#overlay-panels").innerHTML = ranges.map((range) => renderPanel(range, dailyCells)).join("");
-    const adjacentDate = dates.at(-1);
-    document.querySelector("#adjacent-table").innerHTML = await loadAdjacentTable(adjacentDate);
-    document.querySelector("#adjacent-date").textContent = `${adjacentDate.replaceAll("-", "/")} 本期相鄰`;
-    status.textContent = "已完成 6、12、18 個開獎日疊加 · 每日自動更新已開啟。";
-    enableAutomaticUpdates();
-  }).catch((error) => {
-    status.textContent = `疊加資料載入失敗：${error.message}`;
-  });
+  async function load() {
+    try {
+      const response = await fetch(`data/daily539.json?load=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) throw new Error("開獎資料讀取失敗");
+      const payload = await response.json();
+      const dates = (payload.draws || []).slice(0, 18).map((draw) => draw.draw_date).reverse();
+      if (dates.length < 18) throw new Error("不足 18 個開獎日資料");
+      status.textContent = `正在載入最新 18 個開獎日（截至 ${dates.at(-1)}）…`;
+      const dailyCells = await Promise.all(dates.map(loadMappedCells));
+      document.querySelector("#overlay-panels").innerHTML = rangeDays.map((days) => renderPanel(days, dates, dailyCells)).join("");
+      const adjacentDate = dates.at(-1);
+      document.querySelector("#adjacent-table").innerHTML = await loadAdjacentTable(adjacentDate);
+      document.querySelector("#adjacent-date").textContent = `${adjacentDate.replaceAll("-", "/")} 本期相鄰`;
+      document.querySelector(".overlay-header span").textContent = `依最新 18 個實際開獎日累加紅圈位置（截至 ${adjacentDate}）`;
+      status.textContent = `已更新至 ${adjacentDate} · 6、12、18 個開獎日疊加 · 每日自動更新已開啟。`;
+      enableAutomaticUpdates();
+    } catch (error) {
+      status.textContent = `疊加資料載入失敗：${error.message}`;
+    }
+  }
+  load();
 })();
