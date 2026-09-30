@@ -3,9 +3,24 @@
   const status = document.querySelector("#excel539-status");
   const target = document.querySelector("#excel539-grids");
   const pad = (number) => String(number).padStart(2, "0");
+  const exactPositions = {
+    "2026-09-28": [
+      { row: 3, column: 5 },
+      { row: 2, column: 6 },
+      { row: 2, column: 9 },
+      { row: 1, column: 3 },
+      { row: 1, column: 9 },
+    ],
+  };
 
   function render(draw, adjacentGroups) {
-    const drawn = new Set(draw.numbers || []);
+    const markedPositions = new Set((exactPositions[draw.draw_date] || (draw.numbers || []).map((drawnNumber) => {
+      for (const [row, numbers] of adjacentGroups) {
+        const index = numbers.indexOf(drawnNumber);
+        if (index >= 0) return { row, column: index + 1 };
+      }
+      return null;
+    }).filter(Boolean)).map(({ row, column }) => `${row}:${column}`));
     const headers = Array.from({ length: 20 }, (_, index) => `<th>${index + 1}</th>`).join("");
     const rowLabels = [4, 3, 2, 1, 0];
     const gridRows = rowLabels.map((label) => {
@@ -14,8 +29,8 @@
         const watermark = label === 3 || label === 1
           ? `<span style="color:#cfd6d1;font-family:Georgia,serif;font-size:.9rem;font-weight:700">${number}</span>`
           : "";
-        const marked = label === 4 && drawn.has(number);
-        const circle = marked ? `<span class="diagram-circle" aria-label="${pad(number)} 開出">○</span>` : "";
+        const marked = markedPositions.has(`${label}:${number}`);
+        const circle = marked ? `<span class="diagram-circle" aria-label="第${label}列第${number}欄開出">○</span>` : "";
         return `<td>${watermark}${circle}</td>`;
       }).join("");
       return `<tr><th>${label}</th>${cells}</tr>`;
@@ -33,7 +48,7 @@
         <div class="diagram-topline">
           <div class="date-box" style="grid-template-columns:2fr 1fr 1fr"><b style="font-size:.7rem;white-space:nowrap">○加兩倍</b><b></b><b></b></div>
           <div class="diagram-title">539</div>
-          <div class="diagram-caption">最新一期位置格</div>
+          <div class="diagram-caption">${draw.draw_date} 位置格</div>
         </div>
         <div class="diagram-content" style="grid-template-columns:minmax(0,1fr) minmax(620px,1.15fr)">
           <section class="number-board">
@@ -85,7 +100,8 @@
       const response = await fetch("data/daily539.json", { cache: "no-store" });
       if (!response.ok) throw new Error("資料讀取失敗");
       const payload = await response.json();
-      const draw = payload.draws?.[0];
+      const requestedDate = new URLSearchParams(location.search).get("date") || "2026-09-28";
+      const draw = payload.draws?.find((item) => item.draw_date === requestedDate);
       if (!draw) throw new Error("沒有開獎資料");
       let adjacentGroups;
       try {
@@ -94,7 +110,7 @@
         adjacentGroups = fallbackAdjacentGroups;
       }
       render(draw, adjacentGroups);
-      status.textContent = `已填入最新一期：${draw.draw_no}期 · ${draw.draw_date}`;
+      status.textContent = `已填入指定期別：${draw.draw_no}期 · ${draw.draw_date}`;
     } catch (error) {
       status.textContent = "開獎資料讀取失敗，請重新整理後再試。";
     }
