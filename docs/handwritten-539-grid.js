@@ -2,6 +2,7 @@
   "use strict";
   const pad = (number) => String(number).padStart(2, "0");
   const status = document.querySelector("#sheet-status");
+  const dateNav = document.querySelector("#draw-date-nav");
   const defaultAdjacentGroups = [
     [4, [19, 39]],
     [3, [4, 23]],
@@ -154,6 +155,42 @@
     }).join("");
     document.querySelector("#draw-grid").innerHTML = `<thead><tr><th style="width:42px">次數</th>${headers}</tr></thead><tbody>${rows}</tbody>`;
   };
+  const renderDateNav = (draws, selectedDate) => {
+    const recentDraws = draws.slice(0, 18).reverse();
+    const links = recentDraws.map((item) => {
+      const [, month, day] = item.draw_date.split("-");
+      const selected = item.draw_date === selectedDate ? "color:#d84b47;font-weight:900" : "";
+      return `<a href="handwritten-539-grid.html?date=${item.draw_date}" style="${selected}">${Number(month)}/${Number(day)}</a>`;
+    }).join("");
+    dateNav.innerHTML = `<a href="handwritten-539-overlay.html" style="font-weight:900">6／12／18天疊加</a>${links}`;
+  };
+  const loadDynamicAdjacentGroups = (date) => new Promise((resolve, reject) => {
+    const frame = document.createElement("iframe");
+    frame.setAttribute("aria-hidden", "true");
+    frame.style.cssText = "position:fixed;left:-10000px;top:0;width:1500px;height:1200px;border:0;opacity:0;pointer-events:none";
+    const timeout = window.setTimeout(() => {
+      frame.remove();
+      reject(new Error("相鄰統計載入逾時"));
+    }, 15000);
+    frame.addEventListener("load", () => {
+      const check = window.setInterval(() => {
+        const groups = frame.contentDocument?.querySelectorAll(".adjacent-summary-panel .frequency-group");
+        if (!groups?.length) return;
+        window.clearInterval(check);
+        window.clearTimeout(timeout);
+        const parsed = [...groups].map((group) => [
+          Number(group.querySelector("strong")?.textContent.match(/\d+/)?.[0]),
+          [...group.querySelectorAll(".ball-number")].map((element) => Number(element.textContent)),
+        ]);
+        const byCount = new Map(parsed);
+        const result = [4, 3, 2, 1, 0].map((count) => [count, byCount.get(count) || []]);
+        frame.remove();
+        resolve(result);
+      }, 50);
+    }, { once: true });
+    frame.src = `index.html?date=${encodeURIComponent(date)}&embedded=1`;
+    document.body.appendChild(frame);
+  });
   async function load() {
     try {
       const response = await fetch("data/daily539.json", { cache: "no-store" });
@@ -164,7 +201,14 @@
         ? (payload.draws || []).find((item) => item.draw_date === requestedDate) || officialDraws[requestedDate]
         : payload.draws?.[0];
       if (!draw) throw new Error("沒有開獎資料");
-      const adjacentGroups = officialAdjacentGroups[requestedDate] || defaultAdjacentGroups;
+      renderDateNav(payload.draws || [], draw.draw_date);
+      status.textContent = `正在計算${requestedDate ? "指定期別" : "最新一期"}相鄰統計：${draw.draw_no}期 · ${draw.draw_date}`;
+      let adjacentGroups;
+      try {
+        adjacentGroups = await loadDynamicAdjacentGroups(draw.draw_date);
+      } catch (_) {
+        adjacentGroups = officialAdjacentGroups[draw.draw_date] || defaultAdjacentGroups;
+      }
       renderNumberGrid(draw, adjacentGroups);
       renderAdjacentGrid(adjacentGroups);
       status.textContent = `${requestedDate ? "指定期別" : "已填入最新一期"}：${draw.draw_no}期 · ${draw.draw_date}`;
