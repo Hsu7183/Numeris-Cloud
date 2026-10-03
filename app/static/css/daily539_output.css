@@ -25,14 +25,3 @@ tbody tr:nth-child(5n) td,tbody tr:nth-child(5n) th { border-bottom:2px solid #5
 .score-line { display:grid; grid-template-columns:repeat(39,minmax(0,1fr)); margin-bottom:10px; border:1px solid #bfcbbf; }.score-line-item { display:grid; min-width:0; align-content:center; padding:3px 0; border-right:1px solid var(--grid); text-align:center; }.score-line-item:last-child { border:0; }.score-line-item span { color:#7a8c80; font-size:.42rem; }.score-line-item b { color:#164a37; font-size:.58rem; }.score-line-item strong { color:#a45500; font-size:.56rem; }
 .empty { margin:0; padding:45px; text-align:center; color:#52675d; }
 @media (max-width:700px) { .output-page { padding:12px; } header { align-items:flex-start; flex-direction:column; gap:8px; } }
-
-/* 球號以圓形彩球呈現，窄螢幕可橫向捲動矩陣。 */
-.matrix-wrap { overflow-x:auto; }
-.matrix-wrap > table { min-width:1200px; }
-.matrix-ball { display:inline-grid; place-items:center; width:24px; height:24px; flex:none; border:1px solid #739f22; border-radius:50%; background:radial-gradient(circle at 30% 25%,#f2ffd8,#bcf04b 65%,#91c72d); color:#173b15; font-family:Arial,sans-serif; font-size:11px; font-weight:800; line-height:1; box-shadow:inset 0 1px 2px #fff9,0 1px 2px #17342625; }
-.neighbor { background:var(--paper); }
-.matrix-ball.neighbor-ball { border-color:#cb8600; background:radial-gradient(circle at 30% 25%,#fff3cc,#ffb11b 65%,#e89505); color:#482b00; }
-.matrix-ball.drawn-ball { border-color:#075d46; background:radial-gradient(circle at 30% 25%,#32a887,#076b50 65%,#044b38); color:white; }
-.score-item .matrix-ball,.score-line-item .matrix-ball { justify-self:center; margin:3px 0; }
-.score-line { min-width:1100px; }
-.score-section .matrix-ball { color:#173b15; font-size:11px; }

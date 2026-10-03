@@ -7,8 +7,6 @@
     return;
   }
 
-  const ball = (number, type = "") => `<span class="matrix-ball ${type}">${String(number).padStart(2, "0")}</span>`;
-
   const latestNumbers = payload.draws[0].numbers;
   const rangeValues = [20, 50, 100, 200];
 
@@ -43,7 +41,7 @@
     return neighbours;
   }
 
-  const headers = Array.from({ length: 39 }, (_, index) => `<th>${ball(index + 1)}</th>`).join("");
+  const headers = Array.from({ length: 39 }, (_, index) => `<th>${index + 1}</th>`).join("");
   const scoreByNumber = new Map(Array.from({ length: 39 }, (_, index) => [index + 1, 0]));
   const rows = rangeValues.map((limit) => latestNumbers.map((number, index) => {
     const neighbours = neighboringNumbers(limit, number);
@@ -54,9 +52,9 @@
     const cells = Array.from({ length: 39 }, (_, cellIndex) => {
       const value = cellIndex + 1;
       const type = neighbours.has(value) ? "neighbor" : "";
-      return `<td class="${type}">${type ? ball(value, "neighbor-ball") : ""}</td>`;
+      return `<td class="${type}">${type ? String(value).padStart(2, "0") : ""}</td>`;
     }).join("");
-    return `<tr>${index === 0 ? `<th class="range" rowspan="5">${limit}<small>期</small></th>` : ""}<th class="ball-index">${index + 1}</th><th class="ball-value">${ball(number, "drawn-ball")}</th>${cells}</tr>`;
+    return `<tr>${index === 0 ? `<th class="range" rowspan="5">${limit}<small>期</small></th>` : ""}<th class="ball-index">${index + 1}</th><th class="ball-value">${String(number).padStart(2, "0")}</th>${cells}</tr>`;
   }).join("")).join("");
   rangeValues.forEach((limit) => {
     for (let number = 1; number <= 39; number += 1) {
@@ -71,10 +69,10 @@
     score: scoreByNumber.get(index + 1),
   })).sort((first, second) => second.score - first.score || first.number - second.number);
   const scoreStrip = scores.map((item, index) => `<div class="score-item">
-    <span>${index + 1}</span>${ball(item.number)}<strong>${item.score.toFixed(1)}</strong>
+    <span>${index + 1}</span><b>${String(item.number).padStart(2, "0")}</b><strong>${item.score.toFixed(1)}</strong>
   </div>`).join("");
   const scoreLine = scores.map((item, index) => `<div class="score-line-item">
-    <span>${index + 1}</span>${ball(item.number)}<strong>${item.score.toFixed(1)}</strong>
+    <span>${index + 1}</span><b>${String(item.number).padStart(2, "0")}</b><strong>${item.score.toFixed(1)}</strong>
   </div>`).join("");
   document.querySelector("#output-meta").textContent = `最新 ${payload.latest_draw_no} 期 · ${payload.latest_draw_date} · 每期數範圍各顯示 5 顆球與相鄰球`;
   const columns = '<col class="range-col"><col class="index-col"><col class="value-col">' + '<col class="matrix-col">'.repeat(39);
