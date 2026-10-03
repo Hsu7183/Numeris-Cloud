@@ -100,9 +100,18 @@
       const response = await fetch("data/daily539.json", { cache: "no-store" });
       if (!response.ok) throw new Error("資料讀取失敗");
       const payload = await response.json();
-      const requestedDate = new URLSearchParams(location.search).get("date") || "2026-09-28";
-      const draw = payload.draws?.find((item) => item.draw_date === requestedDate);
-      if (!draw) throw new Error("沒有開獎資料");
+      const requestedDate = new URLSearchParams(location.search).get("date");
+      const draws = payload.draws || [];
+      const draw = requestedDate
+        ? draws.find((item) => item.draw_date === requestedDate)
+        : draws.reduce((latest, item) => !latest || item.draw_date > latest.draw_date ||
+          (item.draw_date === latest.draw_date && item.draw_no > latest.draw_no) ? item : latest, null);
+      if (!draw) {
+        status.textContent = requestedDate
+          ? `找不到 ${requestedDate} 的開獎資料，請選擇其他日期。`
+          : "目前沒有開獎資料，請更新資料後再試。";
+        return;
+      }
       let adjacentGroups;
       try {
         adjacentGroups = await loadAdjacentGroups(draw.draw_date);
@@ -110,7 +119,7 @@
         adjacentGroups = fallbackAdjacentGroups;
       }
       render(draw, adjacentGroups);
-      status.textContent = `已填入指定期別：${draw.draw_no}期 · ${draw.draw_date}`;
+      status.textContent = `已填入${requestedDate ? "指定期別" : "最新一期"}：${draw.draw_no}期 · ${draw.draw_date}`;
     } catch (error) {
       status.textContent = "開獎資料讀取失敗，請重新整理後再試。";
     }
