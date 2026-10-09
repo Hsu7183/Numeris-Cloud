@@ -7,6 +7,13 @@
   <link rel="stylesheet" href="handwritten-539-grid.css?v=2">
   <style>
     .overlay-header{display:flex;align-items:center;gap:14px}.overlay-header a{background:#075d46;border-radius:6px;color:#fff;font-size:.82rem;font-weight:900;padding:9px 13px;text-decoration:none}.overlay-header strong{display:block;font-size:1.4rem}.overlay-header span,#overlay-status{color:#66786d;font-size:.78rem}.overlay-date{margin:12px 0 10px;padding:8px 12px;background:#e5f4eb;border-left:5px solid #075d46;color:#075d46;font-size:.92rem;font-weight:900}.overlay-panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.overlay-panel{background:var(--paper);border:2px solid var(--line);overflow-x:auto}.overlay-panel>header{display:flex;align-items:center;justify-content:space-between;min-height:55px;padding:0 12px;border-bottom:2px solid var(--line)}.overlay-panel>header strong{font-size:1rem}.overlay-panel>header span{color:#075d46;background:#e5f4eb;border-radius:5px;font-size:.75rem;font-weight:900;padding:5px 7px}.overlay-panel table{min-width:510px}.overlay-panel tbody th{width:38px}.overlay-circle{display:inline-grid;place-items:center;width:20px;height:20px;border:2px solid var(--red);border-radius:50%;color:var(--red);background:#fffefa;font-family:Georgia,serif;font-size:.68rem;font-weight:900;line-height:1}.overlay-note{color:#66786d;font-size:.7rem;margin:8px 10px}.adjacent-overlay{margin-top:16px;background:var(--paper);border:2px solid var(--line);overflow-x:auto}.adjacent-overlay header{display:flex;align-items:center;justify-content:space-between;min-height:52px;padding:0 14px;border-bottom:2px solid var(--line)}.adjacent-overlay header strong{font-size:1.08rem}.adjacent-overlay header span{color:#075d46;background:#e5f4eb;border-radius:5px;font-size:.78rem;font-weight:900;padding:5px 8px}.adjacent-overlay table{min-width:700px}.overlay-source{position:fixed;left:-10000px;top:0;width:1500px;height:1200px;overflow:hidden;opacity:0;pointer-events:none}@media(max-width:1100px){.overlay-panels{grid-template-columns:1fr}}
+    .blank-differences{margin-top:20px}.blank-differences h2{font-size:1.15rem;margin:0 0 8px}.blank-differences td{font-size:.65rem}.blank-differences .blank-changed{background:#ffe5a3;color:#704500;font-weight:900}.blank-differences .blank-shared{background:#e5f4eb;color:#075d46}.blank-differences .blank-unchanged{color:#a3aca6}
+    .blank-differences td{position:relative}.blank-watermark{position:absolute;inset:0;display:grid;place-items:center;color:#b9c6bd;font-family:Georgia,serif;font-size:1.15rem;font-weight:700;pointer-events:none}.blank-label{position:relative;z-index:1;display:inline-block;background:var(--paper);padding:1px 2px;border-radius:2px}.blank-changed .blank-label{background:#ffe5a3}.blank-shared .blank-label{background:#e5f4eb}.blank-differences td:has(.blank-watermark) .blank-label{top:8px;font-size:.55rem}
+    #blank-difference-panels td{height:46px;padding:0;vertical-align:top}#blank-difference-panels .blank-watermark{inset:3px 0 auto;height:24px;font-size:1.15rem;line-height:24px}#blank-difference-panels .blank-label{position:absolute;top:auto;bottom:3px;left:0;right:0;background:transparent;padding:0;font-size:.55rem;line-height:12px}
+    #blank-difference-panels .blank-label{white-space:nowrap}
+    #blank-difference-panels .blank-label{top:3px;bottom:auto}#blank-difference-panels .blank-watermark{top:auto;bottom:3px}#blank-difference-panels .blank-summary{background:#e5f4eb;color:#075d46;font-size:.8rem;font-weight:900;height:32px}
+    .overlay-panel td{position:relative}.overlay-panel .overlay-watermark,#blank-difference-panels .blank-watermark{position:absolute;inset:0;height:auto;display:grid;place-items:center;color:#d5ddd7!important;font-family:Georgia,serif;font-size:.9rem!important;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;pointer-events:none}
+    #blank-difference-panels .comparison-ball{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:2}#blank-difference-panels td:has(.comparison-ball) .blank-watermark{inset:auto 0 3px;height:14px;font-size:.7rem!important}
   </style>
 </head>
 <body>
@@ -18,13 +25,23 @@
     <p id="today-date" class="overlay-date"></p>
     <p id="overlay-status">正在載入每日位置…</p>
     <section id="overlay-panels" class="overlay-panels" aria-live="polite"></section>
+    <section class="blank-differences" aria-labelledby="blank-difference-title">
+      <h2 id="blank-difference-title">空白格差異比較</h2>
+      <p class="overlay-note">依遠期到近期排序。空白格＝該位置沒有紅圈（累計 0 次），淡色欄號不計。黃色表示較遠期有出現、較近期為空白；綠色表示兩者皆空白；「—」表示兩者皆有。三組皆以同一期為截止，縮短期數只會增加或保留空白格。</p>
+      <div id="blank-difference-panels" class="overlay-panels" aria-live="polite"></div>
+    </section>
     <section id="adjacent-overlay" class="adjacent-overlay" aria-live="polite">
       <header><strong>相鄰統計表</strong><span id="adjacent-date">載入中</span></header>
       <div id="adjacent-table"></div>
       <p class="overlay-note">依相鄰出現次數分為 4、3、2、1、0 次。</p>
     </section>
     <div id="overlay-source" class="overlay-source" aria-hidden="true"></div>
+    <section class="adjacent-overlay" aria-labelledby="check-history-title">
+      <header><strong id="check-history-title">539 核對紀錄</strong></header>
+      <div id="check-history" aria-live="polite">正在載入核對紀錄…</div>
+      <p class="overlay-note">依本次對話補存選號紀錄，核對結果由官方開獎資料計算；11 號命中數為涵蓋結果。</p>
+    </section>
   </main>
-  <script src="handwritten-539-overlay.js?v=4"></script>
+  <script src="handwritten-539-overlay.js?v=12"></script>
 </body>
 </html>
