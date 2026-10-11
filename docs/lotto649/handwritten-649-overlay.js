@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  const rangeDays = [36, 24, 18, 12, 6];
+  const rangeDays = [30, 24, 18, 12, 6];
   const columnCount = 49;
   const maxPeriods = Math.max(...rangeDays);
   const rangeLabel = [...rangeDays].reverse().join("／");
@@ -102,7 +102,7 @@
   const renderBlankDifferences = (datedCells) => {
     const counts = new Map(rangeDays.map((periods) => [periods, countCells(periods, datedCells)]));
     const headers = Array.from({ length: columnCount }, (_, index) => `<th>${index + 1}</th>`).join("");
-    return [[24, 36], [18, 24], [12, 18], [6, 12], [6, 18]].map(([short, long]) => {
+    return [[24, 30], [18, 24], [12, 18], [6, 12], [6, 18]].map(([short, long]) => {
       let changed = 0;
       let blank = 0;
       const rows = [4, 3, 2, 1, 0].map((rowLabel) => {

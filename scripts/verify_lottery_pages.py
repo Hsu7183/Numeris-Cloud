@@ -20,7 +20,7 @@ def verify_overlay(page, base: str, folder: str, game: str, columns: int) -> Non
     panels = page.locator("#overlay-panels > .overlay-panel")
     assert panels.count() == 5
     previous = None
-    for index, periods in enumerate([36, 24, 18, 12, 6]):
+    for index, periods in enumerate([30, 24, 18, 12, 6]):
         panel = panels.nth(index)
         assert panel.locator("header strong").inner_text() == f"近 {periods} 期疊加"
         assert panel.locator("thead th").count() == columns + 1
@@ -37,7 +37,25 @@ def verify_overlay(page, base: str, folder: str, game: str, columns: int) -> Non
         previous = counts
     assert page.locator("#blank-difference-panels > .overlay-panel").count() == 5
     assert page.locator(".blank-summary").first.get_attribute("colspan") == str(columns + 1)
-    print("PASS", game, "6/12/18/24/36 periods and cumulative counts")
+    print("PASS", game, "6/12/18/24/30 periods and cumulative counts")
+
+
+def verify_recent_grid(page, base: str, folder: str, game: str) -> None:
+    data = page.request.get(base + "data/" + game + ".json").json()
+    number = "539" if game == "daily539" else "649"
+    page.goto(base + folder + f"handwritten-{number}-grid.html")
+    dates = page.locator('#draw-date-nav a[href*="?date="]')
+    dates.first.wait_for()
+    assert dates.count() == 30
+    assert dates.first.get_attribute("href").endswith(data["draws"][29]["draw_date"])
+    assert dates.last.get_attribute("href").endswith(data["draws"][0]["draw_date"])
+    dates.first.click()
+    page.wait_for_function(
+        "document.querySelector('#sheet-status').textContent.startsWith('指定期別')",
+        timeout=30000,
+    )
+    assert data["draws"][29]["draw_no"] in page.locator("#sheet-status").inner_text()
+    print("PASS", game, "30 recent dates and oldest draw selection")
 
 
 def main() -> None:
@@ -63,6 +81,7 @@ def main() -> None:
         page.locator(".adjacent-summary-panel").wait_for()
         assert page.locator(".adjacent-summary-panel .ball").count() == 39
         verify_overlay(page, base, "", "daily539", 20)
+        verify_recent_grid(page, base, "", "daily539")
         page.goto(base)
         page.locator(".lotto").click()
         page.locator(".adjacent-summary-panel").wait_for()
@@ -95,6 +114,7 @@ def main() -> None:
                 assert page.locator(".overlay-panel").first.locator("thead th").count() == 50
             print("PASS", name)
         verify_overlay(page, base, "lotto649/", "lotto649", 49)
+        verify_recent_grid(page, base, "lotto649/", "lotto649")
         page.goto(base)
         page.screenshot(path=str(ROOT / "output/lottery-home.png"), full_page=True)
         page.set_viewport_size({"width": 390, "height": 844})
