@@ -1,0 +1,3214 @@
+{
+  "game_code": "TW_LOTTO649",
+  "game_name": "大樂透",
+  "ball_count": 49,
+  "main_number_count": 6,
+  "draw_count": 200,
+  "requested_limit": 200,
+  "latest_draw_no": "115000095",
+  "latest_draw_date": "2026-10-09",
+  "generated_at": "2026-10-11T14:57:26.526976+08:00",
+  "source": "台灣彩券官方資料",
+  "draws": [
+    {
+      "draw_no": "115000095",
+      "draw_date": "2026-10-09",
+      "numbers": [
+        3,
+        9,
+        11,
+        25,
+        34,
+        41
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000094",
+      "draw_date": "2026-10-06",
+      "numbers": [
+        4,
+        6,
+        20,
+        32,
+        36,
+        39
+      ],
+      "special_numbers": [
+        23
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000093",
+      "draw_date": "2026-10-02",
+      "numbers": [
+        4,
+        14,
+        20,
+        26,
+        40,
+        47
+      ],
+      "special_numbers": [
+        42
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000092",
+      "draw_date": "2026-09-29",
+      "numbers": [
+        1,
+        2,
+        4,
+        13,
+        30,
+        38
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000091",
+      "draw_date": "2026-09-25",
+      "numbers": [
+        5,
+        13,
+        24,
+        25,
+        28,
+        33
+      ],
+      "special_numbers": [
+        40
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000090",
+      "draw_date": "2026-09-22",
+      "numbers": [
+        14,
+        15,
+        18,
+        30,
+        35,
+        45
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000089",
+      "draw_date": "2026-09-18",
+      "numbers": [
+        1,
+        6,
+        14,
+        21,
+        31,
+        35
+      ],
+      "special_numbers": [
+        16
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000088",
+      "draw_date": "2026-09-15",
+      "numbers": [
+        2,
+        3,
+        18,
+        21,
+        22,
+        39
+      ],
+      "special_numbers": [
+        7
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000087",
+      "draw_date": "2026-09-11",
+      "numbers": [
+        12,
+        15,
+        19,
+        27,
+        43,
+        48
+      ],
+      "special_numbers": [
+        25
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000086",
+      "draw_date": "2026-09-08",
+      "numbers": [
+        3,
+        15,
+        28,
+        35,
+        47,
+        49
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000085",
+      "draw_date": "2026-09-04",
+      "numbers": [
+        3,
+        13,
+        17,
+        18,
+        27,
+        37
+      ],
+      "special_numbers": [
+        19
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000084",
+      "draw_date": "2026-09-01",
+      "numbers": [
+        10,
+        16,
+        19,
+        26,
+        29,
+        48
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000083",
+      "draw_date": "2026-08-28",
+      "numbers": [
+        9,
+        20,
+        23,
+        26,
+        36,
+        44
+      ],
+      "special_numbers": [
+        4
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000082",
+      "draw_date": "2026-08-25",
+      "numbers": [
+        12,
+        24,
+        26,
+        32,
+        35,
+        40
+      ],
+      "special_numbers": [
+        6
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000081",
+      "draw_date": "2026-08-21",
+      "numbers": [
+        8,
+        14,
+        23,
+        24,
+        26,
+        47
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000080",
+      "draw_date": "2026-08-18",
+      "numbers": [
+        1,
+        14,
+        25,
+        27,
+        29,
+        43
+      ],
+      "special_numbers": [
+        2
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000079",
+      "draw_date": "2026-08-14",
+      "numbers": [
+        5,
+        12,
+        25,
+        33,
+        34,
+        35
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000078",
+      "draw_date": "2026-08-11",
+      "numbers": [
+        8,
+        12,
+        16,
+        24,
+        29,
+        46
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000077",
+      "draw_date": "2026-08-07",
+      "numbers": [
+        2,
+        12,
+        19,
+        21,
+        25,
+        41
+      ],
+      "special_numbers": [
+        31
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000076",
+      "draw_date": "2026-08-04",
+      "numbers": [
+        4,
+        9,
+        15,
+        30,
+        36,
+        49
+      ],
+      "special_numbers": [
+        40
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000075",
+      "draw_date": "2026-07-31",
+      "numbers": [
+        11,
+        20,
+        23,
+        33,
+        34,
+        44
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000074",
+      "draw_date": "2026-07-28",
+      "numbers": [
+        8,
+        19,
+        24,
+        26,
+        32,
+        43
+      ],
+      "special_numbers": [
+        47
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000073",
+      "draw_date": "2026-07-24",
+      "numbers": [
+        3,
+        15,
+        27,
+        34,
+        35,
+        44
+      ],
+      "special_numbers": [
+        40
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000072",
+      "draw_date": "2026-07-21",
+      "numbers": [
+        2,
+        8,
+        15,
+        26,
+        35,
+        46
+      ],
+      "special_numbers": [
+        11
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000071",
+      "draw_date": "2026-07-17",
+      "numbers": [
+        1,
+        6,
+        12,
+        14,
+        17,
+        26
+      ],
+      "special_numbers": [
+        24
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000070",
+      "draw_date": "2026-07-14",
+      "numbers": [
+        10,
+        25,
+        34,
+        36,
+        45,
+        46
+      ],
+      "special_numbers": [
+        7
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000069",
+      "draw_date": "2026-07-10",
+      "numbers": [
+        3,
+        4,
+        15,
+        18,
+        29,
+        49
+      ],
+      "special_numbers": [
+        13
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000068",
+      "draw_date": "2026-07-07",
+      "numbers": [
+        8,
+        13,
+        15,
+        18,
+        19,
+        42
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000067",
+      "draw_date": "2026-07-03",
+      "numbers": [
+        11,
+        16,
+        19,
+        23,
+        39,
+        47
+      ],
+      "special_numbers": [
+        15
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000066",
+      "draw_date": "2026-06-30",
+      "numbers": [
+        4,
+        10,
+        16,
+        29,
+        36,
+        45
+      ],
+      "special_numbers": [
+        14
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000065",
+      "draw_date": "2026-06-26",
+      "numbers": [
+        11,
+        19,
+        23,
+        24,
+        29,
+        41
+      ],
+      "special_numbers": [
+        1
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000064",
+      "draw_date": "2026-06-23",
+      "numbers": [
+        12,
+        18,
+        29,
+        33,
+        34,
+        39
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000063",
+      "draw_date": "2026-06-19",
+      "numbers": [
+        4,
+        12,
+        28,
+        29,
+        35,
+        48
+      ],
+      "special_numbers": [
+        38
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000062",
+      "draw_date": "2026-06-16",
+      "numbers": [
+        1,
+        2,
+        9,
+        11,
+        28,
+        36
+      ],
+      "special_numbers": [
+        41
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000061",
+      "draw_date": "2026-06-12",
+      "numbers": [
+        1,
+        6,
+        16,
+        20,
+        34,
+        49
+      ],
+      "special_numbers": [
+        3
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000060",
+      "draw_date": "2026-06-09",
+      "numbers": [
+        13,
+        18,
+        25,
+        39,
+        40,
+        46
+      ],
+      "special_numbers": [
+        31
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000059",
+      "draw_date": "2026-06-05",
+      "numbers": [
+        12,
+        14,
+        25,
+        30,
+        32,
+        44
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000058",
+      "draw_date": "2026-06-02",
+      "numbers": [
+        8,
+        9,
+        16,
+        20,
+        37,
+        49
+      ],
+      "special_numbers": [
+        2
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000057",
+      "draw_date": "2026-05-29",
+      "numbers": [
+        20,
+        26,
+        29,
+        31,
+        37,
+        49
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000056",
+      "draw_date": "2026-05-26",
+      "numbers": [
+        3,
+        27,
+        29,
+        37,
+        47,
+        48
+      ],
+      "special_numbers": [
+        11
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000055",
+      "draw_date": "2026-05-22",
+      "numbers": [
+        12,
+        13,
+        16,
+        21,
+        28,
+        48
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000054",
+      "draw_date": "2026-05-19",
+      "numbers": [
+        4,
+        20,
+        22,
+        26,
+        38,
+        47
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000053",
+      "draw_date": "2026-05-15",
+      "numbers": [
+        16,
+        29,
+        30,
+        35,
+        42,
+        43
+      ],
+      "special_numbers": [
+        1
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000052",
+      "draw_date": "2026-05-12",
+      "numbers": [
+        6,
+        12,
+        18,
+        19,
+        32,
+        36
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000051",
+      "draw_date": "2026-05-08",
+      "numbers": [
+        10,
+        18,
+        25,
+        28,
+        39,
+        43
+      ],
+      "special_numbers": [
+        48
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000050",
+      "draw_date": "2026-05-05",
+      "numbers": [
+        4,
+        17,
+        23,
+        28,
+        33,
+        37
+      ],
+      "special_numbers": [
+        15
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000049",
+      "draw_date": "2026-05-01",
+      "numbers": [
+        7,
+        22,
+        27,
+        35,
+        43,
+        48
+      ],
+      "special_numbers": [
+        45
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000048",
+      "draw_date": "2026-04-28",
+      "numbers": [
+        6,
+        10,
+        14,
+        25,
+        26,
+        32
+      ],
+      "special_numbers": [
+        7
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000047",
+      "draw_date": "2026-04-24",
+      "numbers": [
+        7,
+        14,
+        16,
+        37,
+        39,
+        47
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000046",
+      "draw_date": "2026-04-21",
+      "numbers": [
+        1,
+        6,
+        17,
+        19,
+        20,
+        40
+      ],
+      "special_numbers": [
+        22
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000045",
+      "draw_date": "2026-04-17",
+      "numbers": [
+        7,
+        10,
+        11,
+        22,
+        40,
+        45
+      ],
+      "special_numbers": [
+        18
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000044",
+      "draw_date": "2026-04-14",
+      "numbers": [
+        4,
+        8,
+        21,
+        23,
+        24,
+        43
+      ],
+      "special_numbers": [
+        13
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000043",
+      "draw_date": "2026-04-10",
+      "numbers": [
+        4,
+        10,
+        15,
+        17,
+        21,
+        40
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000042",
+      "draw_date": "2026-04-07",
+      "numbers": [
+        1,
+        2,
+        6,
+        16,
+        18,
+        26
+      ],
+      "special_numbers": [
+        47
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000041",
+      "draw_date": "2026-04-03",
+      "numbers": [
+        5,
+        12,
+        13,
+        25,
+        36,
+        48
+      ],
+      "special_numbers": [
+        8
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000040",
+      "draw_date": "2026-03-31",
+      "numbers": [
+        5,
+        11,
+        25,
+        40,
+        45,
+        47
+      ],
+      "special_numbers": [
+        39
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000039",
+      "draw_date": "2026-03-27",
+      "numbers": [
+        4,
+        8,
+        23,
+        26,
+        29,
+        36
+      ],
+      "special_numbers": [
+        38
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000038",
+      "draw_date": "2026-03-24",
+      "numbers": [
+        14,
+        33,
+        41,
+        42,
+        44,
+        48
+      ],
+      "special_numbers": [
+        47
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000037",
+      "draw_date": "2026-03-20",
+      "numbers": [
+        11,
+        15,
+        33,
+        38,
+        41,
+        43
+      ],
+      "special_numbers": [
+        21
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000036",
+      "draw_date": "2026-03-17",
+      "numbers": [
+        2,
+        6,
+        10,
+        22,
+        40,
+        45
+      ],
+      "special_numbers": [
+        17
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000035",
+      "draw_date": "2026-03-13",
+      "numbers": [
+        5,
+        12,
+        13,
+        38,
+        47,
+        48
+      ],
+      "special_numbers": [
+        3
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000034",
+      "draw_date": "2026-03-10",
+      "numbers": [
+        5,
+        11,
+        29,
+        37,
+        43,
+        47
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000033",
+      "draw_date": "2026-03-06",
+      "numbers": [
+        9,
+        11,
+        12,
+        14,
+        23,
+        25
+      ],
+      "special_numbers": [
+        42
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000032",
+      "draw_date": "2026-03-03",
+      "numbers": [
+        5,
+        26,
+        27,
+        35,
+        45,
+        46
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000031",
+      "draw_date": "2026-03-02",
+      "numbers": [
+        19,
+        25,
+        27,
+        28,
+        33,
+        39
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000030",
+      "draw_date": "2026-03-01",
+      "numbers": [
+        4,
+        7,
+        34,
+        40,
+        44,
+        49
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000029",
+      "draw_date": "2026-02-28",
+      "numbers": [
+        17,
+        23,
+        30,
+        37,
+        39,
+        49
+      ],
+      "special_numbers": [
+        43
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000028",
+      "draw_date": "2026-02-27",
+      "numbers": [
+        14,
+        18,
+        19,
+        34,
+        45,
+        47
+      ],
+      "special_numbers": [
+        48
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000027",
+      "draw_date": "2026-02-26",
+      "numbers": [
+        1,
+        16,
+        22,
+        24,
+        47,
+        48
+      ],
+      "special_numbers": [
+        7
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000026",
+      "draw_date": "2026-02-25",
+      "numbers": [
+        7,
+        15,
+        22,
+        38,
+        45,
+        49
+      ],
+      "special_numbers": [
+        31
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000025",
+      "draw_date": "2026-02-24",
+      "numbers": [
+        12,
+        19,
+        22,
+        27,
+        28,
+        31
+      ],
+      "special_numbers": [
+        45
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000024",
+      "draw_date": "2026-02-23",
+      "numbers": [
+        6,
+        10,
+        23,
+        27,
+        47,
+        48
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000023",
+      "draw_date": "2026-02-22",
+      "numbers": [
+        5,
+        7,
+        17,
+        22,
+        24,
+        47
+      ],
+      "special_numbers": [
+        20
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000022",
+      "draw_date": "2026-02-21",
+      "numbers": [
+        12,
+        13,
+        17,
+        27,
+        41,
+        48
+      ],
+      "special_numbers": [
+        46
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000021",
+      "draw_date": "2026-02-20",
+      "numbers": [
+        13,
+        15,
+        18,
+        24,
+        33,
+        49
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000020",
+      "draw_date": "2026-02-19",
+      "numbers": [
+        20,
+        28,
+        29,
+        31,
+        35,
+        41
+      ],
+      "special_numbers": [
+        6
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000019",
+      "draw_date": "2026-02-18",
+      "numbers": [
+        16,
+        35,
+        36,
+        37,
+        39,
+        49
+      ],
+      "special_numbers": [
+        45
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000018",
+      "draw_date": "2026-02-17",
+      "numbers": [
+        6,
+        12,
+        24,
+        26,
+        37,
+        46
+      ],
+      "special_numbers": [
+        36
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000017",
+      "draw_date": "2026-02-16",
+      "numbers": [
+        11,
+        16,
+        18,
+        27,
+        38,
+        46
+      ],
+      "special_numbers": [
+        43
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000016",
+      "draw_date": "2026-02-15",
+      "numbers": [
+        3,
+        6,
+        11,
+        18,
+        25,
+        28
+      ],
+      "special_numbers": [
+        35
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000015",
+      "draw_date": "2026-02-14",
+      "numbers": [
+        1,
+        11,
+        22,
+        35,
+        36,
+        40
+      ],
+      "special_numbers": [
+        28
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000014",
+      "draw_date": "2026-02-13",
+      "numbers": [
+        9,
+        20,
+        25,
+        35,
+        39,
+        48
+      ],
+      "special_numbers": [
+        47
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000013",
+      "draw_date": "2026-02-12",
+      "numbers": [
+        1,
+        3,
+        8,
+        15,
+        20,
+        48
+      ],
+      "special_numbers": [
+        46
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000012",
+      "draw_date": "2026-02-10",
+      "numbers": [
+        6,
+        16,
+        20,
+        21,
+        24,
+        35
+      ],
+      "special_numbers": [
+        13
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000011",
+      "draw_date": "2026-02-06",
+      "numbers": [
+        4,
+        12,
+        24,
+        25,
+        39,
+        48
+      ],
+      "special_numbers": [
+        9
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000010",
+      "draw_date": "2026-02-03",
+      "numbers": [
+        6,
+        14,
+        32,
+        33,
+        39,
+        43
+      ],
+      "special_numbers": [
+        13
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000009",
+      "draw_date": "2026-01-30",
+      "numbers": [
+        9,
+        13,
+        27,
+        31,
+        32,
+        39
+      ],
+      "special_numbers": [
+        19
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000008",
+      "draw_date": "2026-01-27",
+      "numbers": [
+        4,
+        11,
+        24,
+        25,
+        29,
+        30
+      ],
+      "special_numbers": [
+        8
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000007",
+      "draw_date": "2026-01-23",
+      "numbers": [
+        21,
+        23,
+        32,
+        36,
+        39,
+        43
+      ],
+      "special_numbers": [
+        12
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000006",
+      "draw_date": "2026-01-20",
+      "numbers": [
+        2,
+        7,
+        26,
+        41,
+        44,
+        45
+      ],
+      "special_numbers": [
+        46
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000005",
+      "draw_date": "2026-01-16",
+      "numbers": [
+        9,
+        10,
+        21,
+        22,
+        25,
+        36
+      ],
+      "special_numbers": [
+        20
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000004",
+      "draw_date": "2026-01-13",
+      "numbers": [
+        2,
+        10,
+        18,
+        19,
+        39,
+        49
+      ],
+      "special_numbers": [
+        24
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000003",
+      "draw_date": "2026-01-09",
+      "numbers": [
+        1,
+        7,
+        13,
+        14,
+        34,
+        45
+      ],
+      "special_numbers": [
+        8
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000002",
+      "draw_date": "2026-01-06",
+      "numbers": [
+        2,
+        23,
+        33,
+        38,
+        39,
+        45
+      ],
+      "special_numbers": [
+        6
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "115000001",
+      "draw_date": "2026-01-02",
+      "numbers": [
+        3,
+        7,
+        16,
+        19,
+        40,
+        42
+      ],
+      "special_numbers": [
+        12
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000118",
+      "draw_date": "2025-12-30",
+      "numbers": [
+        5,
+        10,
+        15,
+        20,
+        24,
+        29
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000117",
+      "draw_date": "2025-12-26",
+      "numbers": [
+        5,
+        7,
+        9,
+        14,
+        17,
+        30
+      ],
+      "special_numbers": [
+        47
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000116",
+      "draw_date": "2025-12-23",
+      "numbers": [
+        1,
+        3,
+        12,
+        33,
+        39,
+        41
+      ],
+      "special_numbers": [
+        29
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000115",
+      "draw_date": "2025-12-19",
+      "numbers": [
+        6,
+        8,
+        11,
+        12,
+        18,
+        46
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000114",
+      "draw_date": "2025-12-16",
+      "numbers": [
+        6,
+        7,
+        15,
+        19,
+        24,
+        33
+      ],
+      "special_numbers": [
+        46
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000113",
+      "draw_date": "2025-12-12",
+      "numbers": [
+        15,
+        17,
+        24,
+        26,
+        40,
+        47
+      ],
+      "special_numbers": [
+        33
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000112",
+      "draw_date": "2025-12-09",
+      "numbers": [
+        5,
+        10,
+        18,
+        26,
+        28,
+        44
+      ],
+      "special_numbers": [
+        48
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000111",
+      "draw_date": "2025-12-05",
+      "numbers": [
+        8,
+        15,
+        23,
+        24,
+        41,
+        47
+      ],
+      "special_numbers": [
+        2
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000110",
+      "draw_date": "2025-12-02",
+      "numbers": [
+        14,
+        20,
+        32,
+        35,
+        42,
+        48
+      ],
+      "special_numbers": [
+        28
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000109",
+      "draw_date": "2025-11-28",
+      "numbers": [
+        8,
+        12,
+        18,
+        28,
+        37,
+        46
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000108",
+      "draw_date": "2025-11-25",
+      "numbers": [
+        2,
+        10,
+        12,
+        20,
+        23,
+        24
+      ],
+      "special_numbers": [
+        28
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000107",
+      "draw_date": "2025-11-21",
+      "numbers": [
+        14,
+        20,
+        21,
+        28,
+        31,
+        46
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000106",
+      "draw_date": "2025-11-18",
+      "numbers": [
+        8,
+        9,
+        10,
+        23,
+        24,
+        43
+      ],
+      "special_numbers": [
+        45
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000105",
+      "draw_date": "2025-11-14",
+      "numbers": [
+        21,
+        25,
+        26,
+        38,
+        41,
+        46
+      ],
+      "special_numbers": [
+        4
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000104",
+      "draw_date": "2025-11-11",
+      "numbers": [
+        11,
+        16,
+        24,
+        42,
+        44,
+        47
+      ],
+      "special_numbers": [
+        32
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000103",
+      "draw_date": "2025-11-07",
+      "numbers": [
+        4,
+        11,
+        22,
+        32,
+        33,
+        41
+      ],
+      "special_numbers": [
+        43
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000102",
+      "draw_date": "2025-11-04",
+      "numbers": [
+        16,
+        25,
+        27,
+        35,
+        47,
+        48
+      ],
+      "special_numbers": [
+        14
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000101",
+      "draw_date": "2025-10-31",
+      "numbers": [
+        3,
+        4,
+        7,
+        10,
+        18,
+        21
+      ],
+      "special_numbers": [
+        15
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000100",
+      "draw_date": "2025-10-28",
+      "numbers": [
+        5,
+        8,
+        11,
+        12,
+        18,
+        39
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000099",
+      "draw_date": "2025-10-24",
+      "numbers": [
+        13,
+        22,
+        23,
+        33,
+        39,
+        40
+      ],
+      "special_numbers": [
+        31
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000098",
+      "draw_date": "2025-10-21",
+      "numbers": [
+        14,
+        20,
+        25,
+        42,
+        44,
+        49
+      ],
+      "special_numbers": [
+        12
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000097",
+      "draw_date": "2025-10-17",
+      "numbers": [
+        3,
+        15,
+        16,
+        31,
+        32,
+        45
+      ],
+      "special_numbers": [
+        42
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000096",
+      "draw_date": "2025-10-14",
+      "numbers": [
+        11,
+        16,
+        20,
+        31,
+        39,
+        41
+      ],
+      "special_numbers": [
+        6
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000095",
+      "draw_date": "2025-10-10",
+      "numbers": [
+        13,
+        16,
+        18,
+        22,
+        39,
+        42
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000094",
+      "draw_date": "2025-10-07",
+      "numbers": [
+        2,
+        9,
+        16,
+        34,
+        42,
+        43
+      ],
+      "special_numbers": [
+        33
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000093",
+      "draw_date": "2025-10-03",
+      "numbers": [
+        4,
+        18,
+        36,
+        40,
+        41,
+        43
+      ],
+      "special_numbers": [
+        29
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000092",
+      "draw_date": "2025-09-30",
+      "numbers": [
+        19,
+        20,
+        22,
+        32,
+        36,
+        42
+      ],
+      "special_numbers": [
+        35
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000091",
+      "draw_date": "2025-09-26",
+      "numbers": [
+        1,
+        2,
+        25,
+        29,
+        41,
+        49
+      ],
+      "special_numbers": [
+        35
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000090",
+      "draw_date": "2025-09-23",
+      "numbers": [
+        5,
+        14,
+        22,
+        25,
+        27,
+        45
+      ],
+      "special_numbers": [
+        3
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000089",
+      "draw_date": "2025-09-19",
+      "numbers": [
+        14,
+        17,
+        26,
+        36,
+        38,
+        41
+      ],
+      "special_numbers": [
+        8
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000088",
+      "draw_date": "2025-09-16",
+      "numbers": [
+        7,
+        17,
+        18,
+        22,
+        25,
+        47
+      ],
+      "special_numbers": [
+        38
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000087",
+      "draw_date": "2025-09-12",
+      "numbers": [
+        2,
+        3,
+        4,
+        11,
+        15,
+        41
+      ],
+      "special_numbers": [
+        26
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000086",
+      "draw_date": "2025-09-09",
+      "numbers": [
+        12,
+        20,
+        25,
+        26,
+        40,
+        45
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000085",
+      "draw_date": "2025-09-05",
+      "numbers": [
+        10,
+        13,
+        14,
+        17,
+        19,
+        29
+      ],
+      "special_numbers": [
+        40
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000084",
+      "draw_date": "2025-09-02",
+      "numbers": [
+        2,
+        6,
+        9,
+        19,
+        20,
+        30
+      ],
+      "special_numbers": [
+        25
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000083",
+      "draw_date": "2025-08-29",
+      "numbers": [
+        13,
+        20,
+        25,
+        27,
+        28,
+        32
+      ],
+      "special_numbers": [
+        2
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000082",
+      "draw_date": "2025-08-26",
+      "numbers": [
+        3,
+        6,
+        22,
+        32,
+        35,
+        39
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000081",
+      "draw_date": "2025-08-22",
+      "numbers": [
+        23,
+        33,
+        38,
+        43,
+        45,
+        47
+      ],
+      "special_numbers": [
+        36
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000080",
+      "draw_date": "2025-08-19",
+      "numbers": [
+        2,
+        23,
+        25,
+        33,
+        41,
+        46
+      ],
+      "special_numbers": [
+        22
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000079",
+      "draw_date": "2025-08-15",
+      "numbers": [
+        3,
+        5,
+        7,
+        15,
+        17,
+        47
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000078",
+      "draw_date": "2025-08-12",
+      "numbers": [
+        6,
+        7,
+        15,
+        22,
+        37,
+        42
+      ],
+      "special_numbers": [
+        36
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000077",
+      "draw_date": "2025-08-08",
+      "numbers": [
+        11,
+        16,
+        17,
+        21,
+        24,
+        29
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000076",
+      "draw_date": "2025-08-05",
+      "numbers": [
+        1,
+        20,
+        34,
+        36,
+        37,
+        40
+      ],
+      "special_numbers": [
+        3
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000075",
+      "draw_date": "2025-08-01",
+      "numbers": [
+        4,
+        14,
+        19,
+        28,
+        40,
+        41
+      ],
+      "special_numbers": [
+        31
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000074",
+      "draw_date": "2025-07-29",
+      "numbers": [
+        2,
+        5,
+        14,
+        19,
+        36,
+        45
+      ],
+      "special_numbers": [
+        43
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000073",
+      "draw_date": "2025-07-25",
+      "numbers": [
+        2,
+        4,
+        23,
+        35,
+        41,
+        47
+      ],
+      "special_numbers": [
+        6
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000072",
+      "draw_date": "2025-07-22",
+      "numbers": [
+        5,
+        17,
+        19,
+        26,
+        27,
+        39
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000071",
+      "draw_date": "2025-07-18",
+      "numbers": [
+        2,
+        25,
+        36,
+        37,
+        38,
+        46
+      ],
+      "special_numbers": [
+        24
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000070",
+      "draw_date": "2025-07-15",
+      "numbers": [
+        32,
+        33,
+        41,
+        45,
+        46,
+        49
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000069",
+      "draw_date": "2025-07-11",
+      "numbers": [
+        15,
+        16,
+        26,
+        34,
+        48,
+        49
+      ],
+      "special_numbers": [
+        46
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000068",
+      "draw_date": "2025-07-08",
+      "numbers": [
+        6,
+        8,
+        12,
+        14,
+        25,
+        35
+      ],
+      "special_numbers": [
+        49
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000067",
+      "draw_date": "2025-07-04",
+      "numbers": [
+        5,
+        13,
+        15,
+        18,
+        33,
+        37
+      ],
+      "special_numbers": [
+        45
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000066",
+      "draw_date": "2025-07-01",
+      "numbers": [
+        8,
+        9,
+        21,
+        25,
+        33,
+        34
+      ],
+      "special_numbers": [
+        2
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000065",
+      "draw_date": "2025-06-27",
+      "numbers": [
+        4,
+        8,
+        9,
+        14,
+        21,
+        39
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000064",
+      "draw_date": "2025-06-24",
+      "numbers": [
+        3,
+        8,
+        20,
+        37,
+        45,
+        49
+      ],
+      "special_numbers": [
+        21
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000063",
+      "draw_date": "2025-06-20",
+      "numbers": [
+        4,
+        20,
+        31,
+        40,
+        42,
+        48
+      ],
+      "special_numbers": [
+        24
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000062",
+      "draw_date": "2025-06-17",
+      "numbers": [
+        13,
+        20,
+        21,
+        26,
+        31,
+        44
+      ],
+      "special_numbers": [
+        28
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000061",
+      "draw_date": "2025-06-13",
+      "numbers": [
+        1,
+        2,
+        10,
+        13,
+        20,
+        27
+      ],
+      "special_numbers": [
+        49
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000060",
+      "draw_date": "2025-06-10",
+      "numbers": [
+        3,
+        5,
+        12,
+        16,
+        22,
+        48
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000059",
+      "draw_date": "2025-06-06",
+      "numbers": [
+        11,
+        13,
+        15,
+        39,
+        42,
+        46
+      ],
+      "special_numbers": [
+        28
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000058",
+      "draw_date": "2025-06-03",
+      "numbers": [
+        9,
+        24,
+        32,
+        40,
+        41,
+        49
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000057",
+      "draw_date": "2025-05-30",
+      "numbers": [
+        3,
+        4,
+        13,
+        21,
+        38,
+        46
+      ],
+      "special_numbers": [
+        2
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000056",
+      "draw_date": "2025-05-27",
+      "numbers": [
+        16,
+        17,
+        26,
+        29,
+        32,
+        40
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000055",
+      "draw_date": "2025-05-23",
+      "numbers": [
+        1,
+        7,
+        11,
+        24,
+        44,
+        48
+      ],
+      "special_numbers": [
+        10
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000054",
+      "draw_date": "2025-05-20",
+      "numbers": [
+        2,
+        11,
+        15,
+        26,
+        29,
+        48
+      ],
+      "special_numbers": [
+        31
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000053",
+      "draw_date": "2025-05-16",
+      "numbers": [
+        13,
+        16,
+        22,
+        23,
+        34,
+        39
+      ],
+      "special_numbers": [
+        14
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000052",
+      "draw_date": "2025-05-13",
+      "numbers": [
+        1,
+        23,
+        29,
+        41,
+        45,
+        49
+      ],
+      "special_numbers": [
+        24
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000051",
+      "draw_date": "2025-05-09",
+      "numbers": [
+        15,
+        27,
+        33,
+        42,
+        48,
+        49
+      ],
+      "special_numbers": [
+        39
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000050",
+      "draw_date": "2025-05-06",
+      "numbers": [
+        5,
+        8,
+        9,
+        25,
+        30,
+        45
+      ],
+      "special_numbers": [
+        31
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000049",
+      "draw_date": "2025-05-02",
+      "numbers": [
+        2,
+        5,
+        39,
+        43,
+        45,
+        47
+      ],
+      "special_numbers": [
+        26
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000048",
+      "draw_date": "2025-04-29",
+      "numbers": [
+        7,
+        11,
+        24,
+        26,
+        30,
+        42
+      ],
+      "special_numbers": [
+        37
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000047",
+      "draw_date": "2025-04-25",
+      "numbers": [
+        20,
+        21,
+        24,
+        25,
+        31,
+        35
+      ],
+      "special_numbers": [
+        28
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000046",
+      "draw_date": "2025-04-22",
+      "numbers": [
+        1,
+        6,
+        14,
+        19,
+        35,
+        49
+      ],
+      "special_numbers": [
+        8
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000045",
+      "draw_date": "2025-04-18",
+      "numbers": [
+        2,
+        8,
+        15,
+        22,
+        29,
+        45
+      ],
+      "special_numbers": [
+        9
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000044",
+      "draw_date": "2025-04-15",
+      "numbers": [
+        18,
+        28,
+        37,
+        41,
+        43,
+        46
+      ],
+      "special_numbers": [
+        11
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000043",
+      "draw_date": "2025-04-11",
+      "numbers": [
+        6,
+        10,
+        11,
+        17,
+        23,
+        32
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000042",
+      "draw_date": "2025-04-08",
+      "numbers": [
+        10,
+        26,
+        33,
+        39,
+        45,
+        46
+      ],
+      "special_numbers": [
+        19
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000041",
+      "draw_date": "2025-04-04",
+      "numbers": [
+        7,
+        20,
+        29,
+        40,
+        43,
+        47
+      ],
+      "special_numbers": [
+        28
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000040",
+      "draw_date": "2025-04-01",
+      "numbers": [
+        4,
+        16,
+        18,
+        29,
+        35,
+        37
+      ],
+      "special_numbers": [
+        33
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000039",
+      "draw_date": "2025-03-28",
+      "numbers": [
+        1,
+        7,
+        11,
+        15,
+        27,
+        30
+      ],
+      "special_numbers": [
+        42
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000038",
+      "draw_date": "2025-03-25",
+      "numbers": [
+        17,
+        24,
+        40,
+        41,
+        46,
+        48
+      ],
+      "special_numbers": [
+        27
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000037",
+      "draw_date": "2025-03-21",
+      "numbers": [
+        13,
+        25,
+        29,
+        40,
+        46,
+        47
+      ],
+      "special_numbers": [
+        22
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000036",
+      "draw_date": "2025-03-18",
+      "numbers": [
+        7,
+        8,
+        13,
+        17,
+        29,
+        36
+      ],
+      "special_numbers": [
+        18
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000035",
+      "draw_date": "2025-03-14",
+      "numbers": [
+        6,
+        7,
+        13,
+        17,
+        21,
+        23
+      ],
+      "special_numbers": [
+        48
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000034",
+      "draw_date": "2025-03-11",
+      "numbers": [
+        2,
+        18,
+        25,
+        37,
+        38,
+        47
+      ],
+      "special_numbers": [
+        42
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000033",
+      "draw_date": "2025-03-07",
+      "numbers": [
+        5,
+        7,
+        26,
+        30,
+        40,
+        48
+      ],
+      "special_numbers": [
+        8
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000032",
+      "draw_date": "2025-03-04",
+      "numbers": [
+        7,
+        21,
+        31,
+        36,
+        46,
+        47
+      ],
+      "special_numbers": [
+        8
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000031",
+      "draw_date": "2025-02-28",
+      "numbers": [
+        7,
+        19,
+        25,
+        26,
+        38,
+        39
+      ],
+      "special_numbers": [
+        4
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000030",
+      "draw_date": "2025-02-25",
+      "numbers": [
+        13,
+        15,
+        24,
+        37,
+        38,
+        43
+      ],
+      "special_numbers": [
+        44
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000029",
+      "draw_date": "2025-02-21",
+      "numbers": [
+        2,
+        7,
+        27,
+        30,
+        38,
+        49
+      ],
+      "special_numbers": [
+        6
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000028",
+      "draw_date": "2025-02-18",
+      "numbers": [
+        5,
+        9,
+        10,
+        31,
+        35,
+        37
+      ],
+      "special_numbers": [
+        30
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000027",
+      "draw_date": "2025-02-14",
+      "numbers": [
+        8,
+        11,
+        14,
+        29,
+        33,
+        45
+      ],
+      "special_numbers": [
+        34
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000026",
+      "draw_date": "2025-02-12",
+      "numbers": [
+        12,
+        30,
+        31,
+        37,
+        47,
+        49
+      ],
+      "special_numbers": [
+        38
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000025",
+      "draw_date": "2025-02-11",
+      "numbers": [
+        7,
+        19,
+        25,
+        27,
+        34,
+        35
+      ],
+      "special_numbers": [
+        12
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000024",
+      "draw_date": "2025-02-10",
+      "numbers": [
+        1,
+        18,
+        28,
+        34,
+        35,
+        43
+      ],
+      "special_numbers": [
+        24
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000023",
+      "draw_date": "2025-02-09",
+      "numbers": [
+        4,
+        6,
+        13,
+        14,
+        22,
+        25
+      ],
+      "special_numbers": [
+        35
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000022",
+      "draw_date": "2025-02-08",
+      "numbers": [
+        3,
+        6,
+        23,
+        26,
+        40,
+        43
+      ],
+      "special_numbers": [
+        2
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000021",
+      "draw_date": "2025-02-07",
+      "numbers": [
+        14,
+        22,
+        25,
+        44,
+        46,
+        49
+      ],
+      "special_numbers": [
+        16
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000020",
+      "draw_date": "2025-02-06",
+      "numbers": [
+        2,
+        5,
+        18,
+        19,
+        42,
+        45
+      ],
+      "special_numbers": [
+        11
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000019",
+      "draw_date": "2025-02-05",
+      "numbers": [
+        3,
+        6,
+        13,
+        32,
+        33,
+        41
+      ],
+      "special_numbers": [
+        44
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000018",
+      "draw_date": "2025-02-04",
+      "numbers": [
+        15,
+        17,
+        21,
+        26,
+        30,
+        47
+      ],
+      "special_numbers": [
+        48
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000017",
+      "draw_date": "2025-02-03",
+      "numbers": [
+        7,
+        20,
+        29,
+        32,
+        33,
+        39
+      ],
+      "special_numbers": [
+        47
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000016",
+      "draw_date": "2025-02-02",
+      "numbers": [
+        10,
+        16,
+        25,
+        28,
+        33,
+        37
+      ],
+      "special_numbers": [
+        13
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000015",
+      "draw_date": "2025-02-01",
+      "numbers": [
+        2,
+        9,
+        10,
+        18,
+        39,
+        40
+      ],
+      "special_numbers": [
+        8
+      ],
+      "source_status": "official"
+    },
+    {
+      "draw_no": "114000014",
+      "draw_date": "2025-01-31",
+      "numbers": [
+        7,
+        11,
+        13,
+        23,
+        39,
+        42
+      ],
+      "special_numbers": [
+        15
+      ],
+      "source_status": "official"
+    }
+  ]
+}

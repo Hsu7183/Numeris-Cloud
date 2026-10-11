@@ -1,0 +1,4 @@
+.pattern-board tbody tr:nth-child(5n) th,
+.pattern-board tbody tr:nth-child(5n) td {
+  border-bottom: 2px dashed #294d3c;
+}

@@ -91,7 +91,7 @@
         resolve([4, 3, 2, 1, 0].map((count) => [count, byCount.get(count) || []]));
       }, 50);
     }, { once: true });
-    frame.src = `index.html?date=${encodeURIComponent(date)}&embedded=1`;
+    frame.src = `daily539.html?date=${encodeURIComponent(date)}&embedded=1`;
     document.body.appendChild(frame);
   });
 

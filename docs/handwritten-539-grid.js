@@ -196,7 +196,7 @@
         resolve(result);
       }, 50);
     }, { once: true });
-    frame.src = `index.html?date=${encodeURIComponent(date)}&embedded=1`;
+    frame.src = `daily539.html?date=${encodeURIComponent(date)}&embedded=1`;
     document.body.appendChild(frame);
   });
   async function load() {

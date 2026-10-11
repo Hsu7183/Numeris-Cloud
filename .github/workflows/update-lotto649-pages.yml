@@ -1,0 +1,47 @@
+name: 更新大樂透 GitHub Pages 資料
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 每晚台灣時間 22:15 更新，涵蓋春節加開。
+    - cron: "15 14 * * *"
+  push:
+    paths:
+      - "scripts/export_lotto649_static.py"
+      - ".github/workflows/update-lotto649-pages.yml"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - name: 取得官方大樂透主號與特別號
+        run: python -m scripts.export_lotto649_static
+      - name: 儲存最新資料
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/lotto649.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(data): update Lotto 6/49 statistics"
+            git pull --rebase
+            git push
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - uses: actions/deploy-pages@v4
