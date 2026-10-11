@@ -56,7 +56,7 @@
       const selected = item.draw_date === selectedDate ? "color:#d84b47;font-weight:900" : "";
       return `<a href="handwritten-649-grid.html?date=${item.draw_date}" style="${selected}">${Number(month)}/${Number(day)}</a>`;
     }).join("");
-    dateNav.innerHTML = `<a href="handwritten-649-overlay.html" style="font-weight:900">6／12／18天疊加</a>${links}`;
+    dateNav.innerHTML = `<a href="handwritten-649-overlay.html" style="font-weight:900">6／12／18／24／36期疊加</a>${links}`;
   };
   const loadDynamicAdjacentGroups = (date) => new Promise((resolve, reject) => {
     const frame = document.createElement("iframe");

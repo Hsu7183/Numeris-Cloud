@@ -1,6 +1,9 @@
 (() => {
   "use strict";
-  const rangeDays = [18, 12, 6];
+  const rangeDays = [36, 24, 18, 12, 6];
+  const columnCount = 20;
+  const maxPeriods = Math.max(...rangeDays);
+  const rangeLabel = [...rangeDays].reverse().join("／");
   const status = document.querySelector("#overlay-status");
   const source = document.querySelector("#overlay-source");
   document.querySelector("#today-date").textContent = `畫面日期：${new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit", weekday: "long" }).format(new Date())}`;
@@ -98,12 +101,12 @@
 
   const renderBlankDifferences = (datedCells) => {
     const counts = new Map(rangeDays.map((periods) => [periods, countCells(periods, datedCells)]));
-    const headers = Array.from({ length: 20 }, (_, index) => `<th>${index + 1}</th>`).join("");
-    return [[12, 18], [6, 12], [6, 18]].map(([short, long]) => {
+    const headers = Array.from({ length: columnCount }, (_, index) => `<th>${index + 1}</th>`).join("");
+    return [[24, 36], [18, 24], [12, 18], [6, 12], [6, 18]].map(([short, long]) => {
       let changed = 0;
       let blank = 0;
       const rows = [4, 3, 2, 1, 0].map((rowLabel) => {
-        const cells = Array.from({ length: 20 }, (_, index) => {
+        const cells = Array.from({ length: columnCount }, (_, index) => {
           const column = index + 1;
           const key = `${rowLabel}:${column}`;
           const shortCount = counts.get(short).get(key) || 0;
@@ -119,7 +122,7 @@
         }).join("");
         return `<tr><th>${rowLabel}</th>${cells}</tr>`;
       }).join("");
-      return `<section class="overlay-panel"><header><strong>近 ${long} → ${short} 期</strong></header><table><thead><tr><th class="blank-summary" colspan="21">空白格增加 ${changed} 格</th></tr><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="overlay-note">有→空：${changed} 格；兩者皆空：${blank} 格；兩者皆有：${100 - changed - blank} 格。</p></section>`;
+      return `<section class="overlay-panel"><header><strong>近 ${long} → ${short} 期</strong></header><table><thead><tr><th class="blank-summary" colspan="${columnCount + 1}">空白格增加 ${changed} 格</th></tr><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="overlay-note">有→空：${changed} 格；兩者皆空：${blank} 格；兩者皆有：${columnCount * 5 - changed - blank} 格。</p></section>`;
     }).join("");
   };
 
@@ -127,9 +130,9 @@
     const selected = datedCells.slice(-periods);
     const label = `${selected[0].date.replaceAll("-", "/")}～${selected.at(-1).date.replaceAll("-", "/")}`;
     const counts = countCells(periods, datedCells);
-    const headers = Array.from({ length: 20 }, (_, index) => `<th>${index + 1}</th>`).join("");
+    const headers = Array.from({ length: columnCount }, (_, index) => `<th>${index + 1}</th>`).join("");
     const rows = [4, 3, 2, 1, 0].map((rowLabel) => {
-      const cells = Array.from({ length: 20 }, (_, index) => {
+      const cells = Array.from({ length: columnCount }, (_, index) => {
         const column = index + 1;
         const count = counts.get(`${rowLabel}:${column}`) || 0;
         const watermark = `<span class="overlay-watermark" aria-hidden="true" style="color:#cfd6d1;font-family:Georgia,serif;font-size:.8rem;font-weight:700">${column}</span>`;
@@ -191,9 +194,9 @@
       if (!response.ok) throw new Error("開獎資料讀取失敗");
       const payload = await response.json();
       await loadCheckHistory(payload);
-      const dates = (payload.draws || []).slice(0, 18).map((draw) => draw.draw_date).reverse();
-      if (dates.length < 18) throw new Error("不足 18 期開獎資料");
-      status.textContent = `正在載入最近 18 期資料（截至 ${dates.at(-1)}）…`;
+      const dates = (payload.draws || []).slice(0, maxPeriods).map((draw) => draw.draw_date).reverse();
+      if (dates.length < maxPeriods) throw new Error(`不足 ${maxPeriods} 期開獎資料`);
+      status.textContent = `正在載入最近 ${maxPeriods} 期資料（截至 ${dates.at(-1)}）…`;
       const dailyCells = await Promise.all(dates.map(loadMappedCells));
       const datedCells = dates.map((date, index) => ({ date, cells: dailyCells[index] }));
       document.querySelector("#overlay-panels").innerHTML = rangeDays.map((periods) => renderPanel(periods, datedCells)).join("");
@@ -202,8 +205,8 @@
       document.querySelector("#adjacent-table").innerHTML = await loadAdjacentTable(adjacentDate);
       placeAdjacentBalls();
       document.querySelector("#adjacent-date").textContent = `${adjacentDate.replaceAll("-", "/")} 本期相鄰`;
-      document.querySelector(".overlay-header span").textContent = `依最近 6／12／18 個實際開獎期累加；休假日不計（截至 ${adjacentDate}）`;
-      status.textContent = `已更新至 ${adjacentDate} · 近 6／12／18 期疊加 · 每日自動更新已開啟。`;
+      document.querySelector(".overlay-header span").textContent = `依最近 ${rangeLabel} 個實際開獎期累加；休假日不計（截至 ${adjacentDate}）`;
+      status.textContent = `已更新至 ${adjacentDate} · 近 ${rangeLabel} 期疊加 · 每日自動更新已開啟。`;
       enableAutomaticUpdates();
     } catch (error) {
       status.textContent = `疊加資料載入失敗：${error.message}`;

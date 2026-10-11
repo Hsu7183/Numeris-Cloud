@@ -68,6 +68,7 @@ def build() -> None:
             text = text.replace("length: 20", "length: 49")
         if name == "handwritten-539-overlay.js":
             text = text.replace("length: 20", "length: 49")
+            text = text.replace("const columnCount = 20;", "const columnCount = 49;")
         text = text.replace("今彩539", "大樂透").replace("今彩 539", "大樂透")
         text = text.replace("DAILY 539", "LOTTO 6/49")
         text = text.replace("daily539", "lotto649").replace("539", "649")

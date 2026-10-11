@@ -8,6 +8,38 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def verify_overlay(page, base: str, folder: str, game: str, columns: int) -> None:
+    data = page.request.get(base + "data/" + game + ".json").json()
+    page.goto(
+        base + folder + "handwritten-" + ("539" if game == "daily539" else "649") + "-overlay.html"
+    )
+    page.wait_for_function(
+        "document.querySelector('#overlay-status').textContent.startsWith('已更新至')",
+        timeout=60000,
+    )
+    panels = page.locator("#overlay-panels > .overlay-panel")
+    assert panels.count() == 5
+    previous = None
+    for index, periods in enumerate([36, 24, 18, 12, 6]):
+        panel = panels.nth(index)
+        assert panel.locator("header strong").inner_text() == f"近 {periods} 期疊加"
+        assert panel.locator("thead th").count() == columns + 1
+        first_date = data["draws"][periods - 1]["draw_date"].replace("-", "/")
+        assert first_date in panel.locator("header span").inner_text()
+        counts = panel.locator("tbody td").evaluate_all(
+            "cells => cells.map(cell => "
+            "Number(cell.querySelector('.overlay-circle')?.textContent || 0))"
+        )
+        assert len(counts) == columns * 5
+        assert all(0 <= count <= periods for count in counts)
+        if previous is not None:
+            assert all(short <= long for short, long in zip(counts, previous, strict=True))
+        previous = counts
+    assert page.locator("#blank-difference-panels > .overlay-panel").count() == 5
+    assert page.locator(".blank-summary").first.get_attribute("colspan") == str(columns + 1)
+    print("PASS", game, "6/12/18/24/36 periods and cumulative counts")
+
+
 def main() -> None:
     payload = json.loads((ROOT / "docs/data/lotto649.json").read_text(encoding="utf-8"))
     assert len(payload["draws"]) == 200
@@ -30,6 +62,7 @@ def main() -> None:
         page.locator(".daily").click()
         page.locator(".adjacent-summary-panel").wait_for()
         assert page.locator(".adjacent-summary-panel .ball").count() == 39
+        verify_overlay(page, base, "", "daily539", 20)
         page.goto(base)
         page.locator(".lotto").click()
         page.locator(".adjacent-summary-panel").wait_for()
@@ -61,6 +94,7 @@ def main() -> None:
             if name == "handwritten-649-overlay.html":
                 assert page.locator(".overlay-panel").first.locator("thead th").count() == 50
             print("PASS", name)
+        verify_overlay(page, base, "lotto649/", "lotto649", 49)
         page.goto(base)
         page.screenshot(path=str(ROOT / "output/lottery-home.png"), full_page=True)
         page.set_viewport_size({"width": 390, "height": 844})
