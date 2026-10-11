@@ -143,7 +143,7 @@
       }).join("");
       return `<tr><th>${rowLabel}</th>${cells}</tr>`;
     }).join("");
-    return `<section class="overlay-panel"><header><strong>近 ${periods} 期疊加</strong><span>${label}</span></header><table><thead><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="overlay-note">最近 ${periods} 個實際開獎期；休假日不計，紅圈內數字為累計出現次數。</p></section>`;
+    return `<section id="overlay-period-${periods}" class="overlay-panel"><header><strong>近 ${periods} 期疊加</strong><span>${label}</span></header><table><thead><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="overlay-note">最近 ${periods} 個實際開獎期；休假日不計，紅圈內數字為累計出現次數。</p></section>`;
   };
 
   const placeAdjacentBalls = () => {

@@ -14,6 +14,7 @@
     #blank-difference-panels .blank-label{top:3px;bottom:auto}#blank-difference-panels .blank-watermark{top:auto;bottom:3px}#blank-difference-panels .blank-summary{background:#e5f4eb;color:#075d46;font-size:.8rem;font-weight:900;height:32px}
     .overlay-panel td{position:relative}.overlay-panel .overlay-watermark,#blank-difference-panels .blank-watermark{position:absolute;inset:0;height:auto;display:grid;place-items:center;color:#d5ddd7!important;font-family:Georgia,serif;font-size:.9rem!important;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;pointer-events:none}
     #blank-difference-panels .comparison-ball{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:2}#blank-difference-panels td:has(.comparison-ball) .blank-watermark{inset:auto 0 3px;height:14px;font-size:.7rem!important}
+    .period-navigation{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0}.period-navigation a{padding:8px 14px;border:1px solid #075d46;border-radius:6px;background:#fffefa;color:#075d46;font-size:.85rem;font-weight:900;text-decoration:none}.period-navigation a:hover,.period-navigation a:focus-visible{background:#e5f4eb}.period-navigation a.new-period{background:#075d46;color:#fff}.overlay-panel{scroll-margin-top:16px}
   .overlay-panel table,.adjacent-overlay table{min-width:1500px}</style>
 </head>
 <body>
@@ -24,6 +25,7 @@
       <div><strong>大樂透｜近 6／12／18／24／36 期疊加</strong><span>依最近 6／12／18／24／36 個實際開獎期累加；休假日不計</span></div>
     </header>
     <p id="today-date" class="overlay-date"></p>
+    <nav class="period-navigation" aria-label="疊加期數"><strong>查看疊加：</strong><a href="#overlay-period-6">近 6 期</a><a href="#overlay-period-12">近 12 期</a><a href="#overlay-period-18">近 18 期</a><a class="new-period" href="#overlay-period-24">近 24 期</a><a class="new-period" href="#overlay-period-36">近 36 期</a></nav>
     <p id="overlay-status">正在載入每日位置…</p>
     <section id="overlay-panels" class="overlay-panels" aria-live="polite"></section>
     <section class="blank-differences" aria-labelledby="blank-difference-title">
@@ -43,6 +45,6 @@
       <p class="overlay-note">依本次對話補存選號紀錄，核對結果由官方開獎資料計算；11 號命中數為涵蓋結果。</p>
     </section>
   </main>
-  <script src="handwritten-649-overlay.js?v=24-36-v1"></script>
+  <script src="handwritten-649-overlay.js?v=24-36-v2"></script>
 </body>
 </html>
