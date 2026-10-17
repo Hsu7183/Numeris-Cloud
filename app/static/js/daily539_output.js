@@ -68,13 +68,10 @@
     number: index + 1,
     score: scoreByNumber.get(index + 1),
   })).sort((first, second) => second.score - first.score || first.number - second.number);
-  const scoreStrip = scores.map((item, index) => `<div class="score-item">
-    <span>${index + 1}</span><b>${String(item.number).padStart(2, "0")}</b><strong>${item.score.toFixed(1)}</strong>
-  </div>`).join("");
   const scoreLine = scores.map((item, index) => `<div class="score-line-item">
     <span>${index + 1}</span><b>${String(item.number).padStart(2, "0")}</b><strong>${item.score.toFixed(1)}</strong>
   </div>`).join("");
   document.querySelector("#output-meta").textContent = `最新 ${payload.latest_draw_no} 期 · ${payload.latest_draw_date} · 每期數範圍各顯示 5 顆球與相鄰球`;
   const columns = '<col class="range-col"><col class="index-col"><col class="value-col">' + '<col class="matrix-col">'.repeat(39);
-  wrap.innerHTML = `<table><colgroup>${columns}</colgroup><thead><tr><th rowspan="2">期數</th><th rowspan="2">球序</th><th rowspan="2">開出球</th><th colspan="39">球號 1–39</th></tr><tr>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="key"><span class="neighbor-key"></span>相鄰球（顯示球號）</p><section class="score-section"><div><strong>相鄰分數排名</strong><span>每期數範圍首次出線 1 分；同範圍每多出現一次加 0.1 分。</span></div><div class="score-line">${scoreLine}</div><div class="score-strip">${scoreStrip}</div></section>`;
+  wrap.innerHTML = `<table><colgroup>${columns}</colgroup><thead><tr><th rowspan="2">期數</th><th rowspan="2">球序</th><th rowspan="2">開出球</th><th colspan="39">球號 1–39</th></tr><tr>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="key"><span class="neighbor-key"></span>相鄰球（顯示球號）</p><section class="score-section"><div><strong>相鄰分數排名</strong><span>每期數範圍首次出線 1 分；同範圍每多出現一次加 0.1 分。</span></div><div class="score-scroll" tabindex="0" role="region" aria-label="相鄰分數排名，39格，可左右捲動"><div class="score-line">${scoreLine}</div></div></section>`;
 })();
