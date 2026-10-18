@@ -46,6 +46,10 @@ def rank(history: list[dict]) -> list[dict]:
 
 def load() -> tuple[list[dict], dict]:
     db = ROOT / "data/database/numeris.sqlite3"
+    snapshot_path = ROOT / "reports/539-adjacent-source.json"
+    snapshot = (
+        json.loads(snapshot_path.read_text(encoding="utf-8")) if snapshot_path.exists() else []
+    )
     if db.exists():
         with sqlite3.connect(f"{db.as_uri()}?mode=ro", uri=True) as connection:
             rows = connection.execute("""
@@ -57,21 +61,24 @@ def load() -> tuple[list[dict], dict]:
             ORDER BY d.draw_date,d.draw_no,n.number_value
             """).fetchall()
     else:
-        # GitHub Pages runners use the audited official history, never a fixture DB.
-        snapshot = json.loads((ROOT / "reports/539-adjacent-source.json").read_text(encoding="utf-8"))
-        rows = [
-            (i, draw["draw_no"], draw["draw_date"], "verified", number)
-            for i, draw in enumerate(snapshot)
-            for number in draw["numbers"]
-        ]
-    merged = {}
+        if not snapshot:
+            raise ValueError("缺少官方歷史資料庫與已核對的歷史快照")
+        rows = []
+    merged = {
+        draw["draw_no"]: dict(
+            draw_no=draw["draw_no"], draw_date=draw["draw_date"], numbers=sorted(draw["numbers"])
+        )
+        for draw in snapshot
+    }
+    database_draws = {}
     conflicts = set()
     for _, number, date, status, ball in rows:
-        merged.setdefault(number, dict(draw_no=number, draw_date=date, numbers=[]))[
+        database_draws.setdefault(number, dict(draw_no=number, draw_date=date, numbers=[]))[
             "numbers"
         ].append(ball)
         if status == "conflict":
             conflicts.add(number)
+    merged.update(database_draws)
     recent = json.loads((ROOT / "docs/data/daily539.json").read_text(encoding="utf-8"))
     conflict_count = len(conflicts)
     replacements = []
@@ -88,6 +95,7 @@ def load() -> tuple[list[dict], dict]:
         conflicts.discard(key)
     assert not conflicts, f"Unresolved conflicts: {conflicts}"
     draws = sorted(merged.values(), key=lambda d: (d["draw_date"], d["draw_no"]))
+    assert len(draws) >= len(snapshot), "歷史資料不可縮減"
     assert len({d["draw_date"] for d in draws}) == len(draws)
     by_year = defaultdict(list)
     for draw in draws:
@@ -98,6 +106,7 @@ def load() -> tuple[list[dict], dict]:
         assert min(numbers) == 1 and len(numbers) == max(numbers), (year, "missing periods")
     return draws, dict(
         database_official_draws=len({r[1] for r in rows}),
+        history_snapshot_draws=len(snapshot),
         recent_snapshot_draws=len(recent["draws"]),
         resolved_conflict_records=conflict_count,
         changed_numbers=replacements,
@@ -203,6 +212,7 @@ def main() -> None:
 
 def render(report: dict) -> None:
     ball_hits = Counter()
+    ball_appearances = Counter(n for trial in report["details"] for n in trial["actual"])
     for trial in report["details"]:
         picks = {item["number"] for item in trial["ranking"][:5]}
         ball_hits.update(picks & set(trial["actual"]))
@@ -226,7 +236,10 @@ def render(report: dict) -> None:
         for y in report["yearly"]
     )
     ranks = "".join(
-        f"<td><small>{r['rank']}名</small><br>{r['hits']}次</td>" for r in report["rank_hits"]
+        f'<td class="hit-group-{i // 5} {"group-end" if (i + 1) % 5 == 0 else ""}" '
+        f'aria-label="{number:02}號球，開出{ball_appearances[number]}次">'
+        f'<span class="ball">{number:02}</span><span class="hits">{ball_appearances[number]}</span></td>'
+        for i, number in enumerate(sorted(range(1, 40), key=lambda n: (-ball_appearances[n], n)))
     )
     details = "".join(
         "<tr><td>"
@@ -244,14 +257,14 @@ def render(report: dict) -> None:
     )
     page = f"""<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>539 相鄰分數歷史試算</title>
 <style>body{{font-family:"Microsoft JhengHei",sans-serif;background:#f5f7f2;color:#193e30;margin:24px}}main{{max-width:1400px;margin:auto}}table{{border-collapse:collapse;width:100%;background:white;font-variant-numeric:tabular-nums}}th,td{{border:1px solid #ccd8ce;padding:8px;text-align:center;white-space:nowrap}}th{{background:#e4eddf}}.scroll{{overflow:auto;margin:18px 0}}p{{line-height:1.8}}a{{color:#076b50}}small{{color:#66796d}}h1{{font-size:1.6rem}}</style><main>
-<link rel="stylesheet" href="539-hit-ranking.css?v=1">
+<link rel="stylesheet" href="539-hit-ranking.css?v=compact-2">
 <a href="output.html">← 相鄰分數排名</a><h1>今彩539 · 相鄰分數歷史試算</h1>
 <p>資料：{report["source_start"]}～{report["source_end"]}，共 {report["source_draws"]:,} 期。前200期建立統計，實際回測 {report["trials"]:,} 期（{report["trial_start"]}～{report["trial_end"]}）。</p>
 <p>每期以當時最近20／50／100／200期的次數分組，從當期5顆球取左右上下相鄰球。同範圍首次1分，重複每次加0.1分，跨範圍加總；同分依球號小到大。用所得排名對照<strong>下一期</strong>獎號，未使用未來資料。</p>
-<p>僅使用官方來源紀錄或已核對的官方歷史快照，排除測試資料；{report['audit']['resolved_conflict_records']}期資料庫衝突標記由近期官方來源快照覆蓋。各年期號自第1期至最後一期連續無缺號；本次未重新連線核對完整歷史官方資料。前N名遇同分仍固定取N顆。以下隨機基準為39顆中固定選N顆的理論平均命中數。</p>
+<p>僅使用官方來源紀錄或已核對的官方歷史快照，排除測試資料；{report["audit"]["resolved_conflict_records"]}期資料庫衝突標記由近期官方來源快照覆蓋。各年期號自第1期至最後一期連續無缺號；本次未重新連線核對完整歷史官方資料。前N名遇同分仍固定取N顆。以下隨機基準為39顆中固定選N顆的理論平均命中數。</p>
 <h2>命中統計</h2><div class="scroll"><table><thead><tr><th>排名範圍</th><th>平均命中</th><th>隨機基準</th><th>至少中1顆</th>{"".join(f"<th>中{n}顆期數</th>" for n in range(6))}</tr></thead><tbody>{summary_rows}</tbody></table></div>
-<h2>39個排名各自命中次數</h2><div class="scroll"><table><tr>{ranks}</tr></table></div>
-<section id="colored-hit-ranking"><h2>相鄰分數前5名 · 各球號命中次數</h2>
+<section id="ball-frequency-ranking" class="compact-hit-ranking"><h2>39個球號 · 開出次數排名</h2><p>統計同一回測期間各球號實際開出的次數，非排名位置命中數；次數最多靠左，同次數球號由小到大。</p><div class="scroll"><table aria-label="39個球號開出次數，由多到少"><tbody><tr>{ranks}</tr></tbody></table></div></section>
+<section id="colored-hit-ranking" class="compact-hit-ranking"><h2>相鄰分數前5名 · 各球號命中次數</h2>
 <p>每期取相鄰分數前5名，對照下一期獎號。由命中次數高到低排列，每5格分色；上排球號，下排命中次數。同分優先取較小球號，入選次數可能不同，此處為命中次數而非命中率。</p>
 <div class="scroll"><table aria-label="39個球號命中次數，每5格分色"><tbody><tr>{ball_cells}</tr></tbody></table></div></section>
 <h2>逐年結果</h2><div class="scroll"><table><tr><th>年</th><th>回測期數</th>{"".join(f"<th>前{k}名平均命中</th>" for k in TOPS)}</tr>{years}</table></div>
