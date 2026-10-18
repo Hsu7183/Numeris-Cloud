@@ -51,6 +51,7 @@ def main() -> None:
     source = source.replace("今彩539 · 相鄰次數", "今彩539 · 合併參考排名")
     source = source.replace("相鄰次數，一列39個號碼", "合併參考分數，一列39個號碼")
     source = source.replace("次數在上 · 球號在下", "合計分在上 · 球號在下")
+    source = source.replace("次數在上，球號在下", "合計分在上，球號在下")
     start = source.index('<div class="note">')
     end = source.index("</div>", start) + 6
     source = (
