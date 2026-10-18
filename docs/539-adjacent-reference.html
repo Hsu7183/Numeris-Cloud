@@ -10,7 +10,7 @@
 .sheet{background:#fffefa;border:1px solid #bcccbc;padding:22px 12px 26px;box-shadow:0 8px 28px #193e3010}.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.heading strong{font-size:18px}.heading span{font-size:12px;color:#61776a}.row{display:grid;grid-template-columns:repeat(39,minmax(0,1fr));border-top:1px solid #bcccbc;border-left:1px solid #bcccbc}.cell{min-width:0;text-align:center;padding:14px 0;border-right:1px solid #bcccbc;border-bottom:1px solid #bcccbc}.count{display:block;color:#193e3040;font-size:clamp(10px,.9vw,14px);white-space:nowrap}.ball{display:block;font-size:clamp(12px,1.7vw,28px);font-weight:600;margin-top:12px;white-space:nowrap}.cell[data-count="4"]{background:#e4efdf}.cell[data-count="3"]{background:#f0f5e8}.cell[data-count="0"] .ball{color:#78887d}.note{font-size:12px;color:#61776a;margin-top:18px}
 </style>
 <style>
-.sheet{overflow-x:auto}.row{min-width:1170px}.ball{font-size:clamp(20px,1.7vw,28px)}.count{font-size:12px}
+.sheet{min-width:0}.row{min-width:0;grid-template-columns:repeat(20,minmax(0,1fr))}.ball{font-size:28px}.count{font-size:12px}
 .row .cell:nth-child(5n):not(:last-child){border-right:3px solid #52755e}
 .row .cell:nth-child(-n+5){background:#e4efdf}
 .row .cell:nth-child(n+6):nth-child(-n+10){background:#e1edf8}
@@ -21,13 +21,16 @@
 .row .cell:nth-child(n+31):nth-child(-n+35){background:#f4efce}
 .row .cell:nth-child(n+36){background:#e8e8f3}
 .row .count{color:rgba(25,62,48,.5)}
+.heading{flex-wrap:wrap}
+@media(max-width:1100px){.row{grid-template-columns:repeat(10,minmax(0,1fr))}}
+@media(max-width:600px){main{padding:20px 12px}.row{grid-template-columns:repeat(5,minmax(0,1fr))}.ball{font-size:26px}}
 </style>
 </head>
 <body><main>
 <header><h1>今彩539 · 相鄰次數</h1><a href="output.html">返回相鄰分數排名</a><a href="539-adjacent-counts-backtest.html">相鄰次數歷史試算</a></header>
 <p id="status" role="status" aria-live="polite">正在載入最新539資料…</p>
-<section class="sheet" aria-label="相鄰次數，一列39個號碼">
-<div class="heading"><strong>39個號碼 · 一號一格</strong><span>次數在上 · 球號在下</span></div>
+<section class="sheet" aria-label="相鄰次數，39個號碼依排名自動換行">
+<div class="heading"><strong>39個號碼 · 每5格一組</strong><span>排名由左至右、由上到下 · 次數在上，球號在下</span></div>
 <div class="row" id="numbers"></div>
 <div class="note">近20／50／100／200期各計一次相鄰，跨範圍累計0～4次；同次數依球號由小到大。每天22:00更新資料，頁面每5分鐘檢查更新。</div>
 </section>
