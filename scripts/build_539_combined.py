@@ -5,8 +5,16 @@
 from __future__ import annotations
 
 import json
+from datetime import date, timedelta
 
 from scripts.backtest_539_adjacent import ROOT, rank
+
+
+def next_draw_date(cutoff: str) -> str:
+    target = date.fromisoformat(cutoff) + timedelta(days=1)
+    while target.weekday() == 6:
+        target += timedelta(days=1)
+    return target.isoformat()
 
 
 def main() -> None:
@@ -32,6 +40,8 @@ def main() -> None:
         reference=reference,
         ranking=ranking,
         historical_backtest=False,
+        target_date=next_draw_date(payload["latest_draw_date"]),
+        target_note="下一個週一至週六開獎日的參考排名，實際開獎安排以官方公告為準；不是已開出的獎號。",
     )
     (ROOT / "docs/data/539-combined.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -56,7 +66,7 @@ def main() -> None:
         source[:start]
         + """<script>
 fetch('data/539-combined.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('讀取失敗');return r.json()}).then(p=>{
- document.getElementById('status').textContent=`截止 ${p.date} · 第${p.latest_draw_no}期 · 相鄰分數＋AI快報試作加權`;
+ document.getElementById('status').textContent=`參考目標：${p.target_date}（待開獎）｜資料截至 ${p.date} · 第${p.latest_draw_no}期｜AI快報截至 ${p.reference.source_date}`;
  document.getElementById('numbers').innerHTML=p.ranking.map(x=>`<div class="cell" aria-label="${x.number}號，合計${x.combined.toFixed(1)}分"><span class="count">${x.combined.toFixed(1)}分</span><span class="ball">${String(x.number).padStart(2,'0')}</span></div>`).join('');
  document.getElementById('breakdown').innerHTML=p.ranking.map((x,i)=>`<tr><td>${i+1}</td><td>${String(x.number).padStart(2,'0')}</td><td>${x.score.toFixed(1)}</td><td>${x.bonus.toFixed(1)}</td><td>${x.combined.toFixed(1)}</td><td>${x.tags.join('、')||'—'}</td></tr>`).join('');
 }).catch(e=>{document.getElementById('status').textContent=e.message});
