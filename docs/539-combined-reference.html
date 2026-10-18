@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>今彩539｜相鄰分數＋AI快報</title>
+<style>
+:root{font-family:"Microsoft JhengHei",Arial,sans-serif;color:#193e30;background:#eef2ea}
+*{box-sizing:border-box}body{margin:0}main{padding:32px 20px}header{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:30px}h1{font-size:24px;margin:0}a{color:#076b50;font-size:14px}p{color:#61776a;font-size:14px;margin:12px 0 24px}
+.sheet{background:#fffefa;border:1px solid #bcccbc;padding:22px 12px 26px;box-shadow:0 8px 28px #193e3010}.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.heading strong{font-size:18px}.heading span{font-size:12px;color:#61776a}.row{display:grid;grid-template-columns:repeat(39,minmax(0,1fr));border-top:1px solid #bcccbc;border-left:1px solid #bcccbc}.cell{min-width:0;text-align:center;padding:14px 0;border-right:1px solid #bcccbc;border-bottom:1px solid #bcccbc}.count{display:block;color:#193e3040;font-size:clamp(10px,.9vw,14px);white-space:nowrap}.ball{display:block;font-size:clamp(12px,1.7vw,28px);font-weight:600;margin-top:12px;white-space:nowrap}.cell[data-count="4"]{background:#e4efdf}.cell[data-count="3"]{background:#f0f5e8}.cell[data-count="0"] .ball{color:#78887d}.note{font-size:12px;color:#61776a;margin-top:18px}
+</style>
+<style>
+.sheet{min-width:0}.row{min-width:0;grid-template-columns:repeat(39,minmax(0,1fr));container-type:inline-size}.cell{padding:10px 0}.ball{font-size:clamp(1px,1.45cqw,20px);margin-top:8px}.count{font-size:clamp(1px,.8cqw,11px)}
+.row .cell:nth-child(5n):not(:last-child){border-right:2px solid #52755e}
+.row .cell:nth-child(-n+5){background:#e4efdf}
+.row .cell:nth-child(n+6):nth-child(-n+10){background:#e1edf8}
+.row .cell:nth-child(n+11):nth-child(-n+15){background:#fff0d7}
+.row .cell:nth-child(n+16):nth-child(-n+20){background:#eee4f5}
+.row .cell:nth-child(n+21):nth-child(-n+25){background:#f9e3e7}
+.row .cell:nth-child(n+26):nth-child(-n+30){background:#dff1ed}
+.row .cell:nth-child(n+31):nth-child(-n+35){background:#f4efce}
+.row .cell:nth-child(n+36){background:#e8e8f3}
+.row .count{color:rgba(25,62,48,.5)}
+.heading{flex-wrap:wrap}
+@media(max-width:600px){main{padding:20px 8px}.sheet{padding:18px 6px}.row .cell:nth-child(5n):not(:last-child){border-right-width:1px}}
+</style>
+</head>
+<body><main>
+<header><h1>今彩539 · 合併參考排名</h1><a href="output.html">返回相鄰分數排名</a><a href="539-adjacent-counts-backtest.html">相鄰次數歷史試算</a></header>
+<p id="status" role="status" aria-live="polite">正在載入最新539資料…</p>
+<section class="sheet" aria-label="合併參考分數，一列39個號碼">
+<div class="heading"><strong>39個號碼 · 同一行顯示</strong><span>排名由左至右 · 每5格一組 · 合計分在上，球號在下</span></div>
+<div class="row" id="numbers"></div>
+<div class="note">試作規則：output.html相鄰分數＋Pilio四類提及各0.1分。上方為合計分，同分球號升序；每5格底色分組。</div>
+<p>相鄰分數與快報截止日一致。冷門、未開期數及條件拖牌不加減分。此為目前資料的合併參考，尚無歷史快報逐日快照可作全歷史回測。</p>
+<p><a href="https://www.pilio.idv.tw/lto539/sqlaibrief.asp" target="_blank" rel="noopener">Pilio AI快報來源</a> · <a href="data/539-combined.json">檢視逐號計分明細</a></p>
+<details><summary>展開相鄰分數、快報加分與提及類別</summary><table style="width:100%;text-align:left;border-collapse:collapse"><thead><tr><th>排名</th><th>球號</th><th>相鄰分數</th><th>快報加分</th><th>合計</th><th>類別</th></tr></thead><tbody id="breakdown"></tbody></table></details>
+</section>
+</main>
+<script>
+fetch('data/539-combined.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('讀取失敗');return r.json()}).then(p=>{
+ document.getElementById('status').textContent=`參考目標：${p.target_date}（待開獎）｜資料截至 ${p.date} · 第${p.latest_draw_no}期｜AI快報截至 ${p.reference.source_date}`;
+ document.getElementById('numbers').innerHTML=p.ranking.map(x=>`<div class="cell" aria-label="${x.number}號，合計${x.combined.toFixed(1)}分"><span class="count">${x.combined.toFixed(1)}分</span><span class="ball">${String(x.number).padStart(2,'0')}</span></div>`).join('');
+ document.getElementById('breakdown').innerHTML=p.ranking.map((x,i)=>`<tr><td>${i+1}</td><td>${String(x.number).padStart(2,'0')}</td><td>${x.score.toFixed(1)}</td><td>${x.bonus.toFixed(1)}</td><td>${x.combined.toFixed(1)}</td><td>${x.tags.join('、')||'—'}</td></tr>`).join('');
+}).catch(e=>{document.getElementById('status').textContent=e.message});
+</script></body></html>

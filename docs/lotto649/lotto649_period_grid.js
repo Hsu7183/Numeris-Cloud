@@ -15,7 +15,9 @@
 
   async function loadData() {
     if (!dateFrom || !dateTo) {
-      const payload = JSON.parse(localStorage.getItem("lotto649OutputData") || "null");
+      const response = await fetch("../data/lotto649.json", {cache:"no-store"});
+      if (!response.ok) throw new Error("期數資料讀取失敗");
+      const payload = await response.json();
       return {
         draws: payload?.draws || [],
         markerDraws: (payload?.draws || []).slice(0, 27),
@@ -26,19 +28,15 @@
       };
     }
 
-    const response = await fetch(`/api/draws?game_code=TW_LOTTO649&date_to=${encodeURIComponent(dateTo)}&page_size=200`);
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || "指定期間資料無法取得");
-    const draws = result.items.map((item) => ({
-      draw_no: item.draw_no,
-      draw_date: item.draw_date,
-      numbers: (item.pools?.main || []).slice().sort((first, second) => first - second),
-    }));
+    const response = await fetch("649-full-audit.json", {cache:"no-store"});
+    if (!response.ok) throw new Error("歷史資料讀取失敗");
+    const all = await response.json();
+    const draws = all.filter(d => d.draw_date <= dateTo).reverse().slice(0, 200);
     const markerDraws = draws.filter((draw) => draw.draw_date >= dateFrom && draw.draw_date <= dateTo);
     return {
       draws,
       markerDraws,
-      markerName: "112/06/26–112/07/18",
+      markerName: `${dateFrom}～${dateTo}`,
       latestDrawNo: draws[0]?.draw_no,
       latestDrawDate: draws[0]?.draw_date,
       historical: true,

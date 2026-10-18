@@ -20,6 +20,10 @@ def build() -> None:
         "excel-539-grid.html",
         "handwritten-539-grid.html",
         "handwritten-539-overlay.html",
+        "539-adjacent-reference.html",
+        "539-aibrief.js",
+        "539-aibrief.css",
+        "539-hit-ranking.css",
     ]
     names += [p.name for p in ROOT.glob("daily539_*")]
     names += [p.name for p in ROOT.glob("excel-539-*") if p.suffix in {".js", ".css"}]
@@ -73,6 +77,8 @@ def build() -> None:
         text = text.replace("DAILY 539", "LOTTO 6/49")
         text = text.replace("daily539", "lotto649").replace("539", "649")
         text = text.replace("data/lotto649", "../data/lotto649")
+        text = text.replace("data/649-", "../data/649-")
+        text = text.replace("/lto649/", "/ltobig/")
         text = text.replace("lotto649.html?", "index.html?")
         text = text.replace('href="lotto649.html"', 'href="index.html"')
         text = text.replace("TW_DAILY649", "TW_LOTTO649")
@@ -81,8 +87,24 @@ def build() -> None:
         text = re.sub(r"length:\s*39", "length: 49", text)
         text = text.replace("<= 39", "<= 49").replace(".repeat(39)", ".repeat(49)")
         text = text.replace('colspan="39"', 'colspan="49"').replace("repeat(39,", "repeat(49,")
+        text = text.replace("39個", "49個").replace("39格", "49格")
+        text = text.replace("39號", "49號").replace("/ 39", "/ 49")
+        text = text.replace("n > 39", "n > 49")
+        if name == "539-adjacent-reference.html":
+            text = text.replace("Array(40)", "Array(50)")
+            text = text.replace("!== 5", "!== 6")
+            text = text.replace(
+                "</style>",
+                ".row .cell:nth-child(n+41):nth-child(-n+45){background:#e1edf0}.row .cell:nth-child(n+46){background:#f7e7d4}</style>",
+                1,
+            )
+            text = text.replace("每天22:00更新資料。", "依已載入的官方主號資料計算；特別號另列。")
+        if name == "539-hit-ranking.css":
+            text += "\n.compact-hit-ranking .hit-group-8{--group-color:#64748b}.compact-hit-ranking .hit-group-9{--group-color:#b45309}\n"
         if name == "daily539_output.js":
             text = text.replace('rowspan="5"', 'rowspan="6"')
+            text = text.replace("顯示 5 顆球", "顯示 6 顆主球（特別號不計）")
+            text = text.replace("/649/pages/../data/lotto649.json", "../data/lotto649.json")
         if name == "excel-539-grid.js":
             text = text.replace("[[1, 13], [14, 26], [27, 39]]", "[[1, 17], [18, 33], [34, 49]]")
             text = text.replace("length: 5", "length: 6").replace("五個", "六個")
@@ -110,6 +132,24 @@ def build() -> None:
             text = text.replace("第 12 行最新", "第 27 行最新")
         if name == "daily539_period_grid.js":
             text = text.replace(
+                'const payload = JSON.parse(localStorage.getItem("lotto649OutputData") || "null");',
+                'const response = await fetch("../data/lotto649.json", {cache:"no-store"});\n      if (!response.ok) throw new Error("期數資料讀取失敗");\n      const payload = await response.json();',
+            )
+            start = text.index("    const response = await fetch(`/api/draws?")
+            end = text.index("    const markerDraws =", start)
+            text = (
+                text[:start]
+                + """    const response = await fetch("649-full-audit.json", {cache:"no-store"});
+    if (!response.ok) throw new Error("歷史資料讀取失敗");
+    const all = await response.json();
+    const draws = all.filter(d => d.draw_date <= dateTo).reverse().slice(0, 200);
+"""
+                + text[end:]
+            )
+            text = text.replace(
+                'markerName: "112/06/26–112/07/18"', "markerName: `${dateFrom}～${dateTo}`"
+            )
+            text = text.replace(
                 "const groups = frequencyGroups(draws, period);",
                 "const groups = frequencyGroups(draws, period);\n    columns = Math.max(columns, ...[...groups.values()].map(values => values.length));\n    const maxCount = Math.max(42, ...groups.keys());",
             )
@@ -136,6 +176,18 @@ def build() -> None:
         if name == "excel-539-diagram.css":
             text += "\n.number-board, .adjacent-table-wrap { overflow-x:auto; } .number-board table, .adjacent-table { min-width:1500px; } .diagram-content { display:block; }\n"
         if name == "handwritten-539-overlay.html":
+            text = text.replace("39球號命中統計", "49球號命中統計")
+            text = text.replace(
+                "</main>",
+                '<section data-aibrief aria-live="polite"><h2>AI快報 · 球號比對</h2></section></main>',
+            )
+            text = text.replace("</body>", '<script src="649-aibrief.js"></script></body>')
+            text = text.replace("</head>", '<link rel="stylesheet" href="649-aibrief.css"></head>')
+        if name == "handwritten-539-grid.js":
+            text = text.replace("6／12／18／24／30期疊加", "6／12／18／24／30／36／42／48期疊加")
+        if name == "daily539_pattern_template.html":
+            text = text.replace("39 號", "49 號")
+        if name == "handwritten-539-overlay.html":
             text = text.replace(
                 "</style>", ".overlay-panel table,.adjacent-overlay table{min-width:1500px}</style>"
             )
@@ -147,8 +199,16 @@ def build() -> None:
         text.replace("今彩539", "大樂透").replace("DAILY 539", "LOTTO 6/49").replace("1–39", "1–49")
     )
     text = text.replace("539", "649").replace('href="index.html"', 'href="../index.html"')
-    text = re.sub(
-        r'<a class="xlsx-output-link" href="period-grid.html">開啟 112 年期數格表</a>', "", text
+    text = text.replace("次數39格", "次數49格")
+    # Keep the main navigation visible before data finishes loading.
+    text = text.replace(
+        "</nav>",
+        '<a class="xlsx-output-link" href="handwritten-649-overlay.html">12．期數疊加</a><a class="xlsx-output-link" href="649-top5-hit-ranking.html">13．49球號命中統計</a><a class="xlsx-output-link" href="649-dashboard.html">14．完整總覽與資料查核</a></nav>',
+        1,
+    )
+    text = text.replace(
+        'href="period-grid.html">07．',
+        'href="period-grid.html?from=2023-06-26&amp;to=2023-07-18">07．',
     )
     text = text.replace("出現次數與期次順序。", "出現次數與期次順序（僅計 6 個主號，特別號另列）。")
     (target / "index.html").write_text(text, encoding="utf-8")
@@ -164,6 +224,9 @@ def build() -> None:
         1,
     )
     app.write_text(text, encoding="utf-8")
+    from scripts.lotto649_modes import build as build_modes
+
+    build_modes()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>539｜相鄰次數39格</title>
+  <style>
+    :root { color-scheme:light; font-family:"Microsoft JhengHei",Arial,sans-serif; color:#193e30; background:#f5f7f2; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:24px; }
+    h1 { font-size:22px; margin:18px 0 8px; }
+    a { color:#076b50; }
+    p { color:#64756b; font-size:14px; }
+    .scroll { overflow-x:auto; margin-top:22px; padding-bottom:12px; }
+    .grid { display:grid; grid-template-columns:repeat(39,minmax(54px,1fr)); width:max(100%,2106px); border:1px solid #bfcebf; background:#fffefa; font-variant-numeric:tabular-nums; }
+    .cell { min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:12px 4px; border-right:1px solid #cfd7ce; }
+    .cell:last-child { border-right:0; }
+    .count { color:rgb(26 44 37 / 25%); font-size:13px; }
+    .number { color:#164a37; font-size:28px; font-weight:500; }
+    @media(max-width:600px) { body { padding:16px; } }
+  </style>
+</head>
+<body>
+  <a href="output.html">← 相鄰分數排名</a>
+  <h1>相鄰次數 · 一列39格</h1>
+  <p>依你提供的次數分組排列，每個號碼固定一格；可左右捲動。</p>
+  <div class="scroll" tabindex="0" role="region" aria-label="39個號碼，依次數由高到低排列">
+    <div class="grid" id="number-grid"></div>
+  </div>
+  <script>
+    const groups = [
+      [4,[13]],
+      [3,[15,16,20,26]],
+      [2,[3,4,12,14,17,19,23,25,29,33,35]],
+      [1,[5,6,7,8,11,18,21,24,28,31,32]],
+      [0,[1,2,9,10,22,27,30,34,36,37,38,39]]
+    ];
+    document.getElementById('number-grid').innerHTML = groups.flatMap(([count,numbers]) => numbers.map(number => `<div class="cell" aria-label="${number}號，${count}次"><span class="count">${count}次</span><span class="number">${String(number).padStart(2,'0')}</span></div>`)).join('');
+  </script>
+</body>
+</html>

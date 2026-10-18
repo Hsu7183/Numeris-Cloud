@@ -1,11 +1,12 @@
 (() => {
   "use strict";
+  const periodCount = 18;
   const topHeaders = [[19, 28, 37], [1, 10, 29, 38], [2, 11, 20, 39], [3, 12, 21, 30], [4, 13, 22, 31], [5, 14, 23, 32], [6, 15, 24, 33], [7, 16, 25, 34], [8, 17, 26, 35], [9, 18, 27, 36]];
   const bottomHeaders = [[1, 5, 9, 13, 17, 21, 25, 29, 33, 37], [2, 6, 10, 14, 18, 22, 26, 30, 34, 38], [3, 7, 11, 15, 19, 23, 27, 31, 35, 39], [4, 8, 12, 16, 20, 24, 28, 32, 36, ""]];
   const pad = (value) => value === "" ? "" : String(value).padStart(2, "0");
   function board(headers, draws) {
     const header = headers.map((value) => `<th>${pad(value)}</th>`).join("");
-    const rows = Array.from({ length: 20 }, (_, index) => {
+    const rows = Array.from({ length: periodCount }, (_, index) => {
       const row = index + 1;
       const occurrences = draws[index]?.occurrences || {};
       const cells = headers.map((value) => value !== "" && occurrences[value]
@@ -34,8 +35,9 @@
     try {
       const response = await fetch("data/daily539.json", { cache: "no-store" });
       if (!response.ok) throw new Error("無法讀取開獎資料");
-      const draws = ((await response.json()).draws || []).slice(0, 12).reverse().map((draw) => ({ ...draw, pools: { main: draw.numbers } }));
-      document.querySelector("#pattern-status").textContent = `115/08/29～115/09/21：已填入 ${draws.length} 期開獎號碼（第 1 行為 8/29；同號第 1、2、3 次出現依序標示 1、2、3）`;
+      const draws = ((await response.json()).draws || []).slice(0, periodCount).reverse().map((draw) => ({ ...draw, pools: { main: draw.numbers } }));
+      const range = draws.length ? `${draws[0].draw_date}～${draws.at(-1).draw_date}` : "尚無開獎資料";
+      document.querySelector("#pattern-status").textContent = `${range}：已填入最近 ${draws.length} 期開獎號碼（由舊到新排列；同號累計第幾次出現即標示該次數）`;
       render(withOccurrenceCounts(draws));
     } catch (error) {
       document.querySelector("#pattern-status").textContent = "開獎資料讀取失敗，請重新整理後再試。";

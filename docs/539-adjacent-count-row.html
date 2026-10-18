@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>今彩539｜相鄰次數39格</title>
+  <style>
+    * { box-sizing:border-box; }
+    body { margin:0; background:#eef2ea; color:#1a2c25; font-family:"Microsoft JhengHei",Arial,sans-serif; }
+    main { padding:28px 24px; }
+    a { color:#076b50; text-decoration:none; }
+    h1 { margin:24px 0 8px; font-size:24px; }
+    p { color:#64756b; font-size:14px; }
+    .scroll { overflow-x:auto; margin-top:24px; padding-bottom:10px; }
+    .row { display:grid; grid-template-columns:repeat(39,minmax(58px,1fr)); background:#fffefa; border:1px solid #bfcbbf; font-variant-numeric:tabular-nums; }
+    .cell { display:grid; gap:8px; text-align:center; padding:14px 5px; border-right:1px solid #cfd7ce; }
+    .cell:last-child { border-right:0; }
+    .cell.start { border-left:2px solid #72957f; }
+    .rank { font-size:12px; opacity:.25; }
+    .number { font-size:28px; font-weight:500; color:#164a37; }
+    .count { font-size:12px; color:#d98b00; opacity:.3; }
+  </style>
+</head>
+<body><main>
+  <a href="output.html">← 相鄰分數排名</a>
+  <h1>今彩539 · 相鄰次數</h1>
+  <p>依提供的4／3／2／1／0次分組排列 · 一列39格</p>
+  <div class="scroll" tabindex="0" role="region" aria-label="39個號碼，可左右捲動"><div class="row" id="number-row"></div></div>
+</main>
+<script>
+  const groups = [
+    [4,[13]],
+    [3,[15,16,20,26]],
+    [2,[3,4,12,14,17,19,23,25,29,33,35]],
+    [1,[5,6,7,8,11,18,21,24,28,31,32]],
+    [0,[1,2,9,10,22,27,30,34,36,37,38,39]]
+  ];
+  let rank = 0;
+  document.getElementById('number-row').innerHTML = groups.map(([count,numbers],gi) => numbers.map((number,i) => `<div class="cell${gi && i===0?' start':''}" aria-label="${number}號，${count}次"><span class="rank">${++rank}</span><span class="number">${String(number).padStart(2,'0')}</span><span class="count">${count}次</span></div>`).join('')).join('');
+</script>
+</body></html>

@@ -8,7 +8,7 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func, select, update
@@ -29,7 +29,7 @@ from app.api import (
 from app.core.database import Base, SessionLocal, engine
 from app.core.exceptions import NumerisError
 from app.core.logging import configure_logging
-from app.core.paths import STATIC_DIR, TEMPLATE_DIR, ensure_directories
+from app.core.paths import PROJECT_ROOT, STATIC_DIR, TEMPLATE_DIR, ensure_directories
 from app.models import database_models  # noqa: F401
 from app.models.database_models import Draw, Game, Job
 from app.services.bootstrap import initialize_catalog
@@ -62,6 +62,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount(
+    "/539/pages", StaticFiles(directory=PROJECT_ROOT / "docs", html=True), name="daily539_pages"
+)
+app.mount(
+    "/649/pages", StaticFiles(directory=PROJECT_ROOT / "docs", html=True), name="lotto649_pages"
+)
 templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
 
@@ -176,13 +182,19 @@ def home(request: Request):
     )
 
 
+@app.get("/lottery")
+def lottery_home():
+    return RedirectResponse("/539/pages/index.html")
+
+
 @app.get("/539")
-def daily539(request: Request):
-    return templates.TemplateResponse(
-        request,
-        "daily539.html",
-        {"app_version": __version__},
-    )
+def daily539():
+    return RedirectResponse("/539/pages/daily539.html")
+
+
+@app.get("/649")
+def lotto649():
+    return RedirectResponse("/649/pages/lotto649/index.html")
 
 
 @app.get("/539/output")

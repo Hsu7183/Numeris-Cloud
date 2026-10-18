@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  const rangeDays = [30, 24, 18, 12, 6];
+  const rangeDays = [48, 42, 36, 30, 24, 18, 12, 6];
   const columnCount = 20;
   const maxPeriods = Math.max(...rangeDays);
   const rangeLabel = [...rangeDays].reverse().join("／");
@@ -102,7 +102,7 @@
   const renderBlankDifferences = (datedCells) => {
     const counts = new Map(rangeDays.map((periods) => [periods, countCells(periods, datedCells)]));
     const headers = Array.from({ length: columnCount }, (_, index) => `<th>${index + 1}</th>`).join("");
-    return [[24, 30], [18, 24], [12, 18], [6, 12], [6, 18]].map(([short, long]) => {
+    return [[42, 48], [36, 42], [30, 36], [24, 30], [18, 24], [12, 18], [6, 12], [6, 18]].map(([short, long]) => {
       let changed = 0;
       let blank = 0;
       const rows = [4, 3, 2, 1, 0].map((rowLabel) => {
@@ -170,30 +170,11 @@
     });
   };
 
-  const loadCheckHistory = async (payload) => {
-    const container = document.querySelector("#check-history");
-    try {
-      const response = await fetch("data/daily539-checks.json", { cache: "no-store" });
-      if (!response.ok) throw new Error("核對紀錄讀取失敗");
-      const history = await response.json();
-      const format = (numbers) => numbers.map((number) => String(number).padStart(2, "0")).join("、");
-      const rows = history.records.slice().sort((a, b) => b.target_date.localeCompare(a.target_date)).map((record) => {
-        const draw = payload.draws.find((item) => item.draw_date === record.target_date);
-        const hits = draw ? record.selected_numbers.filter((number) => draw.numbers.includes(number)) : [];
-        return `<tr><td>${record.selection_date}<br><small>資料截止 ${record.cutoff_date}</small></td><td>${record.target_date}<br>${draw ? draw.draw_no : "待開獎"}</td><td>${format(record.selected_numbers)}</td><td>${draw ? format(draw.numbers) : "待核對"}</td><td>${draw ? format(hits) || "無" : "—"}</td><td>${draw ? `命中 ${hits.length} 個` : "待核對"}</td></tr>`;
-      }).join("");
-      container.innerHTML = rows ? `<table style="min-width:1000px;table-layout:auto"><thead><tr><th>選號日期</th><th>核對日期／期別</th><th>選定號碼</th><th>開獎號碼</th><th>命中號碼</th><th>結果</th></tr></thead><tbody>${rows}</tbody></table>` : "尚無核對紀錄。";
-    } catch (error) {
-      container.textContent = error.message;
-    }
-  };
-
   async function load() {
     try {
       const response = await fetch(`data/daily539.json?load=${Date.now()}`, { cache: "no-store" });
       if (!response.ok) throw new Error("開獎資料讀取失敗");
       const payload = await response.json();
-      await loadCheckHistory(payload);
       const dates = (payload.draws || []).slice(0, maxPeriods).map((draw) => draw.draw_date).reverse();
       if (dates.length < maxPeriods) throw new Error(`不足 ${maxPeriods} 期開獎資料`);
       status.textContent = `正在載入最近 ${maxPeriods} 期資料（截至 ${dates.at(-1)}）…`;

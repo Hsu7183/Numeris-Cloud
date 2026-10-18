@@ -30,11 +30,16 @@ jobs:
       - run: pip install .
       - name: 取得官方大樂透主號與特別號
         run: python -m scripts.export_lotto649_static
+      - name: 更新大樂透AI快報
+        continue-on-error: true
+        run: python -m scripts.update_lotto649_aibrief
+      - name: 重建所有大樂透統計模式
+        run: python -m scripts.build_lotto649_pages
       - name: 儲存最新資料
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/data/lotto649.json
+          git add docs/data/lotto649.json docs/data/649-*.json docs/lotto649 reports/649-adjacent-source.json
           if ! git diff --cached --quiet; then
             git commit -m "chore(data): update Lotto 6/49 statistics"
             git pull --rebase

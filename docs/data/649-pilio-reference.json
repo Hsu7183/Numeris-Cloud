@@ -1,0 +1,16 @@
+{
+  "source_url": "https://www.pilio.idv.tw/ltobig/sqlaibrief.asp",
+  "source_date": "2026-10-16",
+  "captured_date": "2026-10-18",
+  "article_sha256": "e9c135b252f1333a6d393733dbe01c6fcb79b4dec79b74f1ef231d1d60f4dcb9",
+  "categories": {
+    "機率提及": [11],
+    "熱門提及": [3, 4],
+    "連莊參考": [15, 49],
+    "上升趨勢": []
+  },
+  "cold_reference": [8, 12],
+  "overdue_reference": [8, 46],
+  "bonus_per_category": 0.1,
+  "method_note": "與539相同，每項參考類別加0.1分，同類不重複。冷門、未開期數及條件拖牌不加減分。已核對文章分類；僅在開獎日期及文章雜湊相同時套用。"
+}

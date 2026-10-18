@@ -1,6 +1,7 @@
 """Browser checks for the deployed static Pages flows (serve docs on port 8765)."""
 
 import json
+import os
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -18,9 +19,9 @@ def verify_overlay(page, base: str, folder: str, game: str, columns: int) -> Non
         timeout=60000,
     )
     panels = page.locator("#overlay-panels > .overlay-panel")
-    assert panels.count() == 5
+    assert panels.count() == 8
     previous = None
-    for index, periods in enumerate([30, 24, 18, 12, 6]):
+    for index, periods in enumerate([48, 42, 36, 30, 24, 18, 12, 6]):
         panel = panels.nth(index)
         assert panel.locator("header strong").inner_text() == f"近 {periods} 期疊加"
         assert panel.locator("thead th").count() == columns + 1
@@ -35,9 +36,9 @@ def verify_overlay(page, base: str, folder: str, game: str, columns: int) -> Non
         if previous is not None:
             assert all(short <= long for short, long in zip(counts, previous, strict=True))
         previous = counts
-    assert page.locator("#blank-difference-panels > .overlay-panel").count() == 5
+    assert page.locator("#blank-difference-panels > .overlay-panel").count() == 8
     assert page.locator(".blank-summary").first.get_attribute("colspan") == str(columns + 1)
-    print("PASS", game, "6/12/18/24/30 periods and cumulative counts")
+    print("PASS", game, "6/12/18/24/30/36/42/48 periods and cumulative counts")
 
 
 def verify_recent_grid(page, base: str, folder: str, game: str) -> None:
@@ -74,7 +75,7 @@ def main() -> None:
             "response",
             lambda response: errors.append(response.url) if response.status >= 400 else None,
         )
-        base = "http://127.0.0.1:8765/"
+        base = os.environ.get("NUMERIS_PREVIEW_URL", "http://127.0.0.1:8765/")
         page.goto(base)
         assert page.locator(".games a").count() == 2
         page.locator(".daily").click()
@@ -115,6 +116,59 @@ def main() -> None:
             print("PASS", name)
         verify_overlay(page, base, "lotto649/", "lotto649", 49)
         verify_recent_grid(page, base, "lotto649/", "lotto649")
+        for name in [
+            "649-adjacent-reference.html",
+            "649-adjacent-count-grid.html",
+            "649-adjacent-count-row.html",
+        ]:
+            page.goto(base + "lotto649/" + name)
+            page.wait_for_function("document.querySelectorAll('#numbers .cell').length === 49")
+            expected = json.loads(
+                (ROOT / "docs/lotto649/649-adjacent-counts-backtest.json").read_text(
+                    encoding="utf-8"
+                )
+            )["latest_ranking"]
+            actual = page.locator("#numbers .ball").all_text_contents()
+            assert list(map(int, actual)) == [x["number"] for x in expected]
+        for name in ["649-adjacent-backtest.html", "649-adjacent-counts-backtest.html"]:
+            page.goto(base + "lotto649/" + name)
+            assert page.locator("#latest-ranking td").count() == 49
+            assert page.locator("#colored-hit-ranking .ball").count() == 49
+        page.goto(base + "lotto649/649-combined-reference.html")
+        assert page.locator("#numbers td").count() == 49
+        page.wait_for_function(
+            "document.querySelector('[data-aibrief]').textContent.includes('來源開獎日期')"
+        )
+        assert "2026" in page.locator("[data-aibrief]").inner_text()
+        page.goto(base + "lotto649/649-dashboard.html")
+        page.locator("#rows tr").first.wait_for()
+        assert page.locator("#rows tr").count() == 50
+        assert page.locator(".recent-panel").count() == 8
+        page.locator("#number").fill("49")
+        assert all(
+            "49" in row.split("、")
+            for row in page.locator("#rows tr td:nth-child(3)").all_text_contents()
+        )
+        page.locator("#state").select_option("已核對")
+        assert page.locator("#rows tr").count() == 0
+        page.locator("#reset").click()
+        with page.expect_download() as download:
+            page.locator("#export").click()
+        assert download.value.suggested_filename.endswith(".csv")
+        # Opening the period grid in a clean context must work without cached homepage data.
+        page.evaluate('localStorage.removeItem("lotto649OutputData")')
+        page.goto(base + "lotto649/period-grid.html")
+        page.locator(".period-panel").first.wait_for()
+        assert page.locator(".period-panel").count() == 4
+        page.goto(base + "lotto649/period-grid.html?from=2023-06-26&to=2023-07-18")
+        page.locator(".period-panel").first.wait_for()
+        assert "2023-06-26" in page.locator("#grid-meta").inner_text()
+        page.goto(base + "lotto649/649-top5-hit-ranking.html")
+        assert page.locator("#colored-hit-ranking .ball").count() == 49
+        page.screenshot(path=str(ROOT / "outputs/lotto649-hit-ranking-parity.png"), full_page=True)
+        print(
+            "PASS Lotto replays, brief, combined ranking, audit filters/CSV, direct/history grids"
+        )
         page.goto(base)
         page.screenshot(path=str(ROOT / "output/lottery-home.png"), full_page=True)
         page.set_viewport_size({"width": 390, "height": 844})

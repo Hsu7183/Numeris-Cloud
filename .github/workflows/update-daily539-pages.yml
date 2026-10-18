@@ -1,4 +1,4 @@
-name: 更新今彩539 GitHub Pages 資料
+name: 更新今彩539與大樂透 GitHub Pages 資料
 
 on:
   workflow_dispatch:
@@ -31,12 +31,30 @@ jobs:
       - name: 安裝 Numeris
         run: pip install .
       - name: 抓取官方資料並產生靜態統計
-        run: python -m scripts.export_daily539_static
+        run: |
+          python -m scripts.export_daily539_static
+          python -m scripts.export_lotto649_static
+      - name: 更新大樂透AI快報（失敗時保留有效資料）
+        continue-on-error: true
+        run: python -m scripts.update_lotto649_aibrief
+      - name: 產生大樂透所有模式
+        run: python -m scripts.build_lotto649_pages
+      - name: 更新相鄰分數與次數歷史試算
+        run: |
+          python -m scripts.backtest_539_adjacent
+          python -m scripts.backtest_539_adjacent_counts
+          node scripts/verify_539_adjacent.cjs
+          node scripts/verify_539_adjacent_counts.cjs
       - name: 儲存更新後的資料
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/data/daily539.json
+          git add docs/539-adjacent-backtest.html docs/539-adjacent-backtest.json
+          git add docs/539-adjacent-counts-backtest.html docs/539-adjacent-counts-backtest.json
+          git add reports/539-adjacent-source.json
+          git add docs/lotto649 docs/data/lotto649.json
+          git add docs/data/649-*.json reports/649-adjacent-source.json
           git diff --cached --quiet && exit 0
           git commit -m "chore(data): update Daily 539 statistics"
           git push

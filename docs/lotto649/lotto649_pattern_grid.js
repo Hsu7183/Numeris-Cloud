@@ -1,11 +1,12 @@
 (() => {
   "use strict";
+  const periodCount = 18;
   const topHeaders = Array.from({length: 10}, (_, i) => Array.from({length: 49}, (_, n) => n + 1).filter(n => n % 10 === i));
   const bottomHeaders = Array.from({length: 4}, (_, i) => Array.from({length: 49}, (_, n) => n + 1).filter(n => (n - 1) % 4 === i));
   const pad = (value) => value === "" ? "" : String(value).padStart(2, "0");
   function board(headers, draws) {
     const header = headers.map((value) => `<th>${pad(value)}</th>`).join("");
-    const rows = Array.from({ length: 20 }, (_, index) => {
+    const rows = Array.from({ length: periodCount }, (_, index) => {
       const row = index + 1;
       const occurrences = draws[index]?.occurrences || {};
       const cells = headers.map((value) => value !== "" && occurrences[value]
@@ -34,7 +35,8 @@
     try {
       const response = await fetch("../data/lotto649.json", { cache: "no-store" });
       if (!response.ok) throw new Error("無法讀取開獎資料");
-      const draws = ((await response.json()).draws || []).slice(0, 12).reverse().map((draw) => ({ ...draw, pools: { main: draw.numbers } }));
+      const draws = ((await response.json()).draws || []).slice(0, periodCount).reverse().map((draw) => ({ ...draw, pools: { main: draw.numbers } }));
+      const range = draws.length ? `${draws[0].draw_date}～${draws.at(-1).draw_date}` : "尚無開獎資料";
       document.querySelector("#pattern-status").textContent = `已填入近 ${draws.length} 期，主號 01–49；同號累計出現次數依序標示。`;
       render(withOccurrenceCounts(draws));
     } catch (error) {

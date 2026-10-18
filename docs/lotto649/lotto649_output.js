@@ -1,9 +1,19 @@
-(() => {
+(async () => {
   "use strict";
-  const payload = JSON.parse(localStorage.getItem("lotto649OutputData") || "null");
   const wrap = document.querySelector("#matrix-wrap");
+  let payload;
+  try {
+    const dataUrl = location.pathname.replace(/\/$/, "") === "/649/output"
+      ? "../data/lotto649.json" : "../data/lotto649.json";
+    const response = await fetch(dataUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error("資料讀取失敗");
+    payload = await response.json();
+    if (!payload?.draws?.length) throw new Error("尚無有效資料");
+  } catch (_) {
+    try { payload = JSON.parse(localStorage.getItem("lotto649OutputData") || "null"); } catch (_) { payload = null; }
+  }
   if (!payload?.draws?.length) {
-    wrap.innerHTML = '<p class="empty">尚未讀取球號。請返回統計頁按「抓取近 20 期獎號」。</p>';
+    wrap.innerHTML = '<p class="empty">資料暫時無法載入，請重新整理或返回統計頁。</p>';
     return;
   }
 
@@ -60,13 +70,13 @@
     for (let number = 1; number <= 49; number += 1) {
       const appearances = scoreByNumber.get(`${limit}:${number}`) || 0;
       if (appearances) {
-        scoreByNumber.set(number, scoreByNumber.get(number) + 1 + (appearances - 1) * 0.1);
+        scoreByNumber.set(number, scoreByNumber.get(number) + 10 + (appearances - 1));
       }
     }
   });
   const scores = Array.from({ length: 49 }, (_, index) => ({
     number: index + 1,
-    score: scoreByNumber.get(index + 1),
+    score: scoreByNumber.get(index + 1) / 10,
   })).sort((first, second) => second.score - first.score || first.number - second.number);
   const scoreStrip = scores.map((item, index) => `<div class="score-item">
     <span>${index + 1}</span><b>${String(item.number).padStart(2, "0")}</b><strong>${item.score.toFixed(1)}</strong>
@@ -74,7 +84,7 @@
   const scoreLine = scores.map((item, index) => `<div class="score-line-item">
     <span>${index + 1}</span><b>${String(item.number).padStart(2, "0")}</b><strong>${item.score.toFixed(1)}</strong>
   </div>`).join("");
-  document.querySelector("#output-meta").textContent = `最新 ${payload.latest_draw_no} 期 · ${payload.latest_draw_date} · 每期數範圍各顯示 5 顆球與相鄰球`;
+  document.querySelector("#output-meta").textContent = `最新 ${payload.latest_draw_no} 期 · ${payload.latest_draw_date} · 每期數範圍各顯示 6 顆主球（特別號不計）與相鄰球`;
   const columns = '<col class="range-col"><col class="index-col"><col class="value-col">' + '<col class="matrix-col">'.repeat(49);
-  wrap.innerHTML = `<table><colgroup>${columns}</colgroup><thead><tr><th rowspan="2">期數</th><th rowspan="2">球序</th><th rowspan="2">開出球</th><th colspan="49">球號 1–49</th></tr><tr>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="key"><span class="neighbor-key"></span>相鄰球（顯示球號）</p><section class="score-section"><div><strong>相鄰分數排名</strong><span>每期數範圍首次出線 1 分；同範圍每多出現一次加 0.1 分。</span></div><div class="score-line">${scoreLine}</div><div class="score-strip">${scoreStrip}</div></section>`;
+  wrap.innerHTML = `<table><colgroup>${columns}</colgroup><thead><tr><th rowspan="2">期數</th><th rowspan="2">球序</th><th rowspan="2">開出球</th><th colspan="49">球號 1–49</th></tr><tr>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="key"><span class="neighbor-key"></span>相鄰球（顯示球號）</p><section class="score-section"><div><strong>相鄰分數排名</strong><span>每期數範圍首次出線 1 分；同範圍每多出現一次加 0.1 分。</span></div><div class="score-scroll" tabindex="0" role="region" aria-label="相鄰分數排名，同一行49格"><div class="score-line">${scoreLine}</div></div><div class="score-strip">${scoreStrip}</div></section>`;
 })();

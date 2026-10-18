@@ -1,0 +1,11 @@
+[data-aibrief] { margin:18px 0; padding:14px; border:1px solid #b8cbbd; background:#fffefa; color:#193e30; }
+[data-aibrief] h2 { font-size:1.1rem; margin:0 0 8px; }
+[data-aibrief] p { font-size:.8rem; line-height:1.7; margin:8px 0; }
+[data-aibrief] .brief-balls { display:flex; flex-wrap:wrap; gap:5px; }
+[data-aibrief] .brief-ball { display:inline-block; padding:4px 7px; margin:2px; background:#e1efe3; color:#164a37; border-radius:4px; font-size:1rem; font-weight:500; }
+[data-aibrief] .brief-comparison { width:100%; min-width:0; table-layout:auto; border-collapse:collapse; }
+[data-aibrief] .brief-comparison th,[data-aibrief] .brief-comparison td { border:1px solid #ccd8ce; padding:5px 8px; height:auto; white-space:normal; }
+[data-aibrief] .brief-comparison th { width:80px; font-size:.8rem; background:#e4eddf; }
+[data-aibrief] .brief-comparison td { text-align:left; }
+[data-aibrief] .brief-warning { color:#9b5300; }
+[data-aibrief] a { color:#076b50; }

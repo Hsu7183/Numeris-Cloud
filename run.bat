@@ -1,8 +1,8 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-rem Double-click this file to launch the Daily 539 statistics page.
-set "NUMERIS_URL=http://127.0.0.1:8767/539"
+rem Double-click this file to choose Daily 539 or Lotto 6/49 statistics.
+set "NUMERIS_URL=http://127.0.0.1:8767/lottery"
 set "NUMERIS_REFRESH_ONLY="
 
 if /i "%~1"=="--open-only" goto open_browser
@@ -74,7 +74,7 @@ if defined NUMERIS_ALREADY_RUNNING (
 
 echo [Numeris] 2/3 Starting the local service...
 start "" /b powershell -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 2; & '%~f0' '--open-only'"
-echo [Numeris] 3/3 Opening Daily 539 statistics...
+echo [Numeris] 3/3 Opening Daily 539 and Lotto 6/49 statistics...
 echo [Numeris] Close this window to stop the service.
 ".venv\Scripts\python.exe" -m uvicorn app.main:app --host 127.0.0.1 --port 8767
 endlocal
