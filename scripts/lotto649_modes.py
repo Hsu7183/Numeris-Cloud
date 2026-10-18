@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TARGET = ROOT / "docs/lotto649"
 PERIODS = (6, 12, 18, 24, 30, 36, 42, 48)
 STYLE = """body{font-family:"Microsoft JhengHei",sans-serif;margin:24px;background:#f5f7f2;color:#193e30}main{max-width:1500px;margin:auto;min-width:0}a{color:#076b50}nav{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}section{margin:20px 0}p{line-height:1.8}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;background:white}td,th{padding:9px;border:1px solid #ccd8ce;text-align:center;white-space:nowrap}th{background:#e4eddf}.ranking-strip{container-type:inline-size}.ranking-strip table{table-layout:fixed}.ranking-strip td{width:calc(100% / 49);padding:8px 0}.ranking-strip small,.ranking-strip b{display:block;font-size:clamp(1px,.9cqw,15px)}.ranking-strip b{margin-top:8px}.filters{display:flex;gap:10px;flex-wrap:wrap}label{display:grid;gap:5px}input,select,button{font:inherit;padding:8px}iframe{width:100%;height:1000px;border:1px solid #ccd8ce}.frequencies{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.frequencies span{background:white;padding:8px;text-align:center}.frequencies b{display:block}@media(max-width:600px){body{margin:12px}h1{font-size:24px}}"""
+STYLE += """#position-hits{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}#position-hits table{min-width:4900px}#position-hits td{padding:12px 4px}#position-hits small{font-size:14px;line-height:1.7}#position-hits b{font-size:22px;line-height:1.5;color:#193e30}#position-hits:focus-visible{outline:2px solid #076b50;outline-offset:3px}"""
 
 
 def write_json(path: Path, value):
@@ -208,12 +209,12 @@ def render_report(p):
     )
     body += f'<h2>命中統計</h2><div class="scroll"><table>{header}{rows}</table></div>'
     positions = "".join(
-        f"<td data-rank=\"{x['rank']}\" data-hits=\"{x['hits']}\"><small>第{index + 1}名</small>"
+        f"<td data-rank=\"{x['rank']}\" data-hits=\"{x['hits']}\"><small>第{x['rank']}名</small>"
         f"<small>本期球號 {p['latest_ranking'][x['rank'] - 1]['number']:02}</small>"
-        f"<b>{x['hits']}</b><small>原第{x['rank']}名</small></td>"
-        for index, x in enumerate(sorted(p["position_hits"], key=lambda x: (-x["hits"], x["rank"])))
+        f"<b>{x['hits']}</b></td>"
+        for x in sorted(p["position_hits"], key=lambda x: (-x["hits"], x["rank"]))
     )
-    body += f'<h2>累計命中次數排名 · 由高到低</h2><p>依累計命中次數由高到低編為第1～49名，同次數依原排名位置排序。每格顯示截至第{p["latest_draw_no"]}期對應的球號，底下註明原排名位置。累計次數統計的是歷期排名位置，並非本期球號的歷史命中次數。</p><div id="position-hits" class="scroll ranking-strip"><table><tr>{positions}</tr></table></div>'
+    body += f'<h2>第1～49名各自累計命中次數 · 由多到少</h2><p>依累計命中次數由多到少排列，同次數依原名次排序。每格保留原名次，並列出截至第{p["latest_draw_no"]}期該名次的球號。累計次數統計的是歷期排名位置，並非本期球號的歷史命中次數。</p><p>左右滑動表格，可查看完整49格名次、球號與累計次數。</p><div id="position-hits" class="scroll ranking-strip" tabindex="0" role="region" aria-label="49名累計命中次數，由高到低，可左右滑動"><table><tr>{positions}</tr></table></div>'
     body += (
         '<section id="ball-frequency-ranking"><h2>49球號開出次數</h2>'
         + ball_strip(p["ball_frequency"])
