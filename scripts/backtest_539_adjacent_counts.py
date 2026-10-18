@@ -145,13 +145,14 @@ def render(p: dict) -> None:
     )
     page = f"""<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>539 相鄰次數歷史排名試算</title>
 <style>body{{margin:24px;background:#eef2ea;color:#193e30;font-family:"Microsoft JhengHei",sans-serif}}table{{border-collapse:collapse;width:100%;background:#fffefa;font-variant-numeric:tabular-nums}}td,th{{border:1px solid #c7d4c7;padding:10px;text-align:center;white-space:nowrap}}th{{background:#e3eddd}}.scroll{{overflow:auto;margin:20px 0}}b,small{{display:block}}small{{color:#798a7e;margin-bottom:8px}}b{{font-size:22px}}p{{line-height:1.8}}a{{color:#076b50}}</style>
+<style>.ranking-strip{{min-width:0;container-type:inline-size;overflow:visible}}.ranking-strip table{{width:100%;table-layout:fixed}}.ranking-strip td{{width:calc(100% / 39);padding:8px 0}}.ranking-strip small{{font-size:clamp(1px,.65cqw,10px)}}.ranking-strip b{{font-size:clamp(1px,1.15cqw,16px)}}#latest-ranking b{{font-size:clamp(1px,1.45cqw,20px)}}</style>
 <a href="539-adjacent-reference.html">← 今彩539 · 相鄰次數</a><h1>相鄰次數 · 全歷史排名試算</h1>
 <p>資料{p["source_start"]}～{p["source_end"]}共{p["source_draws"]:,}期；前200期建立統計，回測{p["trial_start"]}起共{p["trials"]:,}期。</p>
 <p>完全依相鄰次數頁：近20／50／100／200期各範圍內取當期5顆球的上下左右相鄰球，同一範圍同號最多計1次，跨範圍累計0～4次；次數高者在前，同次數依球號升序。固定取前N名對照下一期5顆獎號，未使用未來資料。</p>
 <p>使用本機官方來源紀錄合併近期快照，排除測試資料，衝突由快照核對覆蓋；各年期號連續。本次未重新連線核對官方。</p>
-<h2>最新39號排名 · 截至{p["latest_draw_no"]}期</h2><div class="scroll"><table><tr>{latest}</tr></table></div>
+<h2>最新39號排名 · 截至{p["latest_draw_no"]}期</h2><div id="latest-ranking" class="scroll ranking-strip"><table aria-label="最新39個球號排名，同一行完整顯示"><tr>{latest}</tr></table></div>
 <h2>命中統計</h2><div class="scroll"><table><tr><th>範圍</th><th>每期平均命中</th><th>隨機基準</th><th>至少中1顆</th>{"".join(f"<th>中{n}顆期數</th>" for n in range(6))}</tr>{summary}</table></div>
-<h2>第1～39名各自累計命中次數</h2><div class="scroll"><table><tr>{positions}</tr></table></div>
+<h2>第1～39名各自累計命中次數</h2><div id="position-hits" class="scroll ranking-strip"><table aria-label="第1至39名各自累計命中次數，同一行完整顯示"><tr>{positions}</tr></table></div>
 <h2>各相鄰次數組別</h2><p>入組球次為每期組內球號數的加總；命中率為該組入選球號下一期開出的比例。隨機基準5／39＝12.82%。</p><table><tr><th>相鄰次數</th><th>入組球次</th><th>命中球次</th><th>每球命中率</th></tr>{groups}</table>
 <p>歷史結果供參考。<a href="539-adjacent-counts-backtest.json">完整逐期排名JSON</a> · <a href="539-adjacent-backtest.html">原相鄰分數試算</a></p>
 <details><summary>全部{p["trials"]:,}期明細與39號排名順序</summary><p>每列排名依前一期已知資料計算，由第1名至第39名，對照該列日期的開獎結果。</p><div class="scroll"><table><tr><th>日期</th><th>期號</th><th>獎號</th>{"".join(f"<th>前{k}名命中</th>" for k in TOPS)}<th>依前一期資料計算的39號排名（第1→39名）</th></tr>{details}</table></div></details></html>"""
