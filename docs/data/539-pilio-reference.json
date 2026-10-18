@@ -1,0 +1,15 @@
+{
+  "source_url": "https://www.pilio.idv.tw/lto539/sqlaibrief.asp",
+  "source_date": "2026-10-16",
+  "captured_date": "2026-10-17",
+  "categories": {
+    "機率提及": [17],
+    "熱門提及": [14, 25],
+    "連莊參考": [9, 23, 24, 25, 32],
+    "上升趨勢": [9, 14, 33]
+  },
+  "cold_reference": [4, 8, 10, 12],
+  "overdue_reference": [13, 26],
+  "bonus_per_category": 0.1,
+  "method_note": "本次試作：每項參考類別加0.1分；同類重複不加分。冷門、未開期數、條件拖牌不加減分。非來源網站原有綜合評分。"
+}

@@ -1,0 +1,337 @@
+{
+  "latest_draw_no": "115000251",
+  "date": "2026-10-16",
+  "reference": {
+    "source_url": "https://www.pilio.idv.tw/lto539/sqlaibrief.asp",
+    "source_date": "2026-10-16",
+    "captured_date": "2026-10-17",
+    "categories": {
+      "機率提及": [
+        17
+      ],
+      "熱門提及": [
+        14,
+        25
+      ],
+      "連莊參考": [
+        9,
+        23,
+        24,
+        25,
+        32
+      ],
+      "上升趨勢": [
+        9,
+        14,
+        33
+      ]
+    },
+    "cold_reference": [
+      4,
+      8,
+      10,
+      12
+    ],
+    "overdue_reference": [
+      13,
+      26
+    ],
+    "bonus_per_category": 0.1,
+    "method_note": "本次試作：每項參考類別加0.1分；同類重複不加分。冷門、未開期數、條件拖牌不加減分。非來源網站原有綜合評分。"
+  },
+  "ranking": [
+    {
+      "number": 13,
+      "score": 4.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 4.0
+    },
+    {
+      "number": 20,
+      "score": 3.1,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 3.1
+    },
+    {
+      "number": 26,
+      "score": 3.1,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 3.1
+    },
+    {
+      "number": 15,
+      "score": 3.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 3.0
+    },
+    {
+      "number": 16,
+      "score": 3.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 3.0
+    },
+    {
+      "number": 14,
+      "score": 2.0,
+      "tags": [
+        "熱門提及",
+        "上升趨勢"
+      ],
+      "bonus": 0.2,
+      "combined": 2.2
+    },
+    {
+      "number": 25,
+      "score": 2.0,
+      "tags": [
+        "熱門提及",
+        "連莊參考"
+      ],
+      "bonus": 0.2,
+      "combined": 2.2
+    },
+    {
+      "number": 17,
+      "score": 2.0,
+      "tags": [
+        "機率提及"
+      ],
+      "bonus": 0.1,
+      "combined": 2.1
+    },
+    {
+      "number": 23,
+      "score": 2.0,
+      "tags": [
+        "連莊參考"
+      ],
+      "bonus": 0.1,
+      "combined": 2.1
+    },
+    {
+      "number": 33,
+      "score": 2.0,
+      "tags": [
+        "上升趨勢"
+      ],
+      "bonus": 0.1,
+      "combined": 2.1
+    },
+    {
+      "number": 3,
+      "score": 2.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 4,
+      "score": 2.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 12,
+      "score": 2.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 19,
+      "score": 2.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 29,
+      "score": 2.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 35,
+      "score": 2.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 8,
+      "score": 1.1,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.1
+    },
+    {
+      "number": 18,
+      "score": 1.1,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.1
+    },
+    {
+      "number": 24,
+      "score": 1.0,
+      "tags": [
+        "連莊參考"
+      ],
+      "bonus": 0.1,
+      "combined": 1.1
+    },
+    {
+      "number": 32,
+      "score": 1.0,
+      "tags": [
+        "連莊參考"
+      ],
+      "bonus": 0.1,
+      "combined": 1.1
+    },
+    {
+      "number": 5,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.0
+    },
+    {
+      "number": 6,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.0
+    },
+    {
+      "number": 7,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.0
+    },
+    {
+      "number": 11,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.0
+    },
+    {
+      "number": 21,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.0
+    },
+    {
+      "number": 28,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.0
+    },
+    {
+      "number": 31,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 1.0
+    },
+    {
+      "number": 9,
+      "score": 0.0,
+      "tags": [
+        "連莊參考",
+        "上升趨勢"
+      ],
+      "bonus": 0.2,
+      "combined": 0.2
+    },
+    {
+      "number": 1,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 2,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 10,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 22,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 27,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 30,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 34,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 36,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 37,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 38,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 39,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "combined": 0.0
+    }
+  ],
+  "historical_backtest": false
+}

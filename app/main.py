@@ -29,7 +29,7 @@ from app.api import (
 from app.core.database import Base, SessionLocal, engine
 from app.core.exceptions import NumerisError
 from app.core.logging import configure_logging
-from app.core.paths import STATIC_DIR, TEMPLATE_DIR, ensure_directories
+from app.core.paths import PROJECT_ROOT, STATIC_DIR, TEMPLATE_DIR, ensure_directories
 from app.models import database_models  # noqa: F401
 from app.models.database_models import Draw, Game, Job
 from app.services.bootstrap import initialize_catalog
@@ -62,6 +62,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount(
+    "/539/pages", StaticFiles(directory=PROJECT_ROOT / "docs", html=True), name="daily539_pages"
+)
 templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
 
