@@ -31,7 +31,7 @@
 <section class="sheet" aria-label="相鄰次數，一列39個號碼">
 <div class="heading"><strong>39個號碼 · 同一行顯示</strong><span>排名由左至右 · 每5格一組 · 次數在上，球號在下</span></div>
 <div class="row" id="numbers"></div>
-<div class="note">近20／50／100／200期各計一次相鄰，跨範圍累計0～4次；同次數依球號由小到大。每天22:00更新資料，頁面每5分鐘檢查更新。</div>
+<div class="note">近20／50／100／200期各計一次相鄰，跨範圍累計0～4次；同次數依球號由小到大。每天22:00更新資料。</div>
 </section>
 </main>
 <script>
@@ -64,10 +64,9 @@ async function update() {
     document.getElementById('numbers').innerHTML = ordered.map(n => `<div class="cell" data-count="${totals[n]}" aria-label="${n}號，${totals[n]}次"><span class="count">${totals[n]}次</span><span class="ball">${String(n).padStart(2,'0')}</span></div>`).join('');
     document.getElementById('status').textContent = `最新 ${payload.latest_draw_no}期 · ${payload.latest_draw_date} · 依相鄰次數由高到低排列`;
   } catch (error) {
-    document.getElementById('status').textContent = `${error.message}；已顯示的有效結果會保留，稍後自動重試。`;
+    document.getElementById('status').textContent = `${error.message}；已顯示的有效結果會保留，請重新整理再試。`;
   }
 }
 update();
-setInterval(update, 5*60*1000);
 </script>
 </body></html>
