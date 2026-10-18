@@ -208,12 +208,12 @@ def render_report(p):
     )
     body += f'<h2>命中統計</h2><div class="scroll"><table>{header}{rows}</table></div>'
     positions = "".join(
-        f"<td data-rank=\"{x['rank']}\" data-hits=\"{x['hits']}\"><small>第{x['rank']}名</small>"
+        f"<td data-rank=\"{x['rank']}\" data-hits=\"{x['hits']}\"><small>第{index + 1}名</small>"
         f"<small>本期球號 {p['latest_ranking'][x['rank'] - 1]['number']:02}</small>"
-        f"<b>{x['hits']}</b></td>"
-        for x in sorted(p["position_hits"], key=lambda x: (-x["hits"], x["rank"]))
+        f"<b>{x['hits']}</b><small>原第{x['rank']}名</small></td>"
+        for index, x in enumerate(sorted(p["position_hits"], key=lambda x: (-x["hits"], x["rank"])))
     )
-    body += f'<h2>第1～49名各自累計命中次數 · 由多到少</h2><p>依累計命中次數由多到少排列，同次數依原名次排序。每格保留原名次，並列出截至第{p["latest_draw_no"]}期該名次的球號。累計次數統計的是歷期排名位置，並非本期球號的歷史命中次數。</p><div id="position-hits" class="scroll ranking-strip"><table><tr>{positions}</tr></table></div>'
+    body += f'<h2>累計命中次數排名 · 由高到低</h2><p>依累計命中次數由高到低編為第1～49名，同次數依原排名位置排序。每格顯示截至第{p["latest_draw_no"]}期對應的球號，底下註明原排名位置。累計次數統計的是歷期排名位置，並非本期球號的歷史命中次數。</p><div id="position-hits" class="scroll ranking-strip"><table><tr>{positions}</tr></table></div>'
     body += (
         '<section id="ball-frequency-ranking"><h2>49球號開出次數</h2>'
         + ball_strip(p["ball_frequency"])
