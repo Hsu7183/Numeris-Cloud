@@ -123,7 +123,10 @@ def render(p: dict) -> None:
         for s in p["summary"]
     )
     positions = "".join(
-        f"<td><small>第{x['rank']}名</small><b>{x['hits']}</b></td>" for x in p["position_hits"]
+        f"<td data-rank=\"{x['rank']}\" data-hits=\"{x['hits']}\"><small>第{x['rank']}名</small>"
+        f"<b class=\"position-ball\">{p['latest_ranking'][x['rank'] - 1]['number']:02}</b>"
+        f"<span class=\"position-hit-count\">{x['hits']}次</span></td>"
+        for x in sorted(p["position_hits"], key=lambda item: (-item["hits"], item["rank"]))
     )
     latest = "".join(
         f"<td><small>{x['count']}次</small><b>{x['number']:02}</b></td>"
@@ -153,7 +156,7 @@ def render(p: dict) -> None:
 <p>使用本機官方來源紀錄合併近期快照，排除測試資料，衝突由快照核對覆蓋；各年期號連續。本次未重新連線核對官方。</p>
 <h2>最新39號排名 · 截至{p["latest_draw_no"]}期</h2><div id="latest-ranking" class="scroll ranking-strip"><table aria-label="最新39個球號排名，同一行完整顯示"><tr>{latest}</tr></table></div>
 <h2>命中統計</h2><div class="scroll"><table><tr><th>範圍</th><th>每期平均命中</th><th>隨機基準</th><th>至少中1顆</th>{"".join(f"<th>中{n}顆期數</th>" for n in range(6))}</tr>{summary}</table></div>
-<h2>第1～39名各自累計命中次數</h2><div id="position-hits" class="scroll ranking-strip"><table aria-label="第1至39名各自累計命中次數，同一行完整顯示"><tr>{positions}</tr></table></div>
+<h2>第1～39名對應球號 · 累計命中次數由多到少</h2><p>上排為原排名，中排為截至{p["latest_draw_no"]}期該排名對應的球號，下排為該排名的歷史累計命中次數；同次數依原排名排序。每期排名對應球號會變動，歷史命中次數統計的是排名位置。</p><style>#position-hits .position-ball{{font-size:clamp(1px,1.45cqw,20px);margin:6px 0}}#position-hits .position-hit-count{{display:block;font-size:clamp(1px,.85cqw,12px);color:#526b5c}}</style><div id="position-hits" class="scroll ranking-strip"><table aria-label="第1至39名對應球號，按排名歷史命中次數由多到少排列"><tr>{positions}</tr></table></div>
 <h2>各相鄰次數組別</h2><p>入組球次為每期組內球號數的加總；命中率為該組入選球號下一期開出的比例。隨機基準5／39＝12.82%。</p><table><tr><th>相鄰次數</th><th>入組球次</th><th>命中球次</th><th>每球命中率</th></tr>{groups}</table>
 <p>歷史結果供參考。<a href="539-adjacent-counts-backtest.json">完整逐期排名JSON</a> · <a href="539-adjacent-backtest.html">原相鄰分數試算</a></p>
 <details><summary>全部{p["trials"]:,}期明細與39號排名順序</summary><p>每列排名依前一期已知資料計算，由第1名至第39名，對照該列日期的開獎結果。</p><div class="scroll"><table><tr><th>日期</th><th>期號</th><th>獎號</th>{"".join(f"<th>前{k}名命中</th>" for k in TOPS)}<th>依前一期資料計算的39號排名（第1→39名）</th></tr>{details}</table></div></details></html>"""
