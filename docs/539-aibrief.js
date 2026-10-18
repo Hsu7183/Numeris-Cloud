@@ -51,7 +51,7 @@
       const footer = document.createElement('p');
       const link = document.createElement('a'); link.href = 'https://www.pilio.idv.tw/lto539/sqlaibrief.asp';
       link.textContent = '查看來源AI快報 ↗'; link.target = '_blank'; link.rel = 'noopener';
-      footer.append(link, ' · 來源資料每天22:00更新；重新整理頁面可讀取最新快報。共同出現不等於命中。');
+      footer.append(link, ' · 來源資料更新後，重新整理頁面可讀取最新快報。共同出現不等於命中。');
       mount.append(footer);
       if (lastRequestFailed || updateStatus?.ok === false) {
         const warning = document.createElement('p'); warning.className = 'brief-warning';
