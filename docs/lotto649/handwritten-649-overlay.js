@@ -175,6 +175,14 @@
       const response = await fetch(`../data/lotto649.json?load=${Date.now()}`, { cache: "no-store" });
       if (!response.ok) throw new Error("開獎資料讀取失敗");
       const payload = await response.json();
+      const overdue = lotto649Overdue.analyze(payload.draws || []);
+      document.querySelector("#overdue-cutoff").textContent = `資料截至 ${payload.latest_draw_date} · 第 ${payload.latest_draw_no} 期`;
+      document.querySelector("#overdue-windows").innerHTML = overdue.windows.map(({ period, top }) =>
+        `<article><h3>近 ${period} 期</h3>${top.map(({ number, omission, atLeast }) => `<span class="overdue-item"><b>${String(number).padStart(2, "0")}</b><small>${atLeast ? "至少 " : ""}${omission} 期未開</small></span>`).join("")}</article>`
+      ).join("");
+      document.querySelector("#overdue-factors").innerHTML = overdue.factors.map(({ number, count }) =>
+        `<span class="overdue-item"><b>${String(number).padStart(2, "0")}</b><small>${count} 次</small></span>`
+      ).join("");
       const dates = (payload.draws || []).slice(0, maxPeriods).map((draw) => draw.draw_date).reverse();
       if (dates.length < maxPeriods) throw new Error(`不足 ${maxPeriods} 期開獎資料`);
       status.textContent = `正在載入最近 ${maxPeriods} 期資料（截至 ${dates.at(-1)}）…`;

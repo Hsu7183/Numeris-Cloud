@@ -15,6 +15,7 @@
     .overlay-panel td{position:relative}.overlay-panel .overlay-watermark,#blank-difference-panels .blank-watermark{position:absolute;inset:0;height:auto;display:grid;place-items:center;color:#d5ddd7!important;font-family:Georgia,serif;font-size:.9rem!important;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;pointer-events:none}
     #blank-difference-panels .comparison-ball{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:2}#blank-difference-panels td:has(.comparison-ball) .blank-watermark{inset:auto 0 3px;height:14px;font-size:.7rem!important}
     .period-navigation{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0}.period-navigation a{padding:8px 14px;border:1px solid #075d46;border-radius:6px;background:#fffefa;color:#075d46;font-size:.85rem;font-weight:900;text-decoration:none}.period-navigation a:hover,.period-navigation a:focus-visible{background:#e5f4eb}.period-navigation a.new-period{background:#075d46;color:#fff}.overlay-panel{scroll-margin-top:16px}
+    .overdue-factor{margin:16px 0;padding:14px;border:2px solid #adbfaf;background:var(--paper)}.overdue-factor h2{margin:0;font-size:1.15rem}.overdue-factor p{font-size:.8rem;color:#52685b}.overdue-windows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.overdue-windows article{padding:10px;border:1px solid #adbfaf;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.overdue-windows h3{width:100%;margin:0 0 4px;font-size:.95rem}.overdue-item{display:inline-flex;flex-direction:column;align-items:center;gap:4px;min-width:48px}.overdue-item b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#075d46;color:white;font-size:1rem}.overdue-item small{font-size:.65rem;white-space:nowrap}.overdue-factors{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:10px 2px}.overdue-factors .overdue-item{min-width:0}@media(max-width:700px){.overdue-windows{grid-template-columns:1fr}.overdue-factors{grid-template-columns:repeat(7,minmax(0,1fr))}}
   .overlay-panel table,.adjacent-overlay table{min-width:1500px}</style>
 <link rel="stylesheet" href="649-aibrief.css?v=1"><link rel="stylesheet" href="649-aibrief.css"></head>
 <body>
@@ -28,6 +29,14 @@
     <nav class="period-navigation" aria-label="疊加期數"><strong>查看疊加：</strong><a href="#overlay-period-6">近 6 期</a><a href="#overlay-period-12">近 12 期</a><a href="#overlay-period-18">近 18 期</a><a class="new-period" href="#overlay-period-24">近 24 期</a><a class="new-period" href="#overlay-period-30">近 30 期</a><a class="new-period" href="#overlay-period-36">近 36 期</a><a class="new-period" href="#overlay-period-42">近 42 期</a><a class="new-period" href="#overlay-period-48">近 48 期</a></nav>
     <nav id="hit-statistics-link" class="period-navigation" aria-label="球號命中統計"><a class="new-period" href="649-top5-hit-ranking.html" target="_blank" rel="noopener">49球號命中統計 ↗</a></nav>
     <section data-aibrief aria-live="polite"><h2>AI快報 · 球號比對</h2><p>正在載入…</p></section>
+    <section class="overdue-factor" aria-labelledby="overdue-title">
+      <h2 id="overdue-title">期數最遠的 5 個號碼 · 未開期數因素</h2>
+      <p>以同一期為截止，最新一期開出＝未開 0 期；區間內未開標示「至少 N 期」。同值依球號小到大取前 5 名；短區間可能有多個號碼同值。跨區間入選次數作為新增參考因素。</p>
+      <p id="overdue-cutoff"></p>
+      <div id="overdue-windows" class="overdue-windows" aria-live="polite">正在載入…</div>
+      <h3>各球號入選區間數（0～8 次）</h3>
+      <div id="overdue-factors" class="overdue-factors"></div>
+    </section>
     <p id="overlay-status">正在載入每日位置…</p>
     <section id="overlay-panels" class="overlay-panels" aria-live="polite"></section>
     <section class="blank-differences" aria-labelledby="blank-difference-title">
@@ -42,6 +51,7 @@
     </section>
     <div id="overlay-source" class="overlay-source" aria-hidden="true"></div>
   <section data-aibrief aria-live="polite"><h2>AI快報 · 球號比對</h2></section></main>
-  <script src="handwritten-649-overlay.js?v=36-42-48-v2"></script>
+  <script src="649-overdue.js?v=1"></script>
+  <script src="handwritten-649-overlay.js?v=overdue-v3"></script>
 <script src="649-aibrief.js?v=1"></script><script src="649-aibrief.js"></script></body>
 </html>
