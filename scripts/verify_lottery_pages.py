@@ -47,16 +47,16 @@ def verify_recent_grid(page, base: str, folder: str, game: str) -> None:
     page.goto(base + folder + f"handwritten-{number}-grid.html")
     dates = page.locator('#draw-date-nav a[href*="?date="]')
     dates.first.wait_for()
-    assert dates.count() == 30
-    assert dates.first.get_attribute("href").endswith(data["draws"][29]["draw_date"])
+    assert dates.count() == 48
+    assert dates.first.get_attribute("href").endswith(data["draws"][47]["draw_date"])
     assert dates.last.get_attribute("href").endswith(data["draws"][0]["draw_date"])
     dates.first.click()
     page.wait_for_function(
         "document.querySelector('#sheet-status').textContent.startsWith('指定期別')",
         timeout=30000,
     )
-    assert data["draws"][29]["draw_no"] in page.locator("#sheet-status").inner_text()
-    print("PASS", game, "30 recent dates and oldest draw selection")
+    assert data["draws"][47]["draw_no"] in page.locator("#sheet-status").inner_text()
+    print("PASS", game, "48 recent dates and oldest draw selection")
 
 
 def main() -> None:
