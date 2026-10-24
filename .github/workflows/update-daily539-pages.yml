@@ -2,9 +2,9 @@ name: 更新今彩539與大樂透 GitHub Pages 資料
 
 on:
   workflow_dispatch:
-  # 今彩539週一至週六約 20:35 開獎；22:00（台灣時間）後更新。
+  # 每天台灣時間22:00更新兩種彩券，23:00補同步；包含加開日。
   schedule:
-    - cron: "0 14 * * 1-6"
+    - cron: "0 14,15 * * *"
   push:
     paths:
       - "docs/data/.gitkeep"
@@ -17,8 +17,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: update-daily539-pages
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   update:
