@@ -164,13 +164,13 @@
     document.querySelector("#draw-grid").innerHTML = `<thead><tr><th style="width:42px">次數</th>${headers}</tr></thead><tbody>${rows}</tbody>`;
   };
   const renderDateNav = (draws, selectedDate) => {
-    const recentDraws = draws.slice(0, 30).reverse();
+    const recentDraws = draws.slice(0, 48).reverse();
     const links = recentDraws.map((item) => {
       const [, month, day] = item.draw_date.split("-");
       const selected = item.draw_date === selectedDate ? "color:#d84b47;font-weight:900" : "";
       return `<a href="handwritten-539-grid.html?date=${item.draw_date}" style="${selected}">${Number(month)}/${Number(day)}</a>`;
     }).join("");
-    dateNav.innerHTML = `<strong style="align-self:center">最近 30 期：</strong><a href="handwritten-539-overlay.html" style="font-weight:900">6／12／18／24／30期疊加</a>${links}`;
+    dateNav.innerHTML = `<strong style="align-self:center">最近 48 期：</strong><a href="handwritten-539-overlay.html" style="font-weight:900">6／12／18／24／30／36／42／48期疊加</a>${links}`;
   };
   const loadDynamicAdjacentGroups = (date) => new Promise((resolve, reject) => {
     const frame = document.createElement("iframe");
