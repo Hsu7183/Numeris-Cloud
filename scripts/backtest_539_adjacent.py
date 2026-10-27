@@ -192,9 +192,11 @@ def main() -> None:
         details=trials,
     )
     destination = ROOT / "docs/539-adjacent-backtest.json"
-    destination.write_text(
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
+    temporary.write_text(
         json.dumps(report, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
     )
+    temporary.replace(destination)
     render(report)
     print(
         json.dumps(
