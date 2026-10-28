@@ -118,7 +118,9 @@ def main() -> None:
     draws, audit = load()
     source_export = ROOT / "reports/539-adjacent-source.json"
     source_export.parent.mkdir(parents=True, exist_ok=True)
-    source_export.write_text(json.dumps(draws, ensure_ascii=False), encoding="utf-8")
+    source_temporary = source_export.with_suffix(".json.tmp")
+    source_temporary.write_text(json.dumps(draws, ensure_ascii=False), encoding="utf-8")
+    source_temporary.replace(source_export)
     trials = []
     rank_hits = Counter()
     yearly = defaultdict(list)
