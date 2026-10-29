@@ -22,7 +22,9 @@ STYLE += """#position-hits{max-width:100%;overflow-x:auto;overscroll-behavior-x:
 
 def write_json(path: Path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    temporary.replace(path)
 
 
 def page(name: str, title: str, body: str, script: str = ""):
