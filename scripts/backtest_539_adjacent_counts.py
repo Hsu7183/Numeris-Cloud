@@ -99,9 +99,11 @@ def main() -> None:
         details=trials,
     )
     target = ROOT / "docs/539-adjacent-counts-backtest.json"
-    target.write_text(
+    temporary = target.with_suffix(target.suffix + ".tmp")
+    temporary.write_text(
         json.dumps(result, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
     )
+    temporary.replace(target)
     render(result)
     print(
         json.dumps(
