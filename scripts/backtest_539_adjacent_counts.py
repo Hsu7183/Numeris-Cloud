@@ -162,6 +162,7 @@ def render(p: dict) -> None:
 <h2>各相鄰次數組別</h2><p>入組球次為每期組內球號數的加總；命中率為該組入選球號下一期開出的比例。隨機基準5／39＝12.82%。</p><table><tr><th>相鄰次數</th><th>入組球次</th><th>命中球次</th><th>每球命中率</th></tr>{groups}</table>
 <p>歷史結果供參考。<a href="539-adjacent-counts-backtest.json">完整逐期排名JSON</a> · <a href="539-adjacent-backtest.html">原相鄰分數試算</a></p>
 <details><summary>全部{p["trials"]:,}期明細與39號排名順序</summary><p>每列排名依前一期已知資料計算，由第1名至第39名，對照該列日期的開獎結果。</p><div class="scroll"><table><tr><th>日期</th><th>期號</th><th>獎號</th>{"".join(f"<th>前{k}名命中</th>" for k in TOPS)}<th>依前一期資料計算的39號排名（第1→39名）</th></tr>{details}</table></div></details></html>"""
+    page = page.replace("</html>", '<script src="539-ranking-layout.js?v=1" defer></script></html>')
     (ROOT / "docs/539-adjacent-counts-backtest.html").write_text(page, encoding="utf-8")
 
 
