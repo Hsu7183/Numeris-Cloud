@@ -311,8 +311,9 @@ def build_combined(history):
     )
     body = f'<p id="status">資料截至{cutoff} · 第{history[-1]["draw_no"]}期 · 下一期參考排名</p><p>{notice}此為目前資料合併參考，尚無逐日快報快照作全歷史回測。</p>'
     cells = "".join(
-        f"<td><small>{x['combined']:.1f}分</small><b>{x['number']:02}</b></td>" for x in ranking
+        f"<td><div class='rank-pair'><span class='ball'>{x['number']:02}</span><span class='count score-{'red' if x['combined'] >= 3 else 'orange' if x['combined'] >= 2 else 'blue' if x['combined'] >= 1 else 'gray'}'>{x['combined']:.1f}</span></div></td>" for x in ranking
     )
+    body += "<style>#numbers .ball{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:1px solid currentColor;border-radius:50%;font:700 13px/1 Arial,sans-serif;margin:0;flex:0 0 26px;font-variant-numeric:tabular-nums}#numbers .count{display:inline-block;font:400 12px/1.2 Arial,sans-serif;white-space:nowrap;margin:0}#numbers .score-red{color:#dc2626}#numbers .score-orange{color:#c56a08}#numbers .score-blue{color:#2563eb}#numbers .score-gray{color:#9ca3af}#numbers .cell{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px 3px}.sheet{overflow-x:auto}#numbers.row{min-width:2418px}#numbers.ranking-strip table{min-width:3038px}#numbers.ranking-strip td{padding:10px 3px}#numbers .rank-pair{display:flex;align-items:center;justify-content:center;gap:4px}</style>"
     body += f'<div id="numbers" class="scroll ranking-strip"><table><tbody><tr>{cells}</tr></tbody></table></div><details><summary>展開逐號計分</summary><div class="scroll"><table><tr><th>球號</th><th>相鄰分數</th><th>快報加分</th><th>合計</th><th>類別</th></tr>'
     body += "".join(
         f"<tr><td>{x['number']:02}</td><td>{x['score']:.1f}</td><td>{x['bonus']:.1f}</td><td>{x['combined']:.1f}</td><td>{html.escape('、'.join(x['tags'])) or '—'}</td></tr>"

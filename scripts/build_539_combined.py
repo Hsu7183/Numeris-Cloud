@@ -72,6 +72,7 @@ def main() -> None:
         json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     source = (ROOT / "docs/539-adjacent-reference.html").read_text(encoding="utf-8")
+    source = source.replace("</head>", "<style>#numbers .ball{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:1px solid currentColor;border-radius:50%;font:700 13px/1 Arial,sans-serif;margin:0;flex:0 0 26px;font-variant-numeric:tabular-nums}#numbers .count{display:inline-block;font:400 12px/1.2 Arial,sans-serif;white-space:nowrap;margin:0}#numbers .score-red{color:#dc2626}#numbers .score-orange{color:#c56a08}#numbers .score-blue{color:#2563eb}#numbers .score-gray{color:#9ca3af}#numbers .cell{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px 3px}.sheet{overflow-x:auto}#numbers.row{min-width:2418px}#numbers.ranking-strip table{min-width:3038px}#numbers.ranking-strip td{padding:10px 3px}#numbers .rank-pair{display:flex;align-items:center;justify-content:center;gap:4px}</style></head>")
     source = source.replace("今彩539｜相鄰次數39格", "今彩539｜相鄰分數＋AI快報")
     source = source.replace("今彩539 · 相鄰次數", "今彩539 · 合併參考排名")
     source = source.replace("相鄰次數，一列39個號碼", "合併參考分數，一列39個號碼")
@@ -94,7 +95,7 @@ def main() -> None:
         + """<script>
 fetch('data/539-combined.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('讀取失敗');return r.json()}).then(p=>{
  document.getElementById('status').textContent=`參考目標：${p.target_date}（待開獎）｜資料截至 ${p.date} · 第${p.latest_draw_no}期｜AI快報截至 ${p.reference.source_date}`;
- document.getElementById('numbers').innerHTML=p.ranking.map(x=>`<div class="cell" aria-label="${x.number}號，合計${x.combined.toFixed(1)}分"><span class="count">${x.combined.toFixed(1)}分</span><span class="ball">${String(x.number).padStart(2,'0')}</span></div>`).join('');
+ document.getElementById('numbers').innerHTML=p.ranking.map(x=>`<div class="cell" aria-label="${x.number}號，合計${x.combined.toFixed(1)}分"><span class="ball">${String(x.number).padStart(2,'0')}</span><span class="count ${x.combined>=3?'score-red':x.combined>=2?'score-orange':x.combined>=1?'score-blue':'score-gray'}">${x.combined.toFixed(1)}</span></div>`).join('');
  document.getElementById('breakdown').innerHTML=p.ranking.map((x,i)=>`<tr><td>${i+1}</td><td>${String(x.number).padStart(2,'0')}</td><td>${x.score.toFixed(1)}</td><td>${x.bonus.toFixed(1)}</td><td>${x.overdue_count}</td><td>${x.overdue_bonus.toFixed(1)}</td><td>${x.combined.toFixed(1)}</td><td>${x.tags.join('、')||'—'}</td></tr>`).join('');
  document.getElementById('overdue-windows').innerHTML=p.overdue_windows.map(w=>`<p>近 ${w.period} 期：${w.top.map(x=>`${String(x.number).padStart(2,'0')}（${x.atLeast?'至少 ':''}${x.omission} 期未開）`).join('、')}</p>`).join('');
 }).catch(e=>{document.getElementById('status').textContent=e.message});
