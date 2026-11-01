@@ -25,6 +25,8 @@ def build() -> None:
         "539-aibrief.css",
         "539-hit-ranking.css",
         "539-overdue.js",
+        "539-ranking-layout.js",
+        "539-ranking-layout.css",
     ]
     names += [p.name for p in ROOT.glob("daily539_*")]
     names += [p.name for p in ROOT.glob("excel-539-*") if p.suffix in {".js", ".css"}]

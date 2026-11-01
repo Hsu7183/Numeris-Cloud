@@ -45,4 +45,4 @@ fetch('data/539-combined.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error
  document.getElementById('breakdown').innerHTML=p.ranking.map((x,i)=>`<tr><td>${i+1}</td><td>${String(x.number).padStart(2,'0')}</td><td>${x.score.toFixed(1)}</td><td>${x.bonus.toFixed(1)}</td><td>${x.overdue_count}</td><td>${x.overdue_bonus.toFixed(1)}</td><td>${x.combined.toFixed(1)}</td><td>${x.tags.join('、')||'—'}</td></tr>`).join('');
  document.getElementById('overdue-windows').innerHTML=p.overdue_windows.map(w=>`<p>近 ${w.period} 期：${w.top.map(x=>`${String(x.number).padStart(2,'0')}（${x.atLeast?'至少 ':''}${x.omission} 期未開）`).join('、')}</p>`).join('');
 }).catch(e=>{document.getElementById('status').textContent=e.message});
-</script></body></html>
+</script></body><script src="539-ranking-layout.js?v=1" defer></script></html>

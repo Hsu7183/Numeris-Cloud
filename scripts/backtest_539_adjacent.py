@@ -261,7 +261,7 @@ def render(report: dict) -> None:
     )
     page = f"""<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>539 相鄰分數歷史試算</title>
 <style>body{{font-family:"Microsoft JhengHei",sans-serif;background:#f5f7f2;color:#193e30;margin:24px}}main{{max-width:1400px;margin:auto}}table{{border-collapse:collapse;width:100%;background:white;font-variant-numeric:tabular-nums}}th,td{{border:1px solid #ccd8ce;padding:8px;text-align:center;white-space:nowrap}}th{{background:#e4eddf}}.scroll{{overflow:auto;margin:18px 0}}p{{line-height:1.8}}a{{color:#076b50}}small{{color:#66796d}}h1{{font-size:1.6rem}}</style><main>
-<link rel="stylesheet" href="539-hit-ranking.css?v=compact-2">
+<link rel="stylesheet" href="539-hit-ranking.css?v=compact-2"><script src="539-ranking-layout.js?v=1" defer></script>
 <a href="output.html">← 相鄰分數排名</a><h1>今彩539 · 相鄰分數歷史試算</h1>
 <p>資料：{report["source_start"]}～{report["source_end"]}，共 {report["source_draws"]:,} 期。前200期建立統計，實際回測 {report["trials"]:,} 期（{report["trial_start"]}～{report["trial_end"]}）。</p>
 <p>每期以當時最近20／50／100／200期的次數分組，從當期5顆球取左右上下相鄰球。同範圍首次1分，重複每次加0.1分，跨範圍加總；同分依球號小到大。用所得排名對照<strong>下一期</strong>獎號，未使用未來資料。</p>
@@ -283,7 +283,7 @@ def render(report: dict) -> None:
         '<title>539 前5名球號命中統計</title>'
         '<style>body{font-family:"Microsoft JhengHei",sans-serif;background:#f5f7f2;color:#193e30;margin:24px}'
         'main{max-width:1400px;margin:auto}p{line-height:1.8}a{color:#076b50}</style>'
-        '<link rel="stylesheet" href="539-hit-ranking.css?v=compact-2">'
+        '<link rel="stylesheet" href="539-hit-ranking.css?v=compact-2"><script src="539-ranking-layout.js?v=1" defer></script>'
         '<link rel="stylesheet" href="539-aibrief.css?v=1"><main>'
         '<a href="539-adjacent-backtest.html">← 完整歷史試算</a>'
         + page[start:end]
