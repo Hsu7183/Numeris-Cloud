@@ -1,42 +1,65 @@
 {
-  "latest_draw_no": "115000252",
-  "date": "2026-10-17",
+  "latest_draw_no": "115000264",
+  "date": "2026-10-31",
   "reference": {
     "source_url": "https://www.pilio.idv.tw/lto539/sqlaibrief.asp",
-    "source_date": "2026-10-17",
-    "captured_date": "2026-10-18",
+    "source_date": "2026-10-31",
+    "captured_date": "2026-11-01",
+    "article_sha256": "525919a5f02cedc37de62c18930b349f700a303e52b0f90042378eb6ba4e55ed",
     "categories": {
       "機率提及": [
-        14,
+        25,
+        28,
+        35
+      ],
+      "熱門提及": [
+        28
+      ],
+      "連莊參考": [
         17
       ],
-      "熱門提及": [],
-      "連莊參考": [
-        10,
-        20,
-        32,
-        39
-      ],
-      "上升趨勢": [
-        2,
-        3,
-        5,
-        9,
-        32
-      ]
+      "上升趨勢": []
     },
     "cold_reference": [
-      37
+      10,
+      16,
+      20,
+      30
     ],
     "overdue_reference": [
-      37
+      10,
+      29
     ],
     "bonus_per_category": 0.1,
-    "method_note": "本次試作：每項參考類別加0.1分；同類重複不加分。冷門、未開期數、條件拖牌不加減分。非來源網站原有綜合評分。"
+    "classification_review": {
+      "機率提及": "出現機率段列25、28；結論第2點另將35列為高出現機率。",
+      "熱門提及": "冷熱門段明確指28為熱門。",
+      "連莊參考": "連莊率段明確列17。",
+      "上升趨勢": "未明確列出上升趨勢球號；拖牌15→28及二合35、37不列為上升。"
+    },
+    "method_note": "依原文逐類核對，每項明確提及類別加0.1分，同類不重複。冷門、久未開、拖牌及配對不加分。僅套用同截止日、同文章雜湊。"
   },
   "ranking": [
     {
-      "number": 15,
+      "number": 1,
+      "score": 3.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 1,
+      "overdue_bonus": 0.1,
+      "combined": 3.1
+    },
+    {
+      "number": 4,
+      "score": 3.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 1,
+      "overdue_bonus": 0.1,
+      "combined": 3.1
+    },
+    {
+      "number": 13,
       "score": 3.1,
       "tags": [],
       "bonus": 0.0,
@@ -45,33 +68,40 @@
       "combined": 3.1
     },
     {
-      "number": 22,
-      "score": 2.1,
+      "number": 15,
+      "score": 3.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 3.0
+    },
+    {
+      "number": 10,
+      "score": 2.0,
       "tags": [],
       "bonus": 0.0,
       "overdue_count": 7,
       "overdue_bonus": 0.7,
-      "combined": 2.8
+      "combined": 2.7
     },
     {
-      "number": 37,
-      "score": 2.2,
+      "number": 2,
+      "score": 2.1,
       "tags": [],
       "bonus": 0.0,
-      "overdue_count": 6,
-      "overdue_bonus": 0.6,
-      "combined": 2.8
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 2.1
     },
     {
-      "number": 5,
+      "number": 3,
       "score": 2.0,
-      "tags": [
-        "上升趨勢"
-      ],
-      "bonus": 0.1,
+      "tags": [],
+      "bonus": 0.0,
       "overdue_count": 1,
       "overdue_bonus": 0.1,
-      "combined": 2.2
+      "combined": 2.1
     },
     {
       "number": 7,
@@ -83,40 +113,7 @@
       "combined": 2.1
     },
     {
-      "number": 9,
-      "score": 2.0,
-      "tags": [
-        "上升趨勢"
-      ],
-      "bonus": 0.1,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 2.1
-    },
-    {
-      "number": 14,
-      "score": 2.0,
-      "tags": [
-        "機率提及"
-      ],
-      "bonus": 0.1,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 2.1
-    },
-    {
       "number": 17,
-      "score": 2.0,
-      "tags": [
-        "機率提及"
-      ],
-      "bonus": 0.1,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 2.1
-    },
-    {
-      "number": 20,
       "score": 2.0,
       "tags": [
         "連莊參考"
@@ -127,7 +124,7 @@
       "combined": 2.1
     },
     {
-      "number": 25,
+      "number": 19,
       "score": 2.1,
       "tags": [],
       "bonus": 0.0,
@@ -136,56 +133,78 @@
       "combined": 2.1
     },
     {
-      "number": 1,
-      "score": 2.0,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 2.0
-    },
-    {
-      "number": 13,
-      "score": 2.0,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 2.0
-    },
-    {
-      "number": 18,
-      "score": 2.0,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 2.0
-    },
-    {
-      "number": 26,
-      "score": 2.0,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 2.0
-    },
-    {
       "number": 35,
-      "score": 1.1,
+      "score": 2.0,
+      "tags": [
+        "機率提及"
+      ],
+      "bonus": 0.1,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 2.1
+    },
+    {
+      "number": 6,
+      "score": 2.0,
       "tags": [],
       "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 9,
+      "score": 2.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 12,
+      "score": 2.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 2.0
+    },
+    {
+      "number": 25,
+      "score": 1.0,
+      "tags": [
+        "機率提及"
+      ],
+      "bonus": 0.1,
       "overdue_count": 7,
       "overdue_bonus": 0.7,
       "combined": 1.8
     },
     {
-      "number": 32,
+      "number": 29,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 7,
+      "overdue_bonus": 0.7,
+      "combined": 1.7
+    },
+    {
+      "number": 34,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 6,
+      "overdue_bonus": 0.6,
+      "combined": 1.6
+    },
+    {
+      "number": 28,
       "score": 1.0,
       "tags": [
-        "連莊參考",
-        "上升趨勢"
+        "機率提及",
+        "熱門提及"
       ],
       "bonus": 0.2,
       "overdue_count": 0,
@@ -193,12 +212,10 @@
       "combined": 1.2
     },
     {
-      "number": 2,
-      "score": 1.0,
-      "tags": [
-        "上升趨勢"
-      ],
-      "bonus": 0.1,
+      "number": 5,
+      "score": 1.1,
+      "tags": [],
+      "bonus": 0.0,
       "overdue_count": 0,
       "overdue_bonus": 0.0,
       "combined": 1.1
@@ -213,27 +230,7 @@
       "combined": 1.1
     },
     {
-      "number": 10,
-      "score": 1.0,
-      "tags": [
-        "連莊參考"
-      ],
-      "bonus": 0.1,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 1.1
-    },
-    {
-      "number": 11,
-      "score": 1.0,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 1,
-      "overdue_bonus": 0.1,
-      "combined": 1.1
-    },
-    {
-      "number": 24,
+      "number": 21,
       "score": 1.1,
       "tags": [],
       "bonus": 0.0,
@@ -242,16 +239,7 @@
       "combined": 1.1
     },
     {
-      "number": 29,
-      "score": 1.1,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 1.1
-    },
-    {
-      "number": 16,
+      "number": 14,
       "score": 1.0,
       "tags": [],
       "bonus": 0.0,
@@ -260,7 +248,7 @@
       "combined": 1.0
     },
     {
-      "number": 21,
+      "number": 22,
       "score": 1.0,
       "tags": [],
       "bonus": 0.0,
@@ -296,7 +284,16 @@
       "combined": 1.0
     },
     {
-      "number": 31,
+      "number": 36,
+      "score": 1.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 1.0
+    },
+    {
+      "number": 39,
       "score": 1.0,
       "tags": [],
       "bonus": 0.0,
@@ -306,53 +303,15 @@
     },
     {
       "number": 33,
-      "score": 1.0,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 1.0
-    },
-    {
-      "number": 38,
-      "score": 1.0,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 1.0
-    },
-    {
-      "number": 4,
       "score": 0.0,
       "tags": [],
       "bonus": 0.0,
-      "overdue_count": 8,
-      "overdue_bonus": 0.8,
-      "combined": 0.8
+      "overdue_count": 6,
+      "overdue_bonus": 0.6,
+      "combined": 0.6
     },
     {
-      "number": 12,
-      "score": 0.0,
-      "tags": [],
-      "bonus": 0.0,
-      "overdue_count": 7,
-      "overdue_bonus": 0.7,
-      "combined": 0.7
-    },
-    {
-      "number": 3,
-      "score": 0.0,
-      "tags": [
-        "上升趨勢"
-      ],
-      "bonus": 0.1,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
-      "combined": 0.1
-    },
-    {
-      "number": 28,
+      "number": 20,
       "score": 0.0,
       "tags": [],
       "bonus": 0.0,
@@ -361,18 +320,16 @@
       "combined": 0.1
     },
     {
-      "number": 39,
+      "number": 26,
       "score": 0.0,
-      "tags": [
-        "連莊參考"
-      ],
-      "bonus": 0.1,
-      "overdue_count": 0,
-      "overdue_bonus": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 1,
+      "overdue_bonus": 0.1,
       "combined": 0.1
     },
     {
-      "number": 6,
+      "number": 11,
       "score": 0.0,
       "tags": [],
       "bonus": 0.0,
@@ -381,7 +338,7 @@
       "combined": 0.0
     },
     {
-      "number": 19,
+      "number": 16,
       "score": 0.0,
       "tags": [],
       "bonus": 0.0,
@@ -390,7 +347,7 @@
       "combined": 0.0
     },
     {
-      "number": 34,
+      "number": 18,
       "score": 0.0,
       "tags": [],
       "bonus": 0.0,
@@ -399,7 +356,43 @@
       "combined": 0.0
     },
     {
-      "number": 36,
+      "number": 24,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 31,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 32,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 37,
+      "score": 0.0,
+      "tags": [],
+      "bonus": 0.0,
+      "overdue_count": 0,
+      "overdue_bonus": 0.0,
+      "combined": 0.0
+    },
+    {
+      "number": 38,
       "score": 0.0,
       "tags": [],
       "bonus": 0.0,
@@ -413,12 +406,17 @@
       "period": 6,
       "top": [
         {
-          "number": 4,
+          "number": 1,
           "omission": 6,
           "atLeast": true
         },
         {
-          "number": 5,
+          "number": 3,
+          "omission": 6,
+          "atLeast": true
+        },
+        {
+          "number": 4,
           "omission": 6,
           "atLeast": true
         },
@@ -431,11 +429,6 @@
           "number": 8,
           "omission": 6,
           "atLeast": true
-        },
-        {
-          "number": 11,
-          "omission": 6,
-          "atLeast": true
         }
       ]
     },
@@ -443,27 +436,27 @@
       "period": 12,
       "top": [
         {
-          "number": 4,
+          "number": 10,
           "omission": 12,
           "atLeast": true
         },
         {
-          "number": 12,
+          "number": 20,
           "omission": 12,
           "atLeast": true
         },
         {
-          "number": 22,
+          "number": 25,
           "omission": 12,
           "atLeast": true
         },
         {
-          "number": 28,
+          "number": 26,
           "omission": 12,
           "atLeast": true
         },
         {
-          "number": 35,
+          "number": 29,
           "omission": 12,
           "atLeast": true
         }
@@ -473,29 +466,29 @@
       "period": 18,
       "top": [
         {
-          "number": 4,
+          "number": 29,
           "omission": 18,
           "atLeast": true
         },
         {
-          "number": 12,
+          "number": 33,
           "omission": 18,
           "atLeast": true
         },
         {
-          "number": 22,
-          "omission": 18,
-          "atLeast": true
+          "number": 34,
+          "omission": 14,
+          "atLeast": false
         },
         {
-          "number": 35,
-          "omission": 18,
-          "atLeast": true
+          "number": 25,
+          "omission": 13,
+          "atLeast": false
         },
         {
-          "number": 37,
-          "omission": 18,
-          "atLeast": true
+          "number": 10,
+          "omission": 12,
+          "atLeast": false
         }
       ]
     },
@@ -503,28 +496,28 @@
       "period": 24,
       "top": [
         {
-          "number": 12,
-          "omission": 24,
-          "atLeast": true
-        },
-        {
-          "number": 35,
-          "omission": 24,
-          "atLeast": true
-        },
-        {
-          "number": 37,
-          "omission": 24,
-          "atLeast": true
-        },
-        {
-          "number": 4,
-          "omission": 23,
+          "number": 29,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 22,
-          "omission": 23,
+          "number": 33,
+          "omission": 22,
+          "atLeast": false
+        },
+        {
+          "number": 34,
+          "omission": 14,
+          "atLeast": false
+        },
+        {
+          "number": 25,
+          "omission": 13,
+          "atLeast": false
+        },
+        {
+          "number": 10,
+          "omission": 12,
           "atLeast": false
         }
       ]
@@ -533,28 +526,28 @@
       "period": 30,
       "top": [
         {
-          "number": 37,
-          "omission": 30,
-          "atLeast": true
-        },
-        {
-          "number": 12,
-          "omission": 26,
+          "number": 29,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 35,
-          "omission": 24,
+          "number": 33,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 4,
-          "omission": 23,
+          "number": 34,
+          "omission": 14,
           "atLeast": false
         },
         {
-          "number": 22,
-          "omission": 23,
+          "number": 25,
+          "omission": 13,
+          "atLeast": false
+        },
+        {
+          "number": 10,
+          "omission": 12,
           "atLeast": false
         }
       ]
@@ -563,28 +556,28 @@
       "period": 36,
       "top": [
         {
-          "number": 37,
-          "omission": 36,
-          "atLeast": true
-        },
-        {
-          "number": 12,
-          "omission": 26,
+          "number": 29,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 35,
-          "omission": 24,
+          "number": 33,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 4,
-          "omission": 23,
+          "number": 34,
+          "omission": 14,
           "atLeast": false
         },
         {
-          "number": 22,
-          "omission": 23,
+          "number": 25,
+          "omission": 13,
+          "atLeast": false
+        },
+        {
+          "number": 10,
+          "omission": 12,
           "atLeast": false
         }
       ]
@@ -593,28 +586,28 @@
       "period": 42,
       "top": [
         {
-          "number": 37,
-          "omission": 42,
-          "atLeast": true
-        },
-        {
-          "number": 12,
-          "omission": 26,
+          "number": 29,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 35,
-          "omission": 24,
+          "number": 33,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 4,
-          "omission": 23,
+          "number": 34,
+          "omission": 14,
           "atLeast": false
         },
         {
-          "number": 22,
-          "omission": 23,
+          "number": 25,
+          "omission": 13,
+          "atLeast": false
+        },
+        {
+          "number": 10,
+          "omission": 12,
           "atLeast": false
         }
       ]
@@ -623,28 +616,28 @@
       "period": 48,
       "top": [
         {
-          "number": 37,
-          "omission": 48,
-          "atLeast": true
-        },
-        {
-          "number": 12,
-          "omission": 26,
+          "number": 29,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 35,
-          "omission": 24,
+          "number": 33,
+          "omission": 22,
           "atLeast": false
         },
         {
-          "number": 4,
-          "omission": 23,
+          "number": 34,
+          "omission": 14,
           "atLeast": false
         },
         {
-          "number": 22,
-          "omission": 23,
+          "number": 25,
+          "omission": 13,
+          "atLeast": false
+        },
+        {
+          "number": 10,
+          "omission": 12,
           "atLeast": false
         }
       ]
@@ -652,6 +645,6 @@
   ],
   "overdue_weight": 0.1,
   "historical_backtest": false,
-  "target_date": "2026-10-19",
+  "target_date": "2026-11-02",
   "target_note": "下一個週一至週六開獎日的參考排名，實際開獎安排以官方公告為準；不是已開出的獎號。"
 }
