@@ -44,3 +44,12 @@ tbody tr:nth-child(5n) td,tbody tr:nth-child(5n) th { border-bottom:2px solid #5
 
 .ranking-nav { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
 .ranking-nav a { padding:8px 12px; border:1px solid #bfcbbf; border-radius:6px; color:var(--green); background:var(--paper); text-decoration:none; font-size:.85rem; }
+
+/* Circled two-digit balls with opaque, value-colored scores on the right. */
+.score-scroll{overflow-x:auto}.score-line{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:68px;width:max-content}
+.score-line-item,.score-item{position:relative;padding:18px 3px 8px}
+.score-section .rank-pair{display:flex;align-items:center;justify-content:center;gap:4px}
+.score-section .rank-pair b{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:26px;height:26px;flex:0 0 26px;border:1px solid currentColor;border-radius:50%;font:700 13px/1 Arial,sans-serif;font-variant-numeric:tabular-nums;margin:0}
+.score-section .rank-pair strong{font:400 12px/1.2 Arial,sans-serif;opacity:1;white-space:nowrap}
+.score-line-item>span,.score-item>span{position:absolute;top:2px;left:4px;font-size:10px}
+.score-section .score-red{color:#dc2626}.score-section .score-orange{color:#c56a08}.score-section .score-blue{color:#2563eb}.score-section .score-gray{color:#9ca3af}
