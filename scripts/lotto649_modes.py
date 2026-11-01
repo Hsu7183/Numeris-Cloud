@@ -29,10 +29,13 @@ def write_json(path: Path, value):
 
 def page(name: str, title: str, body: str, script: str = ""):
     TARGET.mkdir(parents=True, exist_ok=True)
-    (TARGET / name).write_text(
+    destination = TARGET / name
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
+    temporary.write_text(
         f'<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>大樂透｜{title}</title><link rel="stylesheet" href="649-hit-ranking.css"><link rel="stylesheet" href="649-aibrief.css"><style>{STYLE}</style></head><body><main><nav aria-label="大樂透模式"><a href="index.html">← 大樂透首頁</a><a href="649-dashboard.html">完整總覽</a><a href="649-adjacent-reference.html">相鄰次數</a><a href="649-combined-reference.html">相鄰分數＋AI快報</a><a href="649-adjacent-backtest.html">分數歷史試算</a><a href="649-adjacent-counts-backtest.html">次數歷史試算</a><a href="handwritten-649-overlay.html">期數疊加</a></nav><h1>大樂透 · {title}</h1>{body}</main>{script}</body></html>',
         encoding="utf-8",
     )
+    temporary.replace(destination)
 
 
 def load_history():
