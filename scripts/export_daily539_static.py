@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import httpx
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -40,7 +41,9 @@ def export_payload() -> dict[str, object]:
         f"?month={month}&endMonth={month}&pageNum=1&pageSize=500"
     )
     official_rows = (response.json().get("content") or {}).get("daily539Res") or []
-    merged = {str(item["draw_no"]): item for item in payload["draws"]}
+    cached = json.loads(OUTPUT_PATH.read_text(encoding="utf-8-sig")) if OUTPUT_PATH.exists() else {}
+    merged = {str(item["draw_no"]): item for item in cached.get("draws", [])}
+    merged.update({str(item["draw_no"]): item for item in payload["draws"]})
     for row in official_rows:
         draw_no = str(row["period"])
         merged[draw_no] = {
@@ -67,7 +70,22 @@ def main() -> int:
     print("[Numeris] Preparing the GitHub Pages dataset...")
     prepare_database()
     print("[Numeris] Downloading the latest Taiwan Lottery data...")
-    update_taiwan_draws()
+    try:
+        update_taiwan_draws()
+    except httpx.HTTPError:
+        # The annual CDN may be unavailable; retain the validated official snapshot
+        # and still fetch the current month from the independent official API.
+        cached = json.loads(OUTPUT_PATH.read_text(encoding="utf-8-sig"))
+        draws = cached.get("draws", [])
+        if len(draws) < 200 or any(
+            len(row.get("numbers", [])) != 5
+            or len(set(row["numbers"])) != 5
+            or not all(isinstance(n, int) and 1 <= n <= 39 for n in row["numbers"])
+            or row["draw_date"] > datetime.now(TAIPEI).date().isoformat()
+            for row in draws
+        ):
+            raise ValueError("年度來源暫不可用且沒有有效的200期官方快照")
+        print("[Numeris] Annual source unavailable; using validated official snapshot plus monthly API.")
     payload = export_payload()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(
