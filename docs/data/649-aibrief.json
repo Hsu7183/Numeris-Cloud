@@ -1,29 +1,15 @@
 {
   "source_url": "https://www.pilio.idv.tw/ltobig/sqlaibrief.asp",
-  "source_draw_date": "2026-11-10",
+  "source_draw_date": "2026-11-13",
   "mentioned_numbers": [
     2,
+    4,
     8,
-    11,
-    12,
-    13,
-    17,
-    18,
-    23,
     25,
-    28,
-    30,
-    31,
-    32,
-    34,
-    38,
-    39,
     40,
     41,
-    42,
-    44,
-    46
+    43
   ],
-  "article_sha256": "e0eb05421b0ea6bb93df843b5afdc2d983600702470b8e7550d8c6a9e21ec6da",
-  "checked_at": "2026-11-14T04:53:13+08:00"
+  "article_sha256": "b265a3eeabbd4c58bb45832c4a6a04f5fd04d271c06440464e875e32ee2d4013",
+  "checked_at": "2026-11-15T02:55:34+08:00"
 }
