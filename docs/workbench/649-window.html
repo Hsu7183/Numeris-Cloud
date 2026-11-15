@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>大樂透滑動窗口試算台</title>
+<style>
+/* SECTION: base */
+:root{--bg:#f4f1ea;--card:#fffdf8;--ink:#1f232b;--muted:#6d7280;--line:#e2dccf;--accent:#b1222d;--gold:#b3801c;--ok:#1c6b46;--cool:#2a5f9e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;line-height:1.55}
+.wrap{max-width:1160px;margin:0 auto;padding:20px 14px 56px}
+h1{font-size:23px;margin:0 0 4px}
+h2{font-size:15px;margin:0 0 10px;letter-spacing:.5px}
+.sub{color:var(--muted);font-size:13px;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:#fdecec;color:var(--accent);border:1px solid #f3c9cd;margin-left:6px}
+button,select,input,textarea{font:inherit;color:inherit}
+button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+textarea{width:100%;min-height:104px;border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;resize:vertical}
+input[type=text]{border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:#fff}
+input[type=range]{accent-color:var(--accent);flex:1;min-width:150px}
+.hint{font-size:12px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+/* SECTION: kpi */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kpi b{display:block;font-size:19px;line-height:1.25}
+.kpi span{font-size:11.5px;color:var(--muted)}
+/* SECTION: heatmap */
+.ballgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:7px}
+.ball{position:relative;border:1px solid var(--line);border-radius:10px;background:#fff;min-height:50px;padding:5px 4px;text-align:center;cursor:pointer;transition:transform .12s}
+.ball:hover{transform:translateY(-2px)}
+.ball b{display:block;font-size:15px}
+.ball i{font-style:normal;font-size:10.5px;opacity:.85}
+.ball.sel{outline:3px solid var(--ink);outline-offset:-3px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+/* SECTION: bars */
+.bars{display:flex;align-items:flex-end;gap:2px;height:150px;border-bottom:1px solid var(--line);position:relative;padding-top:6px}
+.bar{flex:1 1 0;min-width:0;background:linear-gradient(180deg,var(--accent),#e0787f);border-radius:2px 2px 0 0}
+.bar.cool{background:linear-gradient(180deg,var(--cool),#7ba6d6)}
+.base{position:absolute;left:0;right:0;border-top:1px dashed var(--gold)}
+.xaxis{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+/* SECTION: lists */
+.lists{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:860px){.lists{grid-template-columns:repeat(2,1fr)}}
+.list h3{font-size:13px;margin:0 0 8px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;background:#f0ece2;color:#3a3f4a}
+.pill.hot{background:#fbe3e5;color:var(--accent)}
+.pill.cold{background:#e4edf8;color:var(--cool)}
+.pill.out{background:#efe7d5;color:var(--gold)}
+.tag{font-size:11px;padding:1px 7px;border-radius:999px;background:#f0ece2}
+.up{color:var(--accent)}.down{color:var(--cool)}
+/* SECTION: table */
+table{width:100%;border-collapse:collapse;font-size:12.8px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:11.5px;color:var(--muted);font-weight:600}
+td.n{font-variant-numeric:tabular-nums}
+.num{width:26px;height:26px;border-radius:50%;background:#f0ece2;display:inline-flex;align-items:center;justify-content:center;font-size:12px;margin-right:3px}
+.num.hit{background:var(--accent);color:#fff}
+/* SECTION: misc */
+.sectitle{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.disclaim{font-size:11.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+</style>
+<link rel="stylesheet" href="workbench.css">
+</head>
+<body>
+<nav class="workbench-nav" aria-label="試算工具導覽"><a href="index.html">← 試算工具</a><span id="draw-feed-status" role="status">正在讀取開獎資料…</span></nav>
+<div class="wrap">
+<header style="margin-bottom:14px">
+  <h1>大樂透滑動窗口試算台<span class="badge">49 選 6</span></h1>
+  <p class="sub">把開獎期數想像成一扇不斷往前推的窗：窗內的熱度、遺漏、和值與重號怎麼變，一眼看完。</p>
+</header>
+
+<!-- SECTION: data input -->
+<section class="card">
+  <div class="sectitle">
+    <h2>① 開獎資料</h2>
+    <div class="row">
+      <select id="dataSrc" style="max-width:250px"><option value="real">官網真實資料</option><option value="custom">我貼上的資料</option><option value="sample">隨機範例</option></select>
+      <label class="hint"><input type="checkbox" id="latestFirst" checked> 最新期排最前面</label>
+      <button id="btnLoad" class="primary" data-primary-action="load">載入範例資料</button>
+      <button id="btnApply" data-primary-action="load">套用貼上的資料</button>
+      <button id="btnClear">清空</button>
+    </div>
+  </div>
+  <textarea id="raw" placeholder="每期一行，可加日期或期號。例：&#10;115000089 2026-09-18 01 06 14 21 31 35&#10;2026-10-25 04 11 23 31 38 47&#10;11 08 36 24 40 05"></textarea>
+  <div class="row" style="margin-top:8px">
+    <span class="hint" id="dataStat">尚未載入資料。</span>
+    <span class="hint">格式：1–49 共 6 個號碼，以空格或逗號分隔。</span>
+  </div>
+</section>
+
+<!-- SECTION: window controls -->
+<section class="card">
+  <div class="sectitle"><h2>② 滑動窗口</h2><span class="hint" id="winLabel"></span></div>
+  <div class="row">
+    <span class="hint">窗口大小</span>
+    <button data-n="10">近 10 期</button><button data-n="20">近 20 期</button>
+    <button data-n="30">近 30 期</button><button data-n="50">近 50 期</button><button data-n="9999">全部</button>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button id="btnPrev" aria-label="窗口往回一期">◀</button>
+    <input type="range" id="cursor" min="0" max="0" value="0">
+    <button id="btnNext" aria-label="窗口往前一期">▶</button>
+    <button id="btnPlay" data-primary-action="play">▶ 逐期滑動播放</button>
+    <button id="btnLatest">跳到目前最新一期</button>
+    <label class="hint"><input type="checkbox" id="showPrev"> 對比前一窗</label>
+  </div>
+</section>
+
+<!-- SECTION: kpi -->
+<section class="kpis" id="kpis"></section>
+
+<!-- SECTION: heatmap -->
+<section class="card" style="margin-top:14px">
+  <div class="sectitle">
+    <h2>③ 49 碼窗內熱圖 <span class="hint">（點號碼可加入下方試算）</span></h2>
+    <div class="row">
+      <span class="hint">色階依據</span>
+      <select id="metric"><option value="cnt">出現次數</option><option value="miss">目前遺漏</option><option value="ratio">遺漏倍數</option></select>
+      <button id="btnCopyHot">複製熱碼</button>
+    </div>
+  </div>
+  <div class="ballgrid" id="grid"></div>
+  <div class="legend" id="legend" style="margin-top:10px"></div>
+</section>
+
+<!-- SECTION: chart -->
+<div class="grid2">
+<section class="card">
+  <div class="sectitle"><h2>④ 窗口指標分布</h2><span class="hint" id="chartHint"></span></div>
+  <div class="bars" id="bars"></div>
+  <div class="xaxis"><span>01</span><span>17</span><span>33</span><span>49</span></div>
+</section>
+<section class="card">
+  <div class="sectitle"><h2>⑤ 和值走勢</h2><span class="hint">窗口內每期 6 碼合計</span></div>
+  <div id="trend"></div>
+  <div class="row hint" id="trendStat"></div>
+</section>
+</div>
+
+<!-- SECTION: lists -->
+<section class="card">
+  <div class="sectitle"><h2>⑥ 榜單與窗口變動</h2><span class="hint">開碼種數越高代表窗內越分散</span></div>
+  <div class="lists">
+    <div class="list"><h3>窗內熱碼 TOP 10</h3><div class="pills" id="hot"></div></div>
+    <div class="list"><h3>窗內冷清後 10</h3><div class="pills" id="cold"></div></div>
+    <div class="list"><h3>遺漏超時警戒</h3><div class="pills" id="over"></div></div>
+    <div class="list"><h3>進榜 / 出榜</h3><div class="pills" id="swing"></div><div class="hint" id="swingHint">勾選「對比前一窗」後顯示。</div></div>
+  </div>
+</section>
+
+<!-- SECTION: bet -->
+<section class="card">
+  <div class="sectitle">
+    <h2>⑦ 一組號碼的窗內命中試算</h2>
+    <div class="row">
+      <button id="btnRand">隨機 6 碼</button>
+      <button id="btnTop6">取窗內 TOP 6</button>
+      <button id="btnCold6">取冷清 6 碼</button>
+      <button id="btnBet" class="primary" data-primary-action="bet">試算命中</button>
+      <button id="btnBetClear">清空</button>
+    </div>
+  </div>
+  <div class="row" id="betRow"></div>
+  <div class="grid2" style="margin-top:12px">
+    <div><h3 style="font-size:13px;margin:0 0 6px">命中期數分布（實際 vs 理論）</h3><div id="betHist"></div></div>
+    <div><h3 style="font-size:13px;margin:0 0 6px">選號現況</h3><div id="betDetail" class="hint"></div></div>
+  </div>
+</section>
+
+<!-- SECTION: detail -->
+<section class="card">
+  <div class="sectitle"><h2>⑧ 窗口逐期明細</h2><span class="hint">顯示窗口最後 14 期</span></div>
+  <div style="overflow-x:auto"><table id="detail"><thead><tr><th>期次</th><th>號碼</th><th>和值</th><th>奇:偶</th><th>大:小</th><th>與上期重號</th><th>命中</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<p class="disclaim">彩券開獎為獨立隨機事件，歷史滑動窗口統計只能幫你觀察分布與遺漏，不能提高中獎機率；請理性購券。</p>
+<p class="hint" style="margin-top:8px">大樂透常態每週二、五晚間 20:30 開獎；加碼期間（如春節、中秋）可能每日開獎。試算台每日 22:00 自動抓取，凡有新開獎期就會連動更新。內嵌真實資料涵蓋近一年（114000102～115000099）。若當次抓取失敗，頁面會保留原資料並在助理端回報。</p>
+</div>
+<div id="toast"></div>
+
+<script src="draw-feed.js"></script>
+<script>
+/* SECTION: state */
+var LS='dlot-slide-window-v2', draws=[], cursor=0, N=20, bet=[null,null,null,null,null,null], timer=null, last=null;
+var $=function(id){return document.getElementById(id)};
+function toast(t){var e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(function(){e.classList.remove('show')},1800)}
+function pad(x){return String(x).padStart(2,'0')}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+
+var REAL_ROWS = [];
+function realDataset(){return REAL_ROWS.map(function(r){return {label:r[0],date:r[1],nums:r[2].trim().split(/\s+/).map(function(x){return parseInt(x,10)})}})}
+
+/* SECTION: sample data (random, NOT official results) */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function makeSample(){
+  var r=rng(20261027), out=[], d=new Date(2026,9,27), i, s, arr, gap;
+  for(i=0;i<96;i++){
+    s={}; arr=[];
+    while(arr.length<6){var v=1+Math.floor(r()*49);if(!s[v]){s[v]=1;arr.push(v)}}
+    arr.sort(function(a,b){return a-b});
+    out.push({date:iso(d),nums:arr});
+    gap=(i%2===0?3:4); d.setDate(d.getDate()-gap);
+  }
+  out.reverse();
+  return out;
+}
+
+/* SECTION: parse */
+function parseText(txt,latestFirst){
+  var lines=(txt||'').split('\n'), out=[], bad=0, i, line, dm, lm, rest, found, nums, uniq;
+  for(i=0;i<lines.length;i++){
+    line=lines[i].trim();
+    if(!line||line.charAt(0)==='#'||line.indexOf('範例')>=0) continue;
+    dm=line.match(/(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+    rest=dm?line.replace(dm[0],' '):line;
+    lm=rest.match(/^\s*(\d{6,})/);
+    if(lm){rest=rest.replace(lm[0],' ')}
+    found=rest.match(/\d{1,2}/g)||[]; nums=[];
+    found.forEach(function(x){var v=parseInt(x,10);if(v>=1&&v<=49)nums.push(v)});
+    uniq=nums.filter(function(v,k){return nums.indexOf(v)===k}).sort(function(a,b){return a-b});
+    if(uniq.length>=6) out.push({label:lm?lm[1]:'',date:dm?dm[0]:'',nums:uniq.slice(0,6)}); else bad++;
+  }
+  if(latestFirst) out.reverse();
+  return {rows:out,bad:bad};
+}
+function save(){try{localStorage.setItem(LS,JSON.stringify({raw:$('raw').value,N:N,latestFirst:$('latestFirst').checked,src:$('dataSrc').value}))}catch(e){}}
+function load(){try{var o=JSON.parse(localStorage.getItem(LS));if(o){if(o.raw)$('raw').value=o.raw;$('latestFirst').checked=o.latestFirst!==false;N=o.N||20;if(o.src)$('dataSrc').value=o.src}}catch(e){}}
+
+/* SECTION: stats engine */
+function buildStats(end,size){
+  var start=Math.max(0,end-size+1), i, j, v, win, sums, odd, big, ov=[], rows=[];
+  var cnt=[], app=[], gsum=[], prev=[], lastSeen=[];
+  for(v=0;v<50;v++){cnt[v]=0;app[v]=0;gsum[v]=0;prev[v]=-1;lastSeen[v]=-1}
+  for(i=0;i<=end;i++){
+    for(j=0;j<draws[i].nums.length;j++){
+      v=draws[i].nums[j];
+      app[v]++; if(prev[v]>=0) gsum[v]+=i-prev[v]; prev[v]=i; lastSeen[v]=i;
+      if(i>=start) cnt[v]++;
+    }
+  }
+  for(v=1;v<=49;v++){
+    var miss=lastSeen[v]>=0?(end-lastSeen[v]):null;
+    var avg=app[v]>1?(gsum[v]/(app[v]-1)):(app[v]===1?(end+1):null);
+    rows.push({v:v,cnt:cnt[v],miss:miss,avg:avg,ratio:(avg&&miss!==null)?miss/avg:null});
+  }
+  win=draws.slice(start,end+1);
+  sums=win.map(function(d){return d.nums.reduce(function(a,b){return a+b},0)});
+  odd=win.map(function(d){return d.nums.filter(function(x){return x%2===1}).length});
+  big=win.map(function(d){return d.nums.filter(function(x){return x>=25}).length});
+  for(i=start+1;i<=end;i++){var set={};draws[i-1].nums.forEach(function(x){set[x]=1});ov.push(draws[i].nums.filter(function(x){return set[x]}).length)}
+  return {start:start,end:end,rows:rows,win:win,sums:sums,odd:odd,big:big,ov:ov,span:win.length};
+}
+function topBy(st,key,dir,n){
+  var r=st.rows.slice();
+  r.sort(function(a,b){return dir<0?(b[key]||0)-(a[key]||0):(a[key]||0)-(b[key]||0)});
+  return r.slice(0,n);
+}
+function uniqCodes(st){return st.rows.filter(function(r){return r.cnt>0}).length}
+function mode(arr){var t={},best=null,c=-1;arr.forEach(function(x){t[x]=(t[x]||0)+1;if(t[x]>c){c=t[x];best=x}});return {v:best,n:c}}
+function label(i){return draws[i].label||(draws[i].date?draws[i].date:('第'+(i+1)+'筆'))}
+
+/* SECTION: render kpi */
+function renderKpis(st){
+  var avgSum=Math.round(st.sums.reduce(function(a,b){return a+b},0)/st.sums.length*10)/10;
+  var om=mode(st.odd), bm=mode(st.big);
+  var avgOv=st.ov.length?(st.ov.reduce(function(a,b){return a+b},0)/st.ov.length).toFixed(2):'0';
+  var hot=topBy(st,'cnt',-1,1)[0];
+  var items=[
+    ['窗口範圍',label(st.start)+' → '+label(st.end)],
+    ['窗口期數',st.span+' 期'],
+    ['開出碼種',uniqCodes(st)+' / 49'],
+    ['最熱碼',hot.v+' 號 ×'+hot.cnt],
+    ['平均和值',avgSum],
+    ['平均重號',avgOv+' 碼']
+  ];
+  $('kpis').innerHTML=items.map(function(x){return '<div class="kpi"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>'}).join('')
+    +'<div class="kpi" style="grid-column:1/-1"><span class="hint">常見奇偶 '+om.v+':'+(6-om.v)+'（出現 '+om.n+' 次）／常見大小 '+bm.v+':'+(6-bm.v)+'（出現 '+bm.n+' 次）／和值區間 '+Math.min.apply(null,st.sums)+'–'+Math.max.apply(null,st.sums)+'</span></div>';
+}
+
+/* SECTION: render heatmap */
+function heat(t){return 'rgba(177,34,45,'+(0.05+0.82*t).toFixed(3)+')'}
+function renderGrid(st){
+  var m=$('metric').value, vals=st.rows.map(function(r){return r[m]||0});
+  var mx=Math.max.apply(null,vals)||1, sel={};
+  bet.forEach(function(b){if(b)sel[b]=1});
+  $('grid').innerHTML=st.rows.map(function(r){
+    var t=(r[m]||0)/mx, txt=m==='cnt'?('×'+r.cnt):(r.miss===null?'未開':(m==='miss'?('漏'+r.miss):(r.ratio===null?'—':(Math.round(r.ratio*10)/10)+'倍')));
+    var fg=t>0.62?'#fff':'#2a2f38';
+    return '<div class="ball'+(sel[r.v]?' sel':'')+'" data-v="'+r.v+'" style="background:'+heat(t)+';color:'+fg+'"><b>'+pad(r.v)+'</b><i>'+txt+'</i></div>';
+  }).join('');
+  Array.prototype.forEach.call($('grid').children,function(el){el.onclick=function(){toggleBet(parseInt(el.getAttribute('data-v'),10))}});
+  var name={cnt:'窗內出現次數',miss:'目前遺漏期數',ratio:'遺漏倍數（現遺漏／平均遺漏）'}[m];
+  $('legend').innerHTML='<span>由淺到深＝'+name+'由低到高</span><span>最深 '+mx+'</span><span>黑框＝已加入試算（最多 6 碼）</span>';
+}
+
+/* SECTION: render bars + trend */
+function renderBars(st){
+  var m=$('metric').value, rows=st.rows.slice().sort(function(a,b){return a.v-b.v});
+  var vals=rows.map(function(r){return r[m]||0}), mx=Math.max.apply(null,vals)||1, avg=vals.reduce(function(a,b){return a+b},0)/vals.length;
+  $('bars').innerHTML='<div class="base" style="bottom:'+((avg/mx)*100).toFixed(1)+'%"></div>'+rows.map(function(r){
+    var t=(r[m]||0)/mx, cls=m==='miss'||m==='ratio'?'bar cool':'bar';
+    return '<div class="'+cls+'" style="height:'+(t*100).toFixed(1)+'%" title="'+pad(r.v)+'：'+(r[m]===null?'—':(Math.round(r[m]*10)/10))+'"></div>';
+  }).join('');
+  $('chartHint').textContent='虛線為窗口平均（'+(Math.round(avg*10)/10)+'）';
+}
+function renderTrend(st){
+  var w=600,h=140,pad0=16,mn=Math.min.apply(null,st.sums),mx=Math.max.apply(null,st.sums),n=st.sums.length;
+  var pts=st.sums.map(function(s,i){var x=n<2?(w/2):(pad0+i*(w-2*pad0)/(n-1));var y=h-pad0-((s-mn)/((mx-mn)||1))*(h-2*pad0);return x.toFixed(1)+','+y.toFixed(1)});
+  $('trend').innerHTML='<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:auto"><polyline fill="none" stroke="#b1222d" stroke-width="2" points="'+pts.join(' ')+'"/>'+
+    '<text x="'+pad0+'" y="12" font-size="11" fill="#6d7280">高 '+mx+'</text><text x="'+pad0+'" y="'+(h-3)+'" font-size="11" fill="#6d7280">低 '+mn+'</text></svg>';
+  var lastSum=st.sums[st.sums.length-1];
+  $('trendStat').textContent='尾期和值 '+lastSum+'（與窗口平均相差 '+Math.round((lastSum-st.sums.reduce(function(a,b){return a+b},0)/n)*10)/10+'）';
+}
+
+/* SECTION: render lists */
+function pills(arr,cls,fmt){return arr.map(function(r){return '<span class="pill '+cls+'" title="'+fmt(r)+'">'+pad(r.v)+'</span>'}).join('')}
+function renderLists(st){
+  $('hot').innerHTML=pills(topBy(st,'cnt',-1,10),'hot',function(r){return '出現 '+r.cnt+' 次，遺漏 '+(r.miss===null?'—':r.miss)});
+  $('cold').innerHTML=pills(topBy(st,'cnt',1,10),'cold',function(r){return '出現 '+r.cnt+' 次，遺漏 '+(r.miss===null?'—':r.miss)});
+  $('over').innerHTML=pills(st.rows.filter(function(r){return r.ratio!==null&&r.ratio>=1.8}).sort(function(a,b){return b.ratio-a.ratio}).slice(0,10),'out',function(r){return '遺漏 '+r.miss+'／平均 '+Math.round(r.avg)});
+  if(!$('showPrev').checked||cursor<1){$('swing').innerHTML='<span class="tag">—</span>';$('swingHint').textContent=$('showPrev').checked?'窗口已是最早期，無法對比。':'勾選「對比前一窗」後顯示。';return}
+  var prev=buildStats(cursor-1,N), a=topBy(st,'cnt',-1,10), b=topBy(prev,'cnt',-1,10);
+  var inset=a.filter(function(r){return !b.some(function(x){return x.v===r.v})}), drop=b.filter(function(r){return !a.some(function(x){return x.v===r.v})});
+  $('swing').innerHTML='<span class="tag up">進榜 '+(inset.length?inset.map(function(r){return pad(r.v)}).join(' '):'無')+'</span><span class="tag down">出榜 '+(drop.length?drop.map(function(r){return pad(r.v)}).join(' '):'無')+'</span>';
+  $('swingHint').textContent='對比第 '+(prev.end+1)+' 筆結尾的窗口（TOP 10 變動）';
+}
+
+/* SECTION: render bet */
+function comb(n,k){if(k<0||k>n)return 0;var r=1,i;for(i=1;i<=k;i++){r=r*(n-k+i)/i}return Math.round(r)}
+function theory(k){return comb(6,k)*comb(43,6-k)/comb(49,6)}
+function renderBetRow(){
+  var act=document.activeElement, focusIdx=(act&&act.getAttribute&&act.getAttribute('data-betidx'))?parseInt(act.getAttribute('data-betidx'),10):-1;
+  $('betRow').innerHTML=bet.map(function(v,i){return '<input type="text" inputmode="numeric" maxlength="2" style="width:52px;text-align:center" data-betidx="'+i+'" value="'+(v?pad(v):'')+'">'}).join('')+'<span class="hint">也可直接點上方熱圖選號</span>';
+  var inputs=$('betRow').querySelectorAll('input');
+  Array.prototype.forEach.call(inputs,function(el){
+    el.oninput=function(){var x=parseInt(el.value.replace(/\D/g,''),10);bet[parseInt(el.getAttribute('data-betidx'),10)]=(x>=1&&x<=49)?x:null;refreshBetOnly()};
+    el.onblur=function(){renderAll()};
+  });
+  if(focusIdx>=0&&inputs[focusIdx])inputs[focusIdx].focus();
+}
+function refreshBetOnly(){
+  if(!draws.length)return;
+  var st=last||buildStats(cursor,N);
+  renderBet(st);
+  renderDetail(st,bet.filter(Boolean));
+}
+function toggleBet(v){
+  var i=bet.indexOf(v);
+  if(i>=0){bet[i]=null}else{var f=bet.indexOf(null);if(f<0){toast('已滿 6 碼，先點掉一個號碼');return}bet[f]=v}
+  renderAll();
+}
+function renderBet(st){
+  var picks=bet.filter(Boolean).filter(function(v,i,a){return a.indexOf(v)===i});
+  var hist=[0,0,0,0,0,0,0], dup=picks.length!==new Set(picks).size;
+  st.win.forEach(function(d){
+    var h=d.nums.filter(function(x){return picks.indexOf(x)>=0}).length;
+    hist[h]++;
+  });
+  var mx=Math.max.apply(null,hist.concat([1]));
+  $('betHist').innerHTML='<table><tbody>'+hist.map(function(c,k){
+    var th=theory(k), exp=th*st.span;
+    return '<tr><td class="n">'+k+' 中</td><td><div style="height:11px;width:'+((c/mx)*100).toFixed(1)+'%;background:#b1222d;border-radius:3px" title="實際 '+c+' 期"></div></td><td class="n">'+c+' 期</td><td class="n">理論 '+(th*100).toFixed(2)+'%（約 '+exp.toFixed(1)+' 期）</td></tr>';
+  }).join('')+'</tbody></table>';
+  var map={}; st.rows.forEach(function(r){map[r.v]=r});
+  var per=picks.map(function(v){var r=map[v];return pad(v)+'：×'+r.cnt+'、遺漏'+(r.miss===null?'—':r.miss)+(r.ratio!==null?('（'+(Math.round(r.ratio*10)/10)+'倍）'):'')}).join('<br>');
+  $('betDetail').innerHTML=picks.length?per+'<br><span class="tag">窗口內平均每期命中 '+((hist.reduce(function(a,b,i){return a+b*i},0)/(st.span||1)).toFixed(2))+' 碼</span>'+(dup?'<br><b style="color:#b1222d">選號有重複</b>':''):'<span class="hint">尚未選號。點熱圖號碼或按「隨機 6 碼」。</span>';
+  return picks;
+}
+
+/* SECTION: render detail */
+function renderDetail(st,picks){
+  var rows=st.win.slice(-14).map(function(d){return {d:d,i:draws.indexOf(d)}}).reverse().map(function(o){
+    var d=o.d, oi=o.i;
+    var hits=picks.length?d.nums.filter(function(x){return picks.indexOf(x)>=0}).length:'—';
+    var ov=oi>0?d.nums.filter(function(x){return draws[oi-1].nums.indexOf(x)>=0}).length:'—';
+    return {d:d,sum:d.nums.reduce(function(a,b){return a+b},0),odd:d.nums.filter(function(x){return x%2===1}).length,big:d.nums.filter(function(x){return x>=25}).length,ov:ov,hits:hits,label:label(oi)}
+  });
+  document.querySelector('#detail tbody').innerHTML=rows.map(function(r){
+    return '<tr><td class="n">'+r.label+'</td><td>'+r.d.nums.map(function(v){return '<span class="num'+(picks.indexOf(v)>=0?' hit':'')+'">'+pad(v)+'</span>'}).join('')+'</td><td class="n">'+r.sum+'</td><td class="n">'+r.odd+':'+(6-r.odd)+'</td><td class="n">'+r.big+':'+(6-r.big)+'</td><td class="n">'+r.ov+'</td><td class="n">'+r.hits+'</td></tr>';
+  }).join('')||'<tr><td colspan="7" class="hint">無資料</td></tr>';
+}
+
+/* SECTION: main render */
+function renderAll(){
+  if(!draws.length){
+    $('kpis').innerHTML='';$('grid').innerHTML='';$('bars').innerHTML='';$('trend').innerHTML='';
+    ['hot','cold','over','swing'].forEach(function(k){$(k).innerHTML='<span class="tag">—</span>'});
+    $('betRow').innerHTML='';$('betHist').innerHTML='';$('betDetail').innerHTML='<span class="hint">先載入或貼上開獎資料。</span>';
+    $('winLabel').textContent='';$('chartHint').textContent='';
+    document.querySelector('#detail tbody').innerHTML='<tr><td colspan="7" class="hint">先載入或貼上開獎資料。</td></tr>';
+    last=null;return;
+  }
+  cursor=Math.max(0,Math.min(cursor,draws.length-1));
+  $('cursor').max=draws.length-1; $('cursor').value=cursor;
+  $('winLabel').textContent='窗口尾期：'+label(cursor)+'／共 '+draws.length+' 筆';
+  var st=buildStats(cursor,N);
+  renderKpis(st); renderGrid(st); renderBars(st); renderTrend(st); renderLists(st); renderBetRow(); var picks=renderBet(st); renderDetail(st,picks);
+  last=st;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-n]'),function(b){b.classList.toggle('on',parseInt(b.getAttribute('data-n'),10)===N)});
+}
+function setData(rows,msg){
+  draws=rows; cursor=Math.max(0,draws.length-1); renderAll();
+  $('dataStat').innerHTML=rows.length?('共 '+rows.length+' 期（最新：'+label(draws.length-1)+'）')+msg:('無有效資料'+msg);
+  save();
+}
+
+/* SECTION: data source */
+function applySrc(){
+  var src=$('dataSrc').value;
+  if(src==='real'){
+    var rr=realDataset();
+    if(!rr.length){toast('目前沒有內嵌真實資料');return}
+    $('raw').value=REAL_ROWS.map(function(x){return x[0]+' '+x[1]+' '+x[2]}).join('\n');
+    setData(rr,'<span class="badge">官網真實資料</span>');
+    return;
+  }
+  if(src==='sample'){
+    var s=makeSample();
+    $('raw').value='# 範例為隨機產生，非真實開獎紀錄\n'+s.map(function(d){return d.nums.join(' ')}).join('\n');
+    setData(s,'<span class="badge">隨機範例</span>');
+    return;
+  }
+  var p=parseText($('raw').value,$('latestFirst').checked);
+  if(p.rows.length){setData(p.rows,(p.bad?('，略過 '+p.bad+' 行不足 6 碼'):''));toast('已套用 '+p.rows.length+' 期')}
+  else toast('找不到符合格式的期數');
+}
+
+/* SECTION: events */
+$('dataSrc').onchange=applySrc;
+$('btnLoad').onclick=function(){$('dataSrc').value='sample';applySrc();toast('已載入 96 期隨機範例')};
+$('btnApply').onclick=function(){var t=$('raw').value;if(!t.trim()){toast('請先貼上資料');return}$('dataSrc').value='custom';applySrc()};
+$('btnClear').onclick=function(){$('raw').value='';draws=[];$('dataStat').textContent='尚未載入資料。';renderAll();save()};
+$('latestFirst').onchange=function(){if($('dataSrc').value==='custom')applySrc()};
+document.querySelectorAll('[data-n]').forEach(function(b){b.onclick=function(){N=parseInt(b.getAttribute('data-n'),10);renderAll();save()}});
+$('cursor').oninput=function(){cursor=parseInt(this.value,10);renderAll()};
+$('btnPrev').onclick=function(){if(cursor>0){cursor--;renderAll()}else{toast('已是最早期')}};
+$('btnNext').onclick=function(){if(cursor<draws.length-1){cursor++;renderAll()}else{toast('已是目前最新一期')}};
+$('btnLatest').onclick=function(){cursor=draws.length-1;renderAll()};
+$('showPrev').onchange=function(){renderAll()};
+$('metric').onchange=function(){renderAll()};
+$('btnPlay').onclick=function(){
+  if(timer){clearInterval(timer);timer=null;$('btnPlay').classList.remove('on');$('btnPlay').textContent='▶ 逐期滑動播放';return}
+  if(draws.length<2){toast('資料不足兩期');return}
+  if(cursor>=draws.length-1)cursor=Math.max(0,draws.length-1-Math.min(N,draws.length-1));
+  $('btnPlay').classList.add('on');$('btnPlay').textContent='■ 停止播放';
+  timer=setInterval(function(){if(cursor>=draws.length-1){$('btnPlay').onclick()}else{cursor++;renderAll()}},700);
+};
+$('btnRand').onclick=function(){var s={},a=[];while(a.length<6){var v=1+Math.floor(Math.random()*49);if(!s[v]){s[v]=1;a.push(v)}}a.sort(function(x,y){return x-y});bet=a.concat([null,null,null,null,null,null]).slice(0,6);renderAll()};
+$('btnTop6').onclick=function(){if(!last){toast('先載入資料');return}bet=topBy(last,'cnt',-1,6).map(function(r){return r.v});renderAll()};
+$('btnCold6').onclick=function(){if(!last){toast('先載入資料');return}bet=topBy(last,'cnt',1,6).map(function(r){return r.v});renderAll()};
+$('btnBet').onclick=function(){if(!draws.length){toast('先載入資料');return}renderAll();toast('已按目前窗口重算命中')};
+$('btnBetClear').onclick=function(){bet=[null,null,null,null,null,null];renderAll()};
+$('btnCopyHot').onclick=function(){
+  if(!last){toast('先載入資料');return}
+  var t=topBy(last,'cnt',-1,10).map(function(r){return pad(r.v)}).join(' ');
+  var el=document.createElement('textarea');el.value=t;document.body.appendChild(el);el.select();
+  try{document.execCommand('copy');toast('已複製熱碼 TOP10')}catch(e){toast('複製失敗：'+t)}
+  document.body.removeChild(el);
+};
+
+/* SECTION: boot */
+let initialized = false;
+NumerisDrawFeed.watch("lotto649", (draws) => {
+  REAL_ROWS = NumerisDrawFeed.workbenchRows(draws);
+  if (initialized) {
+    if ($("dataSrc").value === "real") applySrc();
+    return;
+  }
+  initialized = true;
+  load();
+  if (REAL_ROWS.length || $("dataSrc").value !== "real") applySrc();
+});
+</script>
+</body>
+</html>

@@ -9,6 +9,7 @@ on:
     paths:
       - "docs/data/.gitkeep"
       - "scripts/export_daily539_static.py"
+      - "scripts/export_539_workbench.py"
       - ".github/workflows/update-daily539-pages.yml"
 
 permissions:
@@ -48,6 +49,7 @@ jobs:
           python -m scripts.backtest_539_adjacent_counts
           node scripts/verify_539_adjacent.cjs
           node scripts/verify_539_adjacent_counts.cjs
+          python -m scripts.export_539_workbench
       - name: 重建同截止日的539合併排名（含最久未開因素）
         run: |
           python - <<'PY'
@@ -64,7 +66,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/data/daily539.json docs/data/539-aibrief.json docs/data/539-aibrief-status.json
+          git add docs/data/daily539.json docs/data/539-workbench.json docs/data/539-aibrief.json docs/data/539-aibrief-status.json
           git add docs/data/539-combined.json docs/539-combined-reference.html
           git add docs/539-adjacent-backtest.html docs/539-adjacent-backtest.json
           git add docs/539-adjacent-counts-backtest.html docs/539-adjacent-counts-backtest.json

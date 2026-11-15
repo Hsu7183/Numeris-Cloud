@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今彩539｜滑動窗區間統計試算台</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#141a2f; --panel2:#1a2138; --line:#253052;
+  --text:#e8ecf8; --muted:#9aa6c8; --gold:#f5b301; --gold-dim:#8a6a12;
+  --green:#34d399; --red:#f0616d; --blue:#6aa8ff; --purple:#b48cf2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;line-height:1.55}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:14px 4px 18px}
+header h1{font-size:26px;color:var(--gold);letter-spacing:1px}
+header .sub{color:var(--muted);font-size:13px}
+.badge{font-size:11px;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:2px 10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-size:15px;margin-bottom:10px;color:var(--gold)}
+.card h2 .tagn{font-size:11px;color:var(--muted);font-weight:normal;margin-left:8px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c7{grid-column:span 7}.c6{grid-column:span 6}.c5{grid-column:span 5}.c4{grid-column:span 4}
+label{font-size:12.5px;color:var(--muted);display:block;margin-bottom:4px}
+input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13.5px;font-family:inherit}
+textarea{min-height:96px;resize:vertical;font-size:12.5px;line-height:1.5}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold-dim)}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.hint{font-size:11.5px;color:var(--muted);margin-top:6px}
+.warn{font-size:13px;color:var(--red);margin-top:10px;display:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:14px 0}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.kpi .k{font-size:11.5px;color:var(--muted)}
+.kpi .v{font-size:20px;font-weight:700;margin-top:2px}
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text)}
+.ball{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;font-size:13px;font-weight:700;background:radial-gradient(circle at 32% 30%,#ffe08a,#d99a00 70%);color:#3a2600;margin:2px;flex:none}
+.ball.hit{background:radial-gradient(circle at 32% 30%,#ff9d9d,#c22b3c 70%);color:#fff}
+.ball.pred{outline:2px solid var(--blue);outline-offset:1px}
+.balls{display:flex;flex-wrap:wrap;align-items:center;gap:1px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0 2px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--muted);font-size:11px;font-family:inherit}
+svg .axis{stroke:var(--line)}
+svg .zero{stroke:#3a4a78;stroke-width:1.5}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{color:var(--muted);text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid #1c2440;vertical-align:middle}
+.scroll{max-height:320px;overflow:auto}
+.heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px}
+.hcell{border-radius:8px;border:1px solid var(--line);padding:5px 4px;text-align:center;background:var(--panel2)}
+.hcell .n{font-size:14px;font-weight:700}
+.hcell .f{font-size:10.5px;opacity:.85}
+.hcell .g{font-size:10px;opacity:.6}
+.hcell.dormant{border-style:dashed;border-color:var(--blue)}
+.hcell.hot4{background:#f4f6fb;color:#141a2f;border-color:#c9d2e6}
+.hcell.hot4 .f{opacity:1;font-weight:600}
+.hcell.hot4 .g{opacity:.65}
+.nextpick{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:6px}
+.mtx{overflow:auto;padding-bottom:4px}
+table.mtxb{border-collapse:separate;border-spacing:1px;font-size:10px}
+table.mtxb th{padding:1px 2px;font-size:9.5px;color:var(--muted);border:none;text-align:center;min-width:20px}
+table.mtxb td{padding:0;border:none;height:20px;min-width:20px;text-align:center;font-size:9.5px;border-radius:3px;background:var(--panel2);color:var(--muted)}
+table.mtxb td.diag{background:#2b3355;color:#6d7ba3}
+table.mtxb td.hi{color:#fff;font-weight:700}
+table.mtxb th.rh{text-align:right;padding-right:5px}
+.srow{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13px}
+.bar{flex:1;height:8px;border-radius:4px;background:var(--panel2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px}
+.verdict{border-left:3px solid var(--gold);padding:8px 12px;background:var(--panel2);border-radius:0 8px 8px 0;font-size:13px;margin-bottom:10px}
+.verdict b{color:var(--gold)}
+.tag{display:inline-block;font-size:10.5px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted);margin-left:6px}
+.sig-y{color:var(--green);font-weight:700}.sig-n{color:var(--red);font-weight:700}
+footer{margin-top:26px;color:var(--muted);font-size:12.5px;border-top:1px dashed var(--line);padding-top:14px}
+footer p{margin-bottom:8px}
+footer b{color:var(--text)}
+@media(max-width:900px){.c8,.c7,.c5,.c4{grid-column:span 12}}
+</style>
+<link rel="stylesheet" href="workbench.css">
+</head>
+<body>
+<nav class="workbench-nav" aria-label="試算工具導覽"><a href="index.html">← 試算工具</a><span id="draw-feed-status" role="status">正在讀取開獎資料…</span></nav>
+<div class="wrap">
+<header>
+  <h1>今彩539 滑動窗試算台</h1>
+  <span class="sub">以最近 W 期做區間統計 → 選號 → 對照當期開獎逐期回測</span>
+  <span class="badge">純瀏覽器本地運行</span>
+  <span class="badge" id="hdrTime">資料時間序：—</span>
+</header>
+
+<div class="grid">
+  <div class="card c12">
+    <h2>下一期窗口選號 <span class="tagn">用最後 W 期統計示範，非中獎預測</span></h2>
+    <div class="nextpick" id="nextPick"></div>
+    <p class="hint" id="nextNote"></p>
+  </div>
+
+  <div class="card c12">
+    <h2>參數台 <span class="tagn">修改任一參數即時重新試算</span></h2>
+    <div class="ctl">
+      <div>
+        <label>資料來源</label>
+        <select id="dataSrc">
+          <option value="real">官網真實資料</option>
+          <option value="sim">隨機模擬資料（內建）</option>
+          
+          <option value="custom">自行導入（貼上開獎資料）</option>
+        </select>
+      </div>
+      <div id="boxN"><label>模擬期數</label><input type="number" id="simN" min="60" max="3000" step="10" value="600"></div>
+      <div id="boxSeed"><label>隨機種子</label><input type="number" id="seed" min="1" max="999999999" value="20261025"></div>
+      <div><label>窗口大小 W（期）</label><input type="range" id="winW" min="2" max="60" value="20"><div class="hint">當期之前 W 期內：出現次數＝頻率、距上次出現＝遺漏</div></div>
+      <div><label>窗口內選號策略</label>
+        <select id="strat">
+          <option value="hot">熱號：頻率最高 5 碼</option>
+          <option value="cold">冷號：頻率最低 5 碼</option>
+          <option value="overdue">遺漏回補：遺漏最大 5 碼</option>
+          <option value="hybrid">混合：頻率最高 3 碼＋遺漏最大 2 碼</option>
+        </select>
+      </div>
+      <div><label>投注倍數</label><input type="number" id="mult" min="1" max="100" value="1"><div class="hint">每注 50 元</div></div>
+      <div><label>隨機基線組數</label><input type="number" id="baseM" min="5" max="500" value="50"><div class="hint">每期隨機選號取平均，作對照</div></div>
+      <div><label>多窗口候選 W</label><input type="text" id="mwCands" value="5,10,15,20,30,40,50,60"><div class="hint">逗號分隔，最多 8 個；超出資料長度的自動忽略</div></div>
+      <div><label>共現矩陣口徑</label>
+        <select id="coScope">
+          <option value="win">滑窗口徑：最近 W 期</option>
+          <option value="all">全部資料期數</option>
+          <option value="custom">自訂期數</option>
+        </select>
+        <div id="boxCoN" style="display:none;margin-top:6px"><input type="number" id="coN" min="5" max="3000" value="50"></div>
+      </div>
+    </div>
+    <div id="boxCustom" style="display:none;margin-top:10px">
+      <label>自訂資料：每行一期，格式「期號,日期,04 20 22 30 38」（獎號放行尾，空白或逗號分隔）</label>
+      <textarea id="customText" placeholder="115000229,2026-09-21,04 20 22 30 38&#10;115000187,2026-08-03,07 21 23 28 35&#10;……由舊到新排列"></textarea>
+      <div class="hint">自訂資料與參數保存在當前瀏覽器，重新開啟頁面仍會保留。</div>
+    </div>
+    <div class="warn" id="warnMsg"></div>
+  </div>
+
+  <div class="c12">
+    <div class="kpis" id="kpis"></div>
+  </div>
+
+  <div class="card c12">
+    <h2>累計損益曲線 <span class="tagn">策略 vs 隨機基線 vs 理論期望（不含頭獎命中之平滑線）</span><span class="tagn" id="pnlTime"></span></h2>
+    <div class="legend" id="pnlLegend"></div>
+    <div id="pnlChart"></div>
+  </div>
+
+  <div class="card c12">
+    <h2>多窗口對比 <span class="tagn">同一策略在多個 W 下各自回測 · 比較基準請用「每期平均淨損益」（不同 W 回測期數不同，累計值不可直接比）</span><span class="tagn" id="mwTime"></span></h2>
+    <div style="overflow:auto"><table id="mwTable"></table></div>
+    <div class="legend" id="mwLegend" style="margin-top:12px"></div>
+    <div id="mwChart"></div>
+  </div>
+
+  <div class="card c12">
+    <h2>理論期望表（每注） <span class="tagn">純數理常量 · 與時間序／資料期數無關</span></h2>
+    <div style="overflow:auto"><table id="evTable"></table></div>
+  </div>
+
+  <div class="card c12">
+    <h2>命中碼數分布 <span class="tagn">策略實際 vs 理論期望期數</span><span class="tagn" id="distTime"></span></h2>
+    <div id="distChart"></div>
+  </div>
+
+  <div class="card c12">
+    <h2>共現矩陣 <span class="tagn" id="coTag">兩碼同期同時出現的次數（全資料範圍）</span></h2>
+    <div class="hint" style="margin-bottom:8px">今彩539 每期從 39 碼開出 5 碼，任意兩碼同期共現機率為 C(37,3)／C(39,5) ≈ <b id="coExpRate"></b>。色深＝實際共現次數相對理論期望的偏離幅度（紅＝高於期望、綠＝低於期望）；若紅格明顯多於綠格，代表存在成對偏離，但獨立隨機下偶爾偏離亦屬正常，樣本不夠多時不具統計意義。</div>
+    <div class="legend"><span><i style="background:#34d399"></i>低於期望</span><span><i style="background:#253052"></i>貼近期望</span><span><i style="background:#f0616d"></i>高於期望</span><span style="margin-left:auto">點格＝查看精確值</span></div>
+    <div class="mtx" id="coMtx"></div>
+    <div class="hint" id="coTop"></div>
+  </div>
+
+  <div class="card c12">
+    <h2>顯著性檢定 <span class="tagn" id="sigTag">策略表現 vs 純隨機理論 · 卡方／z／Bootstrap 三項檢定</span><span class="tagn" id="sigTime"></span></h2>
+    <div class="verdict" id="sigVerdict"></div>
+    <div class="grid" style="gap:14px">
+      <div class="card c6" style="background:transparent;border:none;padding:0">
+        <h2 style="font-size:13px">檢定一：命中碼數分布 − 卡方適合度檢定</h2>
+        <div style="overflow:auto"><table id="chiTable"></table></div>
+        <div class="hint" id="chiNote"></div>
+      </div>
+      <div class="card c6" style="background:transparent;border:none;padding:0">
+        <h2 style="font-size:13px">檢定二：回收率 − 自助法（Bootstrap）置信區間</h2>
+        <div class="srow"><span style="color:var(--muted);min-width:66px">點估計</span><span class="bar"><i id="bsMean" style="background:var(--gold)"></i></span><b id="bsMeanV"></b></div>
+        <div class="srow"><span style="color:var(--muted);min-width:66px">95% CI</span><span class="bar"><i id="bsCI" style="background:var(--blue);opacity:.55"></i></span><b id="bsCIV"></b></div>
+        <div style="overflow:auto;margin-top:8px"><table id="bootTable"></table></div>
+        <div class="hint" id="bootNote"></div>
+      </div>
+    </div>
+    <div style="overflow:auto;margin-top:12px"><table id="sigTable"></table></div>
+    <div class="hint">H₀（虛無假設）＝「窗口統計不創造優勢」，即策略命中分布與隨機選號無差異。p 值小於 0.05 才有足夠證據拒絕 H₀；若 p 值大，表示觀測差異可用隨機波動解釋。卡方檢定要求期望期數 ≥5，本期數不足時小碼數格會合併（見備注）。自助法重抽樣使用固定種子，結果可重現。</div>
+  </div>
+
+  <div class="card c12">
+    <h2>遺漏分箱檢定 <span class="tagn">各遺漏深度的下期出現率 vs 理論 5/39 · 檢「漏久必補」是否存在</span><span class="tagn" id="gapTime"></span></h2>
+    <div class="verdict" id="gapVerdict"></div>
+    <div style="overflow:auto"><table id="gapTable"></table></div>
+    <div class="hint" id="gapNote"></div>
+  </div>
+
+  <div class="card c12">
+    <h2>最後一窗快照 <span class="tagn" id="heatTag"></span></h2>
+    <div class="hint" style="margin-bottom:8px">色深＝窗口內出現次數（頻≥4 改白底）；虛線框＝整窗未出現（遺漏回補的候選）。排列＝依「漏」由多而少，漏同依「頻」多者先。</div>
+    <div class="heat" id="heat"></div>
+  </div>
+
+  <div class="card c12">
+    <h2>逐期回測明細 <span class="tagn">每列＝一個回測期</span><span class="tagn" id="detailTime"></span></h2>
+    <div class="scroll"><table id="detailTable"></table></div>
+  </div>
+</div>
+
+<footer>
+  <p><b>方法：</b>滑動窗口在第 t 期只統計第 t−W ～ t−1 期這一段區間（嚴格不看未來資料）：每換一期，舊區間頭部一期出窗、新一期入窗，頻率與遺漏只需增量更新，這正是滑動窗「只算差量」的核心。</p>
+  <p><b>結果解讀：</b>熱號／冷號／遺漏在統計上是同一件事的三種排序。今彩539 每期為獨立隨機事件，回測中曲線上下波動屬隨機漂移——若策略曲線長期貼著隨機基線與理論期望，即說明窗口統計「沒有」創造優勢，這本身就是試算要驗證的命題。</p>
+  <p><b>聲明：</b>本頁面是演算法與回測流程的教學性試算工具，不構成任何中獎預測或投注建議；請認合法國票、理性消費，未滿 18 歲不得購買。</p>
+</footer>
+</div>
+
+<script src="draw-feed.js"></script>
+<script>
+"use strict";
+var PRIZE = {5:8000000,4:20000,3:300,2:50,1:0,0:0};
+var BET = 50, POOL = 39, PICK = 5;
+var $ = function(id){ return document.getElementById(id); };
+
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function randDraw(rng){
+  var s = {}, out = [];
+  while (out.length < 5){
+    var n = 1 + Math.floor(rng() * 39);
+    if (!s[n]){ s[n] = 1; out.push(n); }
+  }
+  return out.sort(function(a,b){ return a-b; });
+}
+function comb(a,b){
+  if (b < 0 || b > a) return 0;
+  b = Math.min(b, a-b); var r = 1;
+  for (var i = 0; i < b; i++) r = r * (a-i) / (i+1);
+  return Math.round(r);
+}
+var T5 = comb(39,5);
+function hyperP(m){ return comb(5,m) * comb(34,5-m) / T5; }
+var EV = 0; for (var m2=0; m2<=5; m2++) EV += hyperP(m2) * PRIZE[m2];
+
+var REAL_ROWS = [];
+function realDataset(){
+  return REAL_ROWS.map(function(r){
+    return { issue:r[0], date:r[1], nums:r[2].split(/\s+/).map(Number) };
+  });
+}
+function simDataset(n, seed){
+  var rng = mulberry32(seed * 2 + 1), out = [];
+  for (var i=0;i<n;i++){
+    out.push({ issue:"SIM-"+String(i+1).padStart(4,"0"), date:"", nums:randDraw(rng) });
+  }
+  return out;
+}
+function parseCustom(text){
+  var lines = (text||"").split(/\r?\n/), out = [];
+  for (var i=0;i<lines.length;i++){
+    var line = lines[i].trim(); if (!line) continue;
+    var toks = line.split(/[\s,;，、|]+/).filter(Boolean);
+    var inRange = [], seen = {};
+    for (var j=0;j<toks.length;j++){
+      var v = parseInt(toks[j],10);
+      if (!isNaN(v) && v>=1 && v<=39 && !seen[v]){ seen[v]=1; inRange.push(v); }
+    }
+    if (inRange.length < 5) continue;
+    var nums = inRange.slice(-5).sort(function(a,b){ return a-b; });
+    var meta = toks.filter(function(t){ var v=parseInt(t,10); return isNaN(v)||v<1||v>39; });
+    var dateM = line.match(/\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2}/);
+    out.push({ issue:(dateM?dateM[0]:(meta[0]||("行"+(i+1)))), date:"", nums:nums });
+  }
+  return out;
+}
+
+function windowStats(draws, t, W){
+  var freq = new Array(40).fill(0), gap = new Array(40).fill(-1);
+  for (var i=t-1; i>=t-W && i>=0; i--){
+    var ns = draws[i].nums;
+    for (var k=0;k<ns.length;k++){
+      var n = ns[k]; freq[n]++;
+      if (gap[n] < 0) gap[n] = t-1-i;
+    }
+  }
+  for (var n2=1;n2<=39;n2++) if (gap[n2] < 0) gap[n2] = W+1;
+  return { freq:freq, gap:gap };
+}
+var STRAT_NAME = { hot:"熱號", cold:"冷號", overdue:"遺漏回補", hybrid:"混合(熱3+漏2)" };
+function pickNums(strategy, st){
+  var nums = [], i;
+  for (i=1;i<=39;i++) nums.push(i);
+  function byHot(a,b){ return st.freq[b]-st.freq[a] || st.gap[a]-st.gap[b] || a-b; }
+  function byCold(a,b){ return st.freq[a]-st.freq[b] || st.gap[b]-st.gap[a] || a-b; }
+  function byGap(a,b){ return st.gap[b]-st.gap[a] || st.freq[b]-st.freq[a] || a-b; }
+  if (strategy === "hot") return nums.sort(byHot).slice(0,5);
+  if (strategy === "cold") return nums.sort(byCold).slice(0,5);
+  if (strategy === "overdue") return nums.sort(byGap).slice(0,5);
+  var hot3 = nums.slice().sort(byHot).slice(0,3);
+  var restGap = nums.filter(function(n){ return hot3.indexOf(n)<0; }).sort(byGap).slice(0,2);
+  return hot3.concat(restGap);
+}
+function countHits(pred, actual){
+  var s = {}, c = 0;
+  for (var i=0;i<actual.length;i++) s[actual[i]] = 1;
+  for (var j=0;j<pred.length;j++) if (s[pred[j]]) c++;
+  return c;
+}
+
+/* ===== 統計工具：lgamma / 不完全Gamma / 卡方與常態相關 p 值 ===== */
+function lgamma(x){
+  var c = [0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,
+           -176.61502916514405,12.50158077382919,-0.13857109526572012,9.9843695780195716e-6,
+           1.5056327351493116e-7];
+  if (x < 0.5) return Math.log(Math.PI/Math.sin(Math.PI*x)) - lgamma(1-x);
+  x -= 1; var a = c[0], t = x + 7.5;
+  for (var i=1;i<9;i++) a += c[i]/(x+i);
+  return 0.5*Math.log(2*Math.PI) + (x+0.5)*Math.log(t) - t + Math.log(a);
+}
+function gammq(a,x){
+  if (a<=0 || x<0) return NaN;
+  if (x===0) return 1;
+  if (x < a+1){
+    var sum=1/a, term=sum;
+    for (var i=1;i<=300;i++){ term*=x/(a+i); sum+=term; if (Math.abs(term)<Math.abs(sum)*1e-12) break; }
+    return 1 - sum*Math.exp(-x + a*Math.log(x) - lgamma(a));
+  }
+  var tiny=1e-300, b=x+1-a, cN=1/tiny, d=1/b, h=d;
+  for (var j=1;j<=300;j++){
+    var an=-j*(j-a); b+=2;
+    d=an*d+b; if (Math.abs(d)<tiny) d=tiny;
+    cN=b+an/cN; if (Math.abs(cN)<tiny) cN=tiny;
+    d=1/d; var del=d*cN; h*=del;
+    if (Math.abs(del-1)<1e-12) break;
+  }
+  return Math.exp(-x + a*Math.log(x) - lgamma(a))*h;
+}
+function chi2UpperP(x, df){ if (!(df>0)) return NaN; if (x<=0) return 1; return gammq(df/2, x/2); }
+function normUpperP(z){
+  var t=1/(1+0.2316419*Math.abs(z));
+  var d=0.3989422804014327*Math.exp(-z*z/2);
+  var p=d*t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+  return z>0 ? 1-p : p;
+}
+function twoSidedP(z){ if (isNaN(z)) return NaN; return 2*normUpperP(Math.abs(z)); }
+function fmtP(p){
+  if (isNaN(p)) return "—";
+  if (p < 0.0001) return "&lt; 0.0001";
+  return p.toFixed(4);
+}
+function mean(a){ var s=0; for (var i=0;i<a.length;i++) s+=a[i]; return a.length?s/a.length:NaN; }
+function sd(a){
+  var m=mean(a), s=0;
+  for (var i=0;i<a.length;i++){ var d=a[i]-m; s+=d*d; }
+  return a.length>1 ? Math.sqrt(s/(a.length-1)) : NaN;
+}
+
+function fmtMoney(v){
+  var s = v<0 ? "-" : (v>0 ? "+" : "");
+  return s + Math.abs(Math.round(v)).toLocaleString("zh-TW");
+}
+function ballHtml(n, cls){ return '<span class="ball '+(cls||"")+'">'+String(n).padStart(2,"0")+'</span>'; }
+function ballsHtml(nums, actualSet, hitClass){
+  return '<span class="balls">'+nums.map(function(n){
+    var cls = "";
+    if (hitClass && actualSet && actualSet[n]) cls = "hit";
+    return ballHtml(n, cls);
+  }).join("")+'</span>';
+}
+function pct(v){ return (v*100).toFixed(2)+"%"; }
+
+var lastCfg = null;
+/* ===== 時間序標示：回傳「起日 ～ 迄日（起期號～迄期號，N 期）」；無日期資料退化為期數 ===== */
+function tRange(draws, i0, i1){
+  if (!draws || !draws.length) return "—";
+  if (i0 < 0) i0 = 0;
+  if (i1 > draws.length - 1) i1 = draws.length - 1;
+  var a = draws[i0], b = draws[i1], cnt = i1 - i0 + 1;
+  if (a && b && a.date && b.date) return a.date+" ～ "+b.date+"（"+a.issue+"～"+b.issue+"，"+cnt+" 期）";
+  return "第 "+(i0+1)+" ～ "+(i1+1)+" 期（"+cnt+" 期，資料無日期）";
+}
+function readCfg(){
+  var Wmax = 60;
+  var W = parseInt($("winW").value,10);
+  var cands = $("mwCands").value.split(/[,;，、\s]+/).map(function(x){ return parseInt(x,10); })
+    .filter(function(v){ return !isNaN(v) && v>=2 && v<=60; });
+  var uniq = []; 
+  for (var ci=0;ci<cands.length;ci++) if (uniq.indexOf(cands[ci])<0) uniq.push(cands[ci]);
+  return {
+    src: $("dataSrc").value,
+    simN: Math.max(60, Math.min(3000, parseInt($("simN").value,10)||600)),
+    seed: Math.max(1, parseInt($("seed").value,10)||1),
+    W: W,
+    strategy: $("strat").value,
+    mult: Math.max(1, Math.min(100, parseInt($("mult").value,10)||1)),
+    baseM: Math.max(5, Math.min(500, parseInt($("baseM").value,10)||50)),
+    mwCands: uniq.slice(0,8),
+    coScope: $("coScope").value,
+    coN: Math.max(5, Math.min(3000, parseInt($("coN").value,10)||50)),
+    customText: $("customText").value
+  };
+}
+function getDataset(cfg){
+  if (cfg.src === "real") return realDataset();
+  if (cfg.src === "custom") return parseCustom(cfg.customText);
+  return simDataset(cfg.simN, cfg.seed);
+}
+
+function lineChartSVG(seriesArr, n){
+  var Wpx=1060, Hpx=280, padL=64, padR=14, padT=12, padB=26;
+  var mn=Infinity, mx=-Infinity, si, pi;
+  for (si=0;si<seriesArr.length;si++) for (pi=0;pi<seriesArr[si].pts.length;pi++){
+    var v=seriesArr[si].pts[pi]; if(v<mn)mn=v; if(v>mx)mx=v;
+  }
+  if (mn>0) mn=0; if (mx<0) mx=0;
+  var span=(mx-mn)||1; mn-=span*0.05; mx+=span*0.05;
+  function X(i){ return padL + (n<=1?0:i*(Wpx-padL-padR)/(n-1)); }
+  function Y(v){ return padT + (mx-v)*(Hpx-padT-padB)/(mx-mn); }
+  var svg='<svg viewBox="0 0 '+Wpx+' '+Hpx+'">';
+  var g, gl=4;
+  for (g=0;g<=gl;g++){
+    var gv = mn + (mx-mn)*g/gl, gy = Y(gv);
+    svg+='<line class="axis" x1="'+padL+'" y1="'+gy+'" x2="'+(Wpx-padR)+'" y2="'+gy+'" opacity="0.5"/>';
+    svg+='<text x="'+(padL-6)+'" y="'+(gy+3.5)+'" text-anchor="end">'+Math.round(gv).toLocaleString("zh-TW")+'</text>';
+  }
+  svg+='<line class="zero" x1="'+padL+'" y1="'+Y(0)+'" x2="'+(Wpx-padR)+'" y2="'+Y(0)+'"/>';
+  for (si=0;si<seriesArr.length;si++){
+    var s=seriesArr[si], pts=[], off=s.off||0;
+    for (pi=0;pi<s.pts.length;pi++) pts.push(X(pi+off).toFixed(1)+","+Y(s.pts[pi]).toFixed(1));
+    svg+='<polyline fill="none" stroke="'+s.color+'" stroke-width="'+(s.w||2)+'" '+(s.dash?'stroke-dasharray="'+s.dash+'" ':'')+'points="'+pts.join(" ")+'"/>';
+  }
+  svg+='<text x="'+padL+'" y="'+(Hpx-8)+'">第 1 期</text>';
+  svg+='<text x="'+(Wpx-padR)+'" y="'+(Hpx-8)+'" text-anchor="end">共 '+n+' 期</text>';
+  return svg+'</svg>';
+}
+function distChartSVG(counts, expected, n){
+  var Wpx=660, Hpx=260, padL=48, padB=34, padT=10, padR=10;
+  var mx=0, i;
+  for (i=0;i<6;i++) mx = Math.max(mx, counts[i], expected[i]);
+  if (mx<=0) mx=1; mx*=1.15;
+  var bw=(Wpx-padL-padR)/6;
+  var svg='<svg viewBox="0 0 '+Wpx+' '+Hpx+'">';
+  var H = Hpx-padT-padB;
+  svg+='<line class="axis" x1="'+padL+'" y1="'+(padT+H)+'" x2="'+(Wpx-padR)+'" y2="'+(padT+H)+'"/>';
+  for (i=0;i<6;i++){
+    var x0=padL+i*bw+bw*0.12, w1=bw*0.34;
+    var h1=counts[i]/mx*H, h2=expected[i]/mx*H;
+    svg+='<rect x="'+x0+'" y="'+(padT+H-h1)+'" width="'+w1+'" height="'+Math.max(0.5,h1)+'" fill="#f5b301" rx="2"/>';
+    if (counts[i]>0) svg+='<text x="'+(x0+w1/2)+'" y="'+(padT+H-h1-4)+'" text-anchor="middle" fill="#e8ecf8">'+counts[i]+'</text>';
+    var x2=x0+w1+3;
+    svg+='<rect x="'+x2+'" y="'+(padT+H-h2)+'" width="'+w1+'" height="'+Math.max(0.5,h2)+'" fill="#6aa8ff" opacity="0.65" rx="2"/>';
+    svg+='<text x="'+(x0+bw*0.38)+'" y="'+(padT+H+16)+'" text-anchor="middle">'+i+' 碼</text>';
+  }
+  svg+='<text x="'+(padL-6)+'" y="'+(padT+8)+'" text-anchor="end">'+Math.round(mx)+'</text>';
+  return svg+'</svg>';
+}
+
+function render(cfg, draws){
+  var len = draws.length, W = cfg.W;
+  var n = len - W;
+  if (n < 3){
+    $("warnMsg").style.display="block";
+    $("warnMsg").textContent = "資料期數不足：目前 " + len + " 期，需至少 W+3 期才能開始回測。請縮小窗口或增加資料期數。";
+    return;
+  }
+  $("warnMsg").style.display="none";
+  // —— 時間序標註（整份資料 / 回測範圍 / 窗口範圍）——
+  $("hdrTime").textContent = "資料時間序："+tRange(draws,0,len-1);
+  var btTime = "時間序："+tRange(draws,W,len-1);
+  $("pnlTime").textContent = btTime;
+  $("distTime").textContent = btTime;
+  $("detailTime").textContent = btTime+" · 排列由新到舊";
+  $("sigTime").textContent = "檢定樣本＝"+btTime;
+  var i, t, rngB = mulberry32(cfg.seed + 777);
+  var cumS=[], cumB=[], theo=[], s1=0, s2=0, peak=0, dd=0, hits=[0,0,0,0,0,0], ge4=0;
+  var rows=[];
+  for (i=0;i<n;i++){
+    t = W + i;
+    var st = windowStats(draws, t, W);
+    var pred = pickNums(cfg.strategy, st);
+    var actual = draws[t].nums;
+    var m = countHits(pred, actual);
+    hits[m]++; if (m>=4) ge4++;
+    var prize = PRIZE[m]*cfg.mult, cost = BET*cfg.mult;
+    s1 += prize - cost;
+    cumS.push(s1);
+    if (s1>peak) peak=s1; if (s1-peak<dd) dd=s1-peak;
+    var tot=0;
+    for (var b=0;b<cfg.baseM;b++){ tot += PRIZE[countHits(randDraw(rngB), actual)]; }
+    s2 += (tot/cfg.baseM - BET) * cfg.mult;
+    cumB.push(s2);
+    theo.push((EV - BET) * cfg.mult * (i+1));
+    rows.push({ issue:draws[t].issue, date:draws[t].date, actual:actual, pred:pred, m:m, prize:prize, cost:cost, net:prize-cost });
+  }
+  var totalCost = BET*cfg.mult*n;
+  var totalPrize = cumS[n-1] + totalCost;
+  var roi = totalPrize>0 ? (totalPrize/totalCost) : 0;
+  var kpiHtml =
+    '<div class="kpi"><div class="k">回測期數 × 倍數</div><div class="v neu">'+n+' × '+cfg.mult+'</div></div>'+
+    '<div class="kpi"><div class="k">策略累計淨損益</div><div class="v '+(cumS[n-1]>=0?"pos":"neg")+'">NT$ '+fmtMoney(cumS[n-1])+'</div></div>'+
+    '<div class="kpi"><div class="k">策略回收率</div><div class="v '+(roi>=1?"pos":"neg")+'">'+pct(roi)+'</div></div>'+
+    '<div class="kpi"><div class="k">隨機基線淨損益（'+cfg.baseM+' 組平均）</div><div class="v '+(cumB[n-1]>=0?"pos":"neg")+'">NT$ '+fmtMoney(cumB[n-1])+'</div></div>'+
+    '<div class="kpi"><div class="k">理論期望淨損益</div><div class="v neg">NT$ '+fmtMoney(theo[n-1])+'</div></div>'+
+    '<div class="kpi"><div class="k">最大回撤</div><div class="v neg">NT$ '+fmtMoney(dd)+'</div></div>'+
+    '<div class="kpi"><div class="k">命中 ≥4 碼次數</div><div class="v '+(ge4>0?"pos":"neu")+'">'+ge4+'</div></div>';
+  $("kpis").innerHTML = kpiHtml;
+
+  $("pnlLegend").innerHTML =
+    '<span><i style="background:#f5b301"></i>'+STRAT_NAME[cfg.strategy]+'（窗口策略）</span>'+
+    '<span><i style="background:#6aa8ff"></i>隨機基線平均</span>'+
+    '<span><i style="background:#9aa6c8"></i>理論期望線</span>';
+  $("pnlChart").innerHTML = lineChartSVG([
+    { pts:theo, color:"#9aa6c8", w:1.5, dash:"5 4" },
+    { pts:cumB, color:"#6aa8ff", w:2 },
+    { pts:cumS, color:"#f5b301", w:2.5 }
+  ], n);
+
+  var expected = [];
+  for (i=0;i<6;i++) expected.push(hyperP(i)*n);
+  $("distChart").innerHTML =
+    '<div class="legend"><span><i style="background:#f5b301"></i>策略實際次數</span><span><i style="background:#6aa8ff"></i>理論期望次數</span></div>'+
+    distChartSVG(hits, expected, n);
+
+  var stLast = windowStats(draws, len, W);
+  var nextPred = pickNums(cfg.strategy, stLast);
+  $("nextPick").innerHTML = nextPred.map(function(x){ return ballHtml(x,"pred"); }).join("");
+  $("nextNote").textContent = "策略："+STRAT_NAME[cfg.strategy]+"；統計窗口＝最後 "+W+" 期（"+tRange(draws,len-W,len-1)+"，不含任何未來資料）；選號供下一期（尚未開獎）使用。";
+
+  var evRows = '<tr><th>中幾碼</th><th>機率</th><th>約 1/?</th><th>獎金</th><th>期望/注</th></tr>';
+  var evSum = 0;
+  for (i=5;i>=0;i--){
+    var p = hyperP(i), c = p*PRIZE[i]; evSum += c;
+    evRows += '<tr><td>'+i+' 碼</td><td>'+p.toFixed(6)+'</td><td>'+(p>0?Math.round(1/p).toLocaleString("zh-TW"):"—")+'</td><td>'+PRIZE[i].toLocaleString("zh-TW")+'</td><td>'+c.toFixed(3)+'</td></tr>';
+  }
+  evRows += '<tr><td><b>每注合計</b></td><td colspan="3">回收率 '+pct(evSum/BET)+'</td><td><b>NT$ '+evSum.toFixed(2)+'</b></td></tr>';
+  evRows += '<tr><td>每注淨期望</td><td colspan="4" class="neg"><b>NT$ '+(evSum-BET).toFixed(2)+'（投入 '+BET+' 元）</b></td></tr>';
+  $("evTable").innerHTML = evRows;
+
+  $("heatTag").textContent = "窗口＝最後 "+W+" 期 · 共 39 碼 · 時間序："+tRange(draws,len-W,len-1);
+  var maxF = 1;
+  for (i=1;i<=39;i++) if (stLast.freq[i]>maxF) maxF = stLast.freq[i];
+  // 依「漏」由多而少排序；漏同→頻多者先；再同→號碼小者先
+  var heatOrder = [];
+  for (i=1;i<=39;i++) heatOrder.push(i);
+  heatOrder.sort(function(a,b){ return (stLast.gap[b]-stLast.gap[a]) || (stLast.freq[b]-stLast.freq[a]) || (a-b); });
+  var heatHtml = "";
+  for (var hi=0;hi<heatOrder.length;hi++){
+    var n = heatOrder[hi];
+    var a = stLast.freq[n]/maxF*0.85;
+    var hot4 = stLast.freq[n]>=4;
+    heatHtml += '<div class="hcell'+(stLast.gap[n]>W?" dormant":"")+(hot4?" hot4":"")+'"'+(hot4?'':' style="background:rgba(245,179,1,'+(a*0.22).toFixed(3)+')"')+">"+
+      '<div class="n">'+String(n).padStart(2,"0")+'</div><div class="f">頻 '+stLast.freq[n]+'</div><div class="g">漏 '+stLast.gap[n]+'</div></div>';
+  }
+  $("heat").innerHTML = heatHtml;
+
+  var dHtml = '<tr><th>#</th><th>期號</th><th>日期</th><th>當期開獎</th><th>窗口選號</th><th>命中</th><th>獎金</th><th>投入</th><th>淨損益</th></tr>';
+  var cap = Math.min(rows.length, 300);
+  var dStart = rows.length - cap;
+  for (var ri = rows.length - 1; ri >= dStart; ri--){
+    var r = rows[ri], aset = {}; r.actual.forEach(function(x){ aset[x]=1; });
+    dHtml += '<tr><td>'+(ri+1)+'</td><td>'+r.issue+'</td><td>'+(r.date||"—")+'</td>'+
+      '<td>'+ballsHtml(r.actual, null, "")+'</td>'+
+      '<td>'+ballsHtml(r.pred, aset, "hit")+'</td>'+
+      '<td><b>'+r.m+'</b> 碼</td><td>'+r.prize.toLocaleString("zh-TW")+'</td><td>'+r.cost.toLocaleString("zh-TW")+'</td>'+
+      '<td class="'+(r.net>0?"pos":(r.net<0?"neg":"neu"))+'">'+fmtMoney(r.net)+'</td></tr>';
+  }
+  if (rows.length > cap) dHtml += '<tr><td colspan="9" style="color:var(--muted)">僅顯示最新 '+cap+' 期（共 '+rows.length+' 期，排列由新到舊）</td></tr>';
+  $("detailTable").innerHTML = dHtml;
+
+  renderMultiWindow(cfg, draws);
+  renderCoMtx(cfg, draws);
+  renderSignificance(cfg, backtestAtW(cfg, draws, W));
+  renderGapTest(cfg, draws);
+}
+
+/* ===== 功能一：多窗口對比 ===== */
+var MW_COLORS = ["#6aa8ff","#34d399","#b48cf2","#f0616d","#f5b301","#4dd8e0","#ff9d5c","#9ae06a"];
+function backtestAtW(cfg, draws, W){
+  var len = draws.length, n = len - W;
+  if (n < 3) return null;
+  var cum=0, peak=0, dd=0, ge4=0, ge1=0, cumPts=[], nets=[], hitsArr=[], prizes=[], costEach=BET*cfg.mult;
+  for (var i=0;i<n;i++){
+    var t = W + i;
+    var st = windowStats(draws, t, W);
+    var pred = pickNums(cfg.strategy, st);
+    var m = countHits(pred, draws[t].nums);
+    hitsArr.push(m); if (m>=4) ge4++; if (m>=1) ge1++;
+    cum += PRIZE[m]*cfg.mult - costEach;
+    cumPts.push(cum);
+    nets.push(PRIZE[m]*cfg.mult - costEach);
+    prizes.push(PRIZE[m]*cfg.mult);
+    if (cum>peak) peak=cum; if (cum-peak<dd) dd=cum-peak;
+  }
+  var totalCost = costEach*n, totalPrize = cum + totalCost;
+  return { W:W, n:n, cum:cum, meanNet:cum/n, roi:totalCost>0?totalPrize/totalCost:0,
+           maxDD:dd, ge4:ge4, ge1rate:ge1/n, cumPts:cumPts, nets:nets, prizes:prizes, hits:hitsArr, costEach:costEach };
+}
+function renderMultiWindow(cfg, draws){
+  var maxW = Math.max(2, Math.min(60, draws.length - 3));
+  var cands = (cfg.mwCands && cfg.mwCands.length ? cfg.mwCands : [5,10,15,20,30,40,50,60])
+    .filter(function(w){ return w<=maxW && w>=2; });
+  if (cfg.W>=2 && cfg.W<=maxW && cands.indexOf(cfg.W)<0) cands.push(cfg.W);
+  cands.sort(function(a,b){ return a-b; });
+  if (!cands.length) cands = [maxW];
+  var results = cands.map(function(w){ return backtestAtW(cfg, draws, w); }).filter(Boolean);
+  var html = '<tr><th>窗口 W</th><th>回測期數</th><th>每期平均淨損益</th><th>累計淨損益</th><th>回收率</th><th>最大回撤</th><th>命中≥4碼</th><th>命中≥1碼率</th></tr>';
+  var best = null;
+  for (var i=0;i<results.length;i++) if (!best || results[i].meanNet>best.meanNet) best = results[i];
+  for (i=0;i<results.length;i++){
+    var r = results[i], cur = (r.W===cfg.W);
+    html += '<tr'+(cur?' style="background:rgba(245,179,1,.08)"':'')+'>'+
+      '<td><b>'+r.W+'</b>'+(cur?' <span class="tag">目前</span>':'')+(best&&r.W===best.W?' <span class="tag" style="color:var(--green);border-color:var(--green)">最佳均值</span>':'')+'</td>'+
+      '<td>'+r.n+'</td>'+
+      '<td class="'+(r.meanNet>=0?"pos":"neg")+'">NT$ '+fmtMoney(r.meanNet)+'</td>'+
+      '<td class="'+(r.cum>=0?"pos":"neg")+'">NT$ '+fmtMoney(r.cum)+'</td>'+
+      '<td class="'+(r.roi>=1?"pos":"neg")+'">'+pct(r.roi)+'</td>'+
+      '<td class="neg">NT$ '+fmtMoney(r.maxDD)+'</td>'+
+      '<td>'+r.ge4+'</td><td>'+pct(r.ge1rate)+'</td></tr>';
+  }
+  $("mwTable").innerHTML = html;
+  $("mwTime").textContent = "時間序：各窗口皆回測至最新一期 "+(draws[draws.length-1].date || "（資料無日期）");
+  var series = [], leg = "";
+  var longest = 0; for (i=0;i<results.length;i++) longest = Math.max(longest, results[i].n);
+  for (i=0;i<results.length;i++){
+    var col = MW_COLORS[i % MW_COLORS.length];
+    series.push({ pts:results[i].cumPts, color:col, w:(results[i].W===cfg.W?3:1.8), off:longest-results[i].n });
+    leg += '<span><i style="background:'+col+'"></i>W='+results[i].W+'</span>';
+  }
+  $("mwLegend").innerHTML = leg;
+  $("mwChart").innerHTML = lineChartSVG(series, longest);
+  var note = document.getElementById("mwAlignNote");
+  if (!note){
+    note = document.createElement("div"); note.id = "mwAlignNote"; note.className = "hint";
+    $("mwChart").appendChild(note);
+  }
+  note.textContent = "各曲線依「絕對期號」右對齊：窗口越大的策略越晚開始回測，曲線起點不同屬正常；橫軸最右＝最新一期。";
+}
+
+/* ===== 功能二：共現矩陣 ===== */
+var CO_P = comb(37,3)/comb(39,5);
+function renderCoMtx(cfg, draws){
+  var L = draws.length, i, j, k;
+  // 口徑：win＝最近 W 期 / all＝全部資料 / custom＝最近 coN 期
+  var scopeN = cfg.coScope === "all" ? L : (cfg.coScope === "custom" ? cfg.coN : cfg.W);
+  scopeN = Math.max(5, Math.min(scopeN, L));
+  var kStart = L - scopeN;
+  var co = []; // co[a][b]，a/b 為 1–39，索引 0 保留不用
+  for (i=0;i<=39;i++) co.push(new Array(40).fill(0));
+  for (k=kStart;k<L;k++){
+    var ns = draws[k].nums;
+    for (i=0;i<ns.length;i++){
+      for (j=i+1;j<ns.length;j++){
+        var a=ns[i], b=ns[j];
+        co[a][b]++; co[b][a]++;
+      }
+    }
+  }
+  var exp = scopeN * CO_P;
+  var scopeName = cfg.coScope === "all" ? "全部資料" : (cfg.coScope === "custom" ? "最近自訂期數" : "滑動窗口（與上方 W 同值）");
+  $("coTag").textContent = "口徑＝"+scopeName+" · "+tRange(draws,kStart,L-1)+" · 理論期望共現 "+exp.toFixed(2)+" 次/對";
+  $("coExpRate").textContent = CO_P.toFixed(6);
+  var html = '<table class="mtxb"><tr><th></th>';
+  for (i=1;i<=39;i++) html += '<th>'+String(i).padStart(2,"0")+'</th>';
+  html += '</tr>';
+  var pairs = [];
+  var sdCo = Math.sqrt(exp*(1-CO_P));
+  for (i=1;i<=39;i++){
+    html += '<tr><th class="rh">'+String(i).padStart(2,"0")+'</th>';
+    for (j=1;j<=39;j++){
+      if (i===j){ html += '<td class="diag">—</td>'; continue; }
+      var o = co[i][j], r = exp>0 ? o/exp : 0;
+      var dev = r-1, zc = sdCo>0 ? (o-exp)/sdCo : 0;
+      var alpha = Math.min(Math.abs(zc)/4, 0.92);
+      var bg = dev>=0 ? 'rgba(240,97,109,'+(0.10+alpha*0.72).toFixed(3)+')'
+                      : 'rgba(52,211,153,'+(0.08+alpha*0.55).toFixed(3)+')';
+      if (Math.abs(zc)<0.8) bg = 'var(--panel2)';
+      html += '<td'+(Math.abs(zc)>=2?' class="hi"':'')+' style="background:'+bg+'" title="'+
+        String(i).padStart(2,"0")+' + '+String(j).padStart(2,"0")+'：共現 '+o+' 次（期望 '+exp.toFixed(2)+'，偏離 '+
+        (dev>=0?'+':'')+(dev*100).toFixed(0)+'%，z='+(zc>=0?"+":"")+zc.toFixed(2)+(Math.abs(zc)>=2?"，±2σ 以上":"")+'）">'+o+'</td>';
+      if (i<j) pairs.push({ a:i, b:j, o:o, dev:dev, z:zc });
+    }
+    html += '</tr>';
+  }
+  html += '</table>';
+  $("coMtx").innerHTML = html;
+  pairs.sort(function(x,y){ return y.z-x.z; });
+  var up = pairs.slice(0,3).filter(function(p){ return p.z>0; });
+  var dn = pairs.slice(-3).filter(function(p){ return p.z<0; }).reverse();
+  var sig = pairs.filter(function(p){ return Math.abs(p.z)>=2; });
+  function fmtP2(arr){ return arr.map(function(p){ return String(p.a).padStart(2,"0")+"＋"+String(p.b).padStart(2,"0")+"（"+p.o+" 次，z="+(p.z>=0?"+":"")+p.z.toFixed(2)+"）"; }).join("、"); }
+  var tip = "依 ±2σ（z 值）排序而非純倍率：窗口期數少時共現次數多為 0 或 1，倍率會虛高。";
+  if (sig.length) tip += " 達 |z|≥2 的配對共 "+sig.length+"/"+pairs.length+" 組（純隨機下預期約 "+(pairs.length*0.0456).toFixed(1)+" 組）：";
+  if (up.length) tip += "偏高 "+fmtP2(up)+"；";
+  if (dn.length) tip += "偏低 "+fmtP2(dn);
+  $("coTop").textContent = tip;
+}
+
+/* ===== 功能三：顯著性檢定 ===== */
+function renderSignificance(cfg, res){
+  if (!res){ $("sigVerdict").innerHTML="資料期數不足，無法檢定。"; $("chiTable").innerHTML=""; $("bootTable").innerHTML=""; $("sigTable").innerHTML=""; return; }
+  var n = res.n, i;
+  // —— 檢定一：卡方適合度（命中分布 vs 超幾何理論）——
+  var obs = [0,0,0,0,0,0];
+  for (i=0;i<res.hits.length;i++) obs[res.hits[i]]++;
+  var groups = [], curO=0, curE=0, curLbl=[];
+  for (i=0;i<6;i++){
+    curO += obs[i]; curE += hyperP(i)*n; curLbl.push(i);
+    if (curE >= 5){ groups.push({o:curO,e:curE,lbl:curLbl.slice()}); curO=0; curE=0; curLbl=[]; }
+  }
+  if (curLbl.length){
+    if (curE < 5 && groups.length){ var g0=groups[groups.length-1]; g0.o+=curO; g0.e+=curE; g0.lbl=g0.lbl.concat(curLbl); }
+    else groups.push({o:curO,e:curE,lbl:curLbl.slice()});
+  }
+  var X2=0, df=groups.length-1;
+  var chiHtml='<tr><th>命中碼數</th><th>觀察次數</th><th>理論期望</th><th>(O−E)²/E</th></tr>';
+  for (i=0;i<groups.length;i++){
+    var g=groups[i], c = g.e>0 ? (g.o-g.e)*(g.o-g.e)/g.e : 0; X2+=c;
+    var lbl = g.lbl.length===1 ? g.lbl[0]+" 碼" : g.lbl[0]+"–"+g.lbl[g.lbl.length-1]+" 碼（合併）";
+    chiHtml += '<tr><td>'+lbl+'</td><td>'+g.o+'</td><td>'+g.e.toFixed(2)+'</td><td>'+c.toFixed(3)+'</td></tr>';
+  }
+  var pChi = chi2UpperP(X2, df);
+  chiHtml += '<tr><td colspan="2"><b>χ² = '+X2.toFixed(3)+'，df = '+df+'</b></td><td colspan="2"><b>p = '+(df>0?fmtP(pChi):"—")+'</b></td></tr>';
+  $("chiTable").innerHTML = chiHtml;
+  $("chiNote").textContent = df<=0 ? "期望頻數不足，無法合併出有效自由度。" :
+    (pChi<0.05 ? "p < 0.05：命中分布與純隨機理論分布存在統計差異。" : "p ≥ 0.05：差異可用隨機波動解釋。");
+
+  // —— 檢定二：Bootstrap 回收率 95% CI ——
+  // 注意：理論回收率有約一半來自頭獎（機率 1/575,757），少數期數樣本幾乎不可能命中頭獎，
+  // 若直接與「含頭獎理論值」比較，CI 必然偏低而誤報訊號。故另以「不含頭獎」口徑做有意義的檢定。
+  var B = 1000, rngBs = mulberry32(cfg.seed + 1234);
+  var totalCost = res.costEach*n;
+  var prizesNJ = res.prizes.slice();      // 去除頭獎贡献
+  for (i=0;i<res.hits.length;i++) if (res.hits[i]===5) prizesNJ[i] = 0;
+  function bootCI(arr){
+    var out=[], j;
+    for (var b=0;b<B;b++){
+      var sp=0;
+      for (j=0;j<n;j++){ sp += arr[Math.floor(rngBs()*n)]; }
+      out.push(sp/totalCost);
+    }
+    out.sort(function(a,b2){ return a-b2; });
+    return { lo: out[Math.floor(0.025*B)], hi: out[Math.min(B-1, Math.ceil(0.975*B))] };
+  }
+  var ciAll = bootCI(res.prizes), ciNJ = bootCI(prizesNJ);
+  var ptAll = mean(res.prizes)*n/totalCost, ptNJ = mean(prizesNJ)*n/totalCost;
+  var theoAll = EV/BET, theoNJ = (EV - hyperP(5)*PRIZE[5])/BET;
+  var containsAll = (ciAll.lo <= theoAll && theoAll <= ciAll.hi);
+  var containsNJ  = (ciNJ.lo  <= theoNJ  && theoNJ  <= ciNJ.hi);
+  var jackCnt = 0; for (i=0;i<res.hits.length;i++) if (res.hits[i]===5) jackCnt++;
+  var scale = Math.max(ciNJ.hi, ciAll.hi, theoNJ, 0.4)*1.1;
+  $("bsMean").style.width = Math.min(100, ptNJ/scale*100).toFixed(1)+"%";
+  $("bsMeanV").textContent = pct(ptNJ);
+  $("bsCI").style.width = Math.max(1, (ciNJ.hi-ciNJ.lo)/scale*100).toFixed(1)+"%";
+  $("bsCI").style.marginLeft = Math.max(0, ciNJ.lo/scale*100).toFixed(1)+"%";
+  $("bsCIV").textContent = pct(ciNJ.lo)+" ～ "+pct(ciNJ.hi);
+  $("bootTable").innerHTML =
+    '<tr><th>項目（不含頭獎口徑）</th><th>數值</th></tr>'+
+    '<tr><td>樣本每期平均淨損益</td><td class="'+(res.meanNet>=0?"pos":"neg")+'">NT$ '+fmtMoney(res.meanNet)+'</td></tr>'+
+    '<tr><td>實際命中頭獎次數</td><td>'+jackCnt+' 次（理論 '+ (hyperP(5)*n).toFixed(6) +'）</td></tr>'+
+    '<tr><td>理論回收率（含頭獎）</td><td>'+pct(theoAll)+'</td></tr>'+
+    '<tr><td>理論回收率（不含頭獎）</td><td>'+pct(theoNJ)+'</td></tr>'+
+    '<tr><td>Bootstrap 重抽樣</td><td>'+B+' 次 × '+n+' 期（種子 '+cfg.seed+'）</td></tr>'+
+    '<tr><td>95% CI 是否涵蓋不含頭獎理論值</td><td class="'+(containsNJ?"sig-y":"sig-n")+'">'+(containsNJ?"是 — 無法拒絕 H₀":"否 — 偏離理論期望")+'</td></tr>'+
+    '<tr><td>95% CI 是否涵蓋含頭獎理論值</td><td class="'+(containsAll?"sig-y":"sig-n")+'">'+(containsAll?"是":"否（屬正常：頭獎期望难以在小樣本出現）")+'</td></tr>';
+  $("bootNote").textContent = "回收率＝總獎金／總投入。上表曲線與區間皆採「不含頭獎」口徑，因為頭獎期望占理論回收率約一半，"+n+" 期樣本几乎不可能命中，若用含頭獎理論值比較會穩定誤報。";
+
+  // —— 檢定三：均值 z 檢定（策略命中 vs 超幾何理論）——
+  var mu0 = PICK*(PICK/POOL);
+  var mBar = mean(res.hits);
+  // 超幾何分布精確變異數：Var = n*(K/N)*(1-K/N)*(N-n)/(N-1)，N=39,K=5,n=每期5碼
+  var var0 = PICK*(PICK/POOL)*(1-PICK/POOL)*(POOL-PICK)/(POOL-1);
+  var z = (mBar-mu0)/Math.sqrt(var0/n);
+  var pZ = twoSidedP(z);
+  $("sigTable").innerHTML =
+    '<tr><th>檢定</th><th> statistic</th><th>p 值</th><th>α=0.05 結論</th></tr>'+
+    '<tr><td>卡方適合度（命中分布 vs 理論）</td><td>χ² '+X2.toFixed(3)+'（df '+df+'）</td><td>'+fmtP(pChi)+'</td><td class="'+(pChi<0.05?"sig-y":"sig-n")+'">'+(pChi<0.05?"顯著差異":"無顯著差異")+'</td></tr>'+
+    '<tr><td>均值 z 檢定（策略平均命中 '+mBar.toFixed(3)+' vs 理論 '+mu0.toFixed(3)+'）</td><td>z = '+z.toFixed(3)+'</td><td>'+fmtP(pZ)+'</td><td class="'+(pZ<0.05?"sig-y":"sig-n")+'">'+(pZ<0.05?"顯著差異":"無顯著差異")+'</td></tr>'+
+    '<tr><td>回收率 Bootstrap 95% CI（不含頭獎）</td><td>'+pct(ciNJ.lo)+' ～ '+pct(ciNJ.hi)+'</td><td>—</td><td class="'+(containsNJ?"sig-y":"sig-n")+'">'+(containsNJ?"涵蓋理論值，無顯著差異":"未涵蓋理論值")+'</td></tr>';
+
+  var sigAny = (pChi<0.05)||(pZ<0.05)||(!containsNJ);
+  $("sigVerdict").innerHTML = sigAny
+    ? '<b>結論：</b>本窗口設定下檢出至少一項 p &lt; 0.05 或偏離理論期望的訊號。但注意：同時做 3 個檢定、又允許任意調整 W 與策略後觀測，多重比較下「撿到顯著」的機率大增；建議把此結果視為待驗證訊號，而非優勢證明。'
+    : '<b>結論：</b>三項檢定均無法拒絕 H₀（窗口統計不創造優勢）。策略命中分布、平均命中數、回收率置信區間皆落在純隨機可解釋範圍內，'+n+' 期回測結果與「539 每期獨立隨機」一致。';
+}
+
+/* ===== 功能四：遺漏分箱檢定（用全部資料，不受 W 影響） ===== */
+var GAP_BINS = [
+  {lo:0, hi:2, lbl:"0–2"},
+  {lo:3, hi:4, lbl:"3–4"},
+  {lo:5, hi:6, lbl:"5–6"},
+  {lo:7, hi:8, lbl:"7–8"},
+  {lo:9, hi:10, lbl:"9–10"},
+  {lo:11, hi:15, lbl:"11–15"},
+  {lo:16, hi:20, lbl:"16–20"},
+  {lo:21, hi:9999, lbl:"21+"}
+];
+function renderGapTest(cfg, draws){
+  var L = draws.length, t, n, i;
+  if (L < 30){ $("gapVerdict").textContent="資料不足 30 期，無法分箱檢定。"; $("gapTable").innerHTML=""; $("gapNote").textContent=""; return; }
+  var P0 = PICK/POOL; // 5/39 ≈ 12.82%
+  var cnt = [], hit = [];
+  for (i=0;i<GAP_BINS.length;i++){ cnt.push(0); hit.push(0); }
+  var lastSeen = new Array(40).fill(-1); // 上次出現的期索引
+  var rows0 = 1; // 第 1 期起才有「之前」可看
+  for (t=rows0;t<L;t++){
+    for (n=1;n<=39;n++){
+      var g = (lastSeen[n] < 0) ? t : (t-1-lastSeen[n]); // 距上次出現已漏幾期（不含當期）
+      var b = -1;
+      for (i=0;i<GAP_BINS.length;i++) if (g>=GAP_BINS[i].lo && g<=GAP_BINS[i].hi){ b=i; break; }
+      if (b>=0){ cnt[b]++; if (draws[t].nums.indexOf(n)>=0) hit[b]++; }
+    }
+    for (var k2=0;k2<draws[t].nums.length;k2++) lastSeen[draws[t].nums[k2]] = t;
+  }
+  var html = '<tr><th>上期已漏（期）</th><th>觀測樣本數</th><th>下期出現次數</th><th>實際出現率</th><th>理論 5/39</th><th>z 值</th><th>雙側 p</th><th>α=0.05</th></tr>';
+  var sigBins = 0, tested = 0, tot=0, totHit=0;
+  for (i=0;i<GAP_BINS.length;i++){
+    if (cnt[i] < 30){ html += '<tr><td>'+GAP_BINS[i].lbl+'</td><td>'+cnt[i]+'</td><td colspan="6" style="color:var(--muted)">樣本過少，不檢定</td></tr>'; continue; }
+    tested++;
+    var r = hit[i]/cnt[i], se = Math.sqrt(P0*(1-P0)/cnt[i]), z = (r-P0)/se, pz = twoSidedP(z);
+    if (Math.abs(z)>=1.96) sigBins++;
+    tot += cnt[i]; totHit += hit[i];
+    html += '<tr><td><b>'+GAP_BINS[i].lbl+'</b></td><td>'+cnt[i].toLocaleString("zh-TW")+'</td><td>'+hit[i].toLocaleString("zh-TW")+'</td>'+
+      '<td>'+pct(r)+'</td><td>'+pct(P0)+'</td><td>'+(z>=0?"+":"")+z.toFixed(2)+'</td><td>'+fmtP(pz)+'</td>'+
+      '<td class="'+(Math.abs(z)>=1.96?"sig-y":"sig-n")+'">'+(Math.abs(z)>=1.96?"偏離":"一致")+'</td></tr>';
+  }
+  var deepCnt=0, deepHit=0;
+  for (i=5;i<GAP_BINS.length;i++){ deepCnt+=cnt[i]; deepHit+=hit[i]; }
+  var rz = deepCnt>0 ? ((deepHit/deepCnt)-P0)/Math.sqrt(P0*(1-P0)/deepCnt) : NaN;
+  $("gapTable").innerHTML = html;
+  $("gapTime").textContent = "檢定範圍＝"+tRange(draws,rows0,L-1);
+  var vTxt = tested===0 ? "各分箱樣本皆過少，無法檢定。" : (sigBins===0
+    ? '<b>結論：</b>受檢的 '+tested+' 個遺漏深度分箱，實際出現率皆與理論 12.82% 無顯著差異（|z|&lt;1.96）。數據支持 H₀：「漏得久」並不會提高下期出現機率——遺漏回補沒有統計優勢。'
+    : '<b>結論：</b>受檢 '+tested+' 箱中有 '+sigBins+' 箱在 α=0.05 下偏離理論值；多重比較下（做 '+tested+' 次檢定）純隨機也預期約 '+(tested*0.05).toFixed(1)+' 箱誤報，個別顯著箱應視為待驗證訊號而非回補證據。');
+  var rDeep = deepCnt>0 ? pct(deepHit/deepCnt) : "—";
+  $("gapVerdict").innerHTML = vTxt+'<br>「漏 ≥11 期」整併口徑：實際 '+rDeep+' vs 理論 '+pct(P0)+'（z='+(rz>=0?"+":"")+rz.toFixed(2)+'）——若此處沒有偏高，「回補」即無跡象。';
+  $("gapNote").textContent = "口徑說明：對每一期 t 與每個號碼 n，先算 n 在 t 之前已连续缺席 g 期，把 (g, n 於第 t 期是否出現) 記錄一次；理論出現率恒為 5/39。樣本＝全資料 (期數−1)×39 個「碼·期對」，與參數台的 W 無關。";
+}
+
+function rebuildWindowRange(){
+  var cfg = readCfg();
+  var draws = getDataset(cfg);
+  var maxW = Math.max(2, Math.min(60, draws.length - 3));
+  var sl = $("winW");
+  sl.min = "2"; sl.max = String(maxW);
+  var cur = parseInt(sl.value,10);
+  if (isNaN(cur) || cur > maxW) sl.value = String(Math.min(20, maxW));
+  else sl.value = String(Math.max(2, cur));
+  return draws;
+}
+
+function run(){
+  try{
+    var cfg = readCfg();
+    var draws = rebuildWindowRange();
+    cfg.W = parseInt($("winW").value,10);
+    if (cfg.src === "real"){
+      $("warnMsg").style.display = draws.length - cfg.W >= 3 ? "none" : "block";
+      if (draws.length - cfg.W >= 3) $("warnMsg").textContent = "";
+      else $("warnMsg").textContent = "官網真實資料共 " + draws.length + " 期，窗口請不超過 " + (draws.length - 3) + " 期，或改用模擬／自訂完整資料。";
+    }
+    saveCfg(cfg);
+    lastCfg = cfg;
+    if (draws.length === 0){
+      $("warnMsg").style.display="block";
+      $("warnMsg").textContent = "自訂資料解析結果為空，請依格式每行貼一期（獎號 1–39 放行尾）。";
+      $("kpis").innerHTML=""; $("pnlChart").innerHTML=""; $("distChart").innerHTML=""; $("heat").innerHTML=""; $("detailTable").innerHTML=""; $("nextPick").innerHTML="";
+      return;
+    }
+    run2(cfg, draws);
+  }catch(e){
+    $("warnMsg").style.display="block";
+    $("warnMsg").textContent = "試算失敗："+e.message;
+  }
+}
+function run2(cfg, draws){
+  var maxW = Math.max(2, Math.min(60, draws.length - 3));
+  if (cfg.W > maxW) cfg.W = maxW;
+  render(cfg, draws);
+}
+
+function saveCfg(cfg){
+  try{
+    localStorage.setItem("sw539.config", JSON.stringify({
+      src:cfg.src, simN:cfg.simN, seed:cfg.seed, W:cfg.W,
+      strategy:cfg.strategy, mult:cfg.mult, baseM:cfg.baseM,
+      mwCands:cfg.mwCands.join(","), coScope:cfg.coScope, coN:cfg.coN
+    }));
+    if (cfg.src === "custom") localStorage.setItem("sw539.custom", cfg.customText);
+  }catch(e){}
+}
+function loadCfg(){
+  try{
+    var c = JSON.parse(localStorage.getItem("sw539.config")||"null");
+    if (c){
+      $("dataSrc").value = c.src||"real";
+      $("simN").value = c.simN||600;
+      $("seed").value = c.seed||20261025;
+      $("winW").value = c.W||20;
+      $("strat").value = c.strategy||"hot";
+      $("mult").value = c.mult||1;
+      $("baseM").value = c.baseM||50;
+      if (c.mwCands) $("mwCands").value = c.mwCands;
+      $("coScope").value = c.coScope||"win";
+      $("coN").value = c.coN||50;
+    }
+    var cu = localStorage.getItem("sw539.custom");
+    if (cu) $("customText").value = cu;
+  }catch(e){}
+}
+function syncSrcUI(){
+  var v = $("dataSrc").value;
+  $("boxN").style.display = v==="sim" ? "" : "none";
+  $("boxSeed").style.display = v==="sim" ? "" : "none";
+  $("boxCustom").style.display = v==="custom" ? "" : "none";
+  $("boxCoN").style.display = $("coScope").value==="custom" ? "" : "none";
+}
+["dataSrc","simN","seed","strat","mult","baseM","customText","mwCands","coScope","coN"].forEach(function(id){
+  $(id).addEventListener("change", function(){ if(id==="dataSrc"||id==="coScope") syncSrcUI(); rebuildWindowRange(); run(); });
+});
+$("winW").addEventListener("input", function(){
+  var sl=$("winW");
+  sl.setAttribute("title","窗口 "+sl.value+" 期");
+});
+$("winW").addEventListener("change", run);
+
+function updateRealLabel(){
+  var opt=document.querySelector('#dataSrc option[value="real"]');
+  var rows=REAL_ROWS;
+  opt.textContent="官網真實資料（"+rows.length+" 期："+rows[0][1]+" ～ "+rows[rows.length-1][1]+"）";
+}
+let initialized = false;
+NumerisDrawFeed.watch("daily539", (draws) => {
+  REAL_ROWS = NumerisDrawFeed.workbenchRows(draws);
+  if (initialized) {
+    updateRealLabel();
+    if ($("dataSrc").value === "real") run();
+    return;
+  }
+  initialized = true;
+  loadCfg();
+  syncSrcUI();
+  if (REAL_ROWS.length) updateRealLabel();
+  if ($("dataSrc").value === "custom" && !$("customText").value){
+    $("customText").value = REAL_ROWS.map(function(r){ return r[0]+","+r[1]+","+r[2]; }).join("\n");
+  }
+  if (REAL_ROWS.length || $("dataSrc").value !== "real") run();
+});
+</script>
+</body>
+</html>

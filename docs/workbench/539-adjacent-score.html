@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今彩539｜相鄰分數歷史試算台（修正版）</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#141a2f; --panel2:#1a2138; --line:#253052;
+  --text:#e8ecf8; --muted:#9aa6c8; --gold:#f5b301; --gold-dim:#8a6a12;
+  --green:#34d399; --red:#f0616d; --blue:#6aa8ff; --purple:#b48cf2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;line-height:1.55}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:14px 4px 18px}
+header h1{font-size:24px;color:var(--gold);letter-spacing:1px}
+header .sub{color:var(--muted);font-size:13px}
+.badge{font-size:11px;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:2px 10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-size:15px;margin-bottom:10px;color:var(--gold)}
+.card h2 .tagn{font-size:11px;color:var(--muted);font-weight:normal;margin-left:8px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.c12{grid-column:span 12}.c7{grid-column:span 7}.c5{grid-column:span 5}
+label{font-size:12.5px;color:var(--muted);display:block;margin-bottom:4px}
+input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13.5px;font-family:inherit}
+textarea{min-height:90px;resize:vertical;font-size:12.5px;line-height:1.5}
+input[type=checkbox]{width:auto;margin-right:6px;vertical-align:middle}
+.chk{font-size:12.5px;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold-dim)}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.hint{font-size:11.5px;color:var(--muted);margin-top:6px}
+.warn{font-size:13px;color:var(--red);margin-top:10px;display:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.kpi .k{font-size:11.5px;color:var(--muted)}
+.kpi .v{font-size:18px;font-weight:700;margin-top:2px}
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text)}
+.ball{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-size:12.5px;font-weight:700;background:radial-gradient(circle at 32% 30%,#ffe08a,#d99a00 70%);color:#3a2600;margin:2px;flex:none}
+.ball.hit{background:radial-gradient(circle at 32% 30%,#ff9d9d,#c22b3c 70%);color:#fff}
+.ball.pred{background:radial-gradient(circle at 32% 30%,#a6cdff,#2f6fd0 72%);color:#08182f;border:1px solid #6aa8ff}
+.balls{display:flex;flex-wrap:wrap;align-items:center;gap:1px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{color:var(--muted);text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid #1c2440;vertical-align:middle}
+.scroll{max-height:340px;overflow:auto}
+.sig{color:var(--green);font-weight:700}.nosig{color:var(--muted)}
+footer{margin-top:26px;color:var(--muted);font-size:12.5px;border-top:1px dashed var(--line);padding-top:14px}
+footer p{margin-bottom:8px}footer b{color:var(--text)}
+@media(max-width:900px){.c7,.c5{grid-column:span 12}}
+</style>
+<link rel="stylesheet" href="workbench.css">
+</head>
+<body>
+<nav class="workbench-nav" aria-label="試算工具導覽"><a href="index.html">← 試算工具</a><span id="draw-feed-status" role="status">正在讀取開獎資料…</span></nav>
+<div class="wrap">
+<header>
+  <h1>今彩539 相鄰分數試算台（修正版）</h1>
+  <span class="sub">窗口分組計分 → 當期 5 球的相鄰候選排名 → 對照下一期命中</span>
+  <span class="badge">純瀏覽器本地運行</span><span class="badge">已套用非重疊窗口＋相鄰池基準修正</span>
+</header>
+
+<div class="grid">
+  <div class="card c12">
+    <h2>參數台 <span class="tagn">修改任一參數即時重算</span></h2>
+    <div class="ctl">
+      <div>
+        <label>資料來源</label>
+        <select id="dataSrc">
+          <option value="real">官網真實資料</option>
+          <option value="sim">隨機模擬資料（內建）</option>
+          
+          <option value="custom">自行導入（貼上開獎資料）</option>
+        </select>
+      </div>
+      <div id="boxN"><label>模擬期數</label><input type="number" id="simN" min="210" max="3000" step="10" value="600"></div>
+      <div id="boxSeed"><label>隨機種子</label><input type="number" id="seed" min="1" max="999999999" value="20261029"></div>
+      <div><label>窗口大小（期，由近到遠）</label><input type="text" id="wlist" value="20,50,100,200"><div class="hint">期數不足時自動只啟用放得下的窗口</div></div>
+      <div><label>窗口切分方式</label>
+        <select id="wmode">
+          <option value="seg">不重疊區段（1–20、21–50…）【修正版・建議】</option>
+          <option value="nested">巢狀重疊視窗（原始做法，近期重複計權）</option>
+        </select>
+      </div>
+      <div><label>取前幾名 N（逗號分隔）</label><input type="text" id="nlist" value="5,8,10,12"></div>
+      <div><label>同分拆序</label>
+        <select id="tie">
+          <option value="small">小球號優先（原始規則）</option>
+          <option value="rand">隨機拆序（種子決定）</option>
+        </select>
+      </div>
+      <div><label>上下相鄰步長（0＝僅左右 ±1）</label><input type="number" id="vstep" min="0" max="20" value="0"><div class="hint">依獎號排列版面而定，未確認前建議維持 0</div></div>
+    </div>
+    <div style="margin-top:10px" class="ctl">
+      <label class="chk"><input type="checkbox" id="dupScore">同一候選被多顆當期球相鄰時，分數按相鄰次數累加（預設只計一次）</label>
+      <label class="chk"><input type="checkbox" id="wrap">39↔1 環繞相鄰（預設不環繞）</label>
+      <label class="chk"><input type="checkbox" id="exclNow" checked>候選排除當期已開出的 5 碼（預設排除）</label>
+    </div>
+    <div id="boxCustom" style="display:none;margin-top:10px">
+      <label>自訂資料：每行一期，格式「期號,日期,04 20 22 30 38」，由舊到新</label>
+      <textarea id="customText" placeholder="115000259,2026-10-26,13 15 19 28 35"></textarea>
+      <div class="hint">自訂資料與參數保存在瀏覽器 localStorage，重開頁面仍保留。</div>
+    </div>
+    <div class="warn" id="warnMsg"></div>
+  </div>
+
+  <div class="c12"><div class="kpis" id="kpis"></div></div>
+
+  <div class="card c12">
+    <h2>主結果 <span class="tagn">平均每期中碼數；對照「相鄰池隨機」與「全局隨機 N×5/39」兩條基準；z≥2 標綠（配對標準誤）</span></h2>
+    <div style="overflow:auto"><table id="mainTable"></table></div>
+    <p class="hint" id="winNote"></p>
+  </div>
+
+  <div class="card c12">
+    <h2>參數掃描 <span class="tagn">窗口×計分規則網格（N=5）· 點擊才執行 · 用當前資料來源 · 不影響其他模組</span></h2>
+    <button id="scanBtn" style="background:var(--gold);border:none;color:#3a2600;font-weight:700;border-radius:8px;padding:7px 18px;font-size:13.5px;cursor:pointer;margin-bottom:8px">開始掃描</button>
+    <div style="overflow:auto"><table id="scanTable"></table></div>
+    <p class="hint" id="scanNote"></p>
+  </div>
+
+  <div class="card c7">
+    <h2>同分拆序偏檢 <span class="tagn">小球號優先 vs 隨機拆序（排除小號偏好撐績效）</span></h2>
+    <div style="overflow:auto"><table id="tieTable"></table></div>
+  </div>
+
+  <div class="card c5">
+    <h2>穩定性分塊 <span class="tagn">回測期等分 4 塊，看績效是否集中某段</span></h2>
+    <div style="overflow:auto"><table id="blockTable"></table></div>
+  </div>
+
+  <div class="card c12">
+    <h2>下一期候選排名示範 <span class="tagn">以最後一期相鄰候選＋窗口分數排序，僅為教學示範，非中獎預測</span></h2>
+    <div class="balls" id="nextPick"></div>
+    <p class="hint" id="nextNote"></p>
+  </div>
+
+  <div class="card c12">
+    <h2>逐期明細 <span class="tagn" id="detailTag"></span></h2>
+    <div class="scroll"><table id="detailTable"></table></div>
+  </div>
+</div>
+
+<footer>
+  <p><b>規則（已明確化）：</b>第 t 期開獎後，取該 5 碼的左右相鄰數（±1，可選環繞、可選上下步長）作為候選池，並排除當期 5 碼本身。每個窗口內：球出現 1 次得 1 分，每多 1 次加 0.1 分；各窗口分數加總排名（同分依所選拆序規則），取前 N 名對照第 t+1 期實際獎號計算命中。統計窗口以第 t 期結算（含第 t 期，即開獎當晚已知資訊），全程不使用第 t+1 期及以後資料。</p>
+  <p><b>修正 1（窗口切分）：</b>預設「不重疊區段」＝1–20、21–50、51–100、101–200，各段獨立貢獻證據；可切回原始「巢狀重疊」做法對比——巢狀下最近 20 期的出現最多被計 4 次，20/50 窗口只是重複計數。</p>
+  <p><b>修正 2（基準分離）：</b>「相鄰池隨機」＝每期從同一批相鄰候選中隨機取 N 顆的理論平均命中（精確值 N×池內下期命中數÷池大小，非抽樣）。策略若只赢「全局隨機 N×5/39」而不赢「相鄰池隨機」，績效來自相鄰假設本身，不是分數排序。z＝策略減池隨機的平均差 ÷ 配對標準誤，|z|≥2 才算有訊號；本頁為多組 N 網格篩選，挑最高一格仍有多重比較成分，請配合分塊表看穩定性。</p>
+  <p><b>資料與同步：</b>官網真實資料由 Numeris Cloud 同步更新（最多 420 期）。200 期窗口需至少 201＋期資料才跑得動，期數不足時會自動停用最深窗口並在頁面提示。</p>
+  <p><b>聲明：</b>今彩539 每期為獨立隨機事件，本頁是演算法與回測流程的教學性試算工具，不構成任何中獎預測或投注建議；請認合法國票、理性消費，未滿 18 歲不得購買。</p>
+</footer>
+</div>
+
+<script src="draw-feed.js"></script>
+<script>
+"use strict";
+var POOL=39;
+var $ = function(id){ return document.getElementById(id); };
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function randDraw(rng){
+  var s={}, out=[];
+  while(out.length<5){ var n=1+Math.floor(rng()*39); if(!s[n]){ s[n]=1; out.push(n);} }
+  return out.sort(function(a,b){ return a-b; });
+}
+
+var REAL_ROWS = [];
+
+
+function realDataset(){
+  return REAL_ROWS.map(function(r){ return { issue:r[0], date:r[1], nums:r[2].split(/\s+/).map(Number) }; });
+}
+function simDataset(n, seed){
+  var rng = mulberry32(seed*2+1), out=[];
+  for (var i=0;i<n;i++) out.push({ issue:"SIM-"+String(i+1).padStart(4,"0"), nums:randDraw(rng) });
+  return out;
+}
+function parseCustom(text){
+  var lines=(text||"").split(/\r?\n/), out=[];
+  for (var i=0;i<lines.length;i++){
+    var line=lines[i].trim(); if(!line) continue;
+    var toks=line.split(/[\s,;，、|]+/).filter(Boolean);
+    var inR=[], seen={};
+    for (var j=0;j<toks.length;j++){
+      var v=parseInt(toks[j],10);
+      if(!isNaN(v)&&v>=1&&v<=39&&!seen[v]){ seen[v]=1; inR.push(v); }
+    }
+    if (inR.length<5) continue;
+    var nums=inR.slice(-5).sort(function(a,b){ return a-b; });
+    var dateM=line.match(/\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2}/);
+    var meta=toks.filter(function(t){ var v=parseInt(t,10); return isNaN(v)||v<1||v>39; });
+    out.push({ issue:(dateM?dateM[0]:(meta[0]||("行"+(i+1)))), nums:nums });
+  }
+  return out;
+}
+
+function readCfg(){
+  var wl=($("wlist").value||"").split(/[,\s、]+/).map(Number).filter(function(x){ return x>=2&&x<=POOL*10; }).sort(function(a,b){ return a-b; });
+  var nl=($("nlist").value||"").split(/[,\s、]+/).map(Number).filter(function(x){ return x>=1&&x<=39; }).sort(function(a,b){ return a-b; });
+  return {
+    src:$("dataSrc").value,
+    simN:Math.max(210,Math.min(3000,parseInt($("simN").value,10)||600)),
+    seed:Math.max(1,parseInt($("seed").value,10)||1),
+    Wlist: wl.length?wl:[20,50,100,200],
+    nlist: nl.length?nl:[5],
+    wmode:$("wmode").value,
+    tie:$("tie").value,
+    vstep:Math.max(0,parseInt($("vstep").value,10)||0),
+    dup:$("dupScore").checked, wrap:$("wrap").checked, excl:$("exclNow").checked,
+    customText:$("customText").value
+  };
+}
+function getDataset(cfg){
+  if (cfg.src==="real") return realDataset();
+  if (cfg.src==="custom") return parseCustom(cfg.customText);
+  return simDataset(cfg.simN,cfg.seed);
+}
+
+function enabledWindows(cfg, len){
+  var usable=cfg.Wlist.filter(function(w){ return w<=len-2; });
+  var skipped=cfg.Wlist.filter(function(w){ return w>len-2; });
+  var wins=[], prev=0;
+  for (var i=0;i<usable.length;i++){
+    if (cfg.wmode==="seg"){ wins.push({a:prev+1,b:usable[i]}); prev=usable[i]; }
+    else wins.push({a:1,b:usable[i]});
+  }
+  return { wins:wins, skipped:skipped, usable:usable };
+}
+function windowFreqs(draws, t, wins){
+  var out=[];
+  for (var w=0;w<wins.length;w++){
+    var cnt=new Array(40).fill(0);
+    for (var d=wins[w].a; d<=wins[w].b; d++){
+      var idx=t-d+1; if (idx<0) continue;
+      var ns=draws[idx].nums;
+      for (var k=0;k<ns.length;k++) cnt[ns[k]]++;
+    }
+    out.push(cnt);
+  }
+  return out;
+}
+function neighbors(draw5, cfg){
+  var mult={}, order=[], set5={};
+  for (var i=0;i<draw5.length;i++) set5[draw5[i]]=1;
+  function push(n){
+    if (n<1||n>39){
+      if (cfg.wrap) n=((n-1)%39+39)%39+1; else return;
+    }
+    if (cfg.excl && set5[n]) return;
+    if (!mult[n]){ mult[n]=1; order.push(n); } else mult[n]++;
+  }
+  for (var j=0;j<draw5.length;j++){
+    var b=draw5[j];
+    push(b-1); push(b+1);
+    if (cfg.vstep>0){ push(b-cfg.vstep); push(b+cfg.vstep); }
+  }
+  order.sort(function(a,b){ return a-b; });
+  return { pool:order, mult:mult };
+}
+function scorePool(cnts, pool, mult, cfg){
+  var sc={};
+  for (var i=0;i<pool.length;i++){
+    var n=pool[i], s=0;
+    for (var w=0;w<cnts.length;w++){
+      var f=cnts[w][n];
+      if (f>0) s += 1+0.1*(f-1);
+    }
+    if (cfg.dup) s *= mult[n];
+    sc[n]=Math.round(s*1000)/1000;
+  }
+  return sc;
+}
+function rankPool(pool, sc, tieKeys, tieMode){
+  var arr=pool.slice();
+  if (tieMode==="rand") arr.sort(function(a,b){ return sc[b]-sc[a] || tieKeys[a]-tieKeys[b]; });
+  else arr.sort(function(a,b){ return sc[b]-sc[a] || a-b; });
+  return arr;
+}
+function hitsOf(pred, actual){
+  var s={}, c=0;
+  for (var i=0;i<actual.length;i++) s[actual[i]]=1;
+  for (var j=0;j<pred.length;j++) if (s[pred[j]]) c++;
+  return c;
+}
+function meanSd(a){
+  var n=a.length; if(!n) return {m:0,s:0};
+  var m=0; for (var i=0;i<n;i++) m+=a[i]; m/=n;
+  if (n<2) return {m:m,s:0};
+  var v=0; for (var k=0;k<n;k++) v+=(a[k]-m)*(a[k]-m);
+  return {m:m,s:Math.sqrt(v/(n-1))};
+}
+function fmt(v,d){ return v>=0 ? "+"+v.toFixed(d) : v.toFixed(d); }
+
+/* ===== 參數掃描（獨立模組，不影響上方任何試算） ===== */
+function runScan(){
+  try{
+    var cfg=readCfg();
+    var draws=getDataset(cfg);
+    if (draws.length<30){ $("scanTable").innerHTML=""; $("scanNote").textContent="資料不足 30 期，掃描無意義。"; return; }
+    var combos=[
+      ["基準：±1相鄰、排除當期", {dup:false,wrap:false,vstep:0,excl:true}],
+      ["＋相鄰次數累加計分",      {dup:true, wrap:false,vstep:0,excl:true}],
+      ["＋39↔1 環繞",            {dup:false,wrap:true, vstep:0,excl:true}],
+      ["＋上下步長 5",            {dup:false,wrap:false,vstep:5,excl:true}],
+      ["＋不排除當期碼",          {dup:false,wrap:false,vstep:0,excl:false}],
+      ["＋累加＋環繞",            {dup:true, wrap:true, vstep:0,excl:true}]
+    ];
+    var Ws=[]; [20,40,60,100,150,200].forEach(function(w){ if(w<=draws.length-2) Ws.push(w); });
+    var out=[];
+    Ws.forEach(function(W){
+      combos.forEach(function(cb){
+        var c2={ seed:cfg.seed, nlist:[5], dup:cb[1].dup, wrap:cb[1].wrap, vstep:cb[1].vstep, excl:cb[1].excl };
+        var res=runLoop(c2, draws, [{a:1,b:W}], "small");
+        if (!res.n) return;
+        var hs=res.hitsA[5], ps=res.poolA[5];
+        var dArr=hs.map(function(h,i){ return h-ps[i]; });
+        var ms=meanSd(hs), mp=meanSd(ps), md=meanSd(dArr);
+        var seP=md.s/Math.sqrt(Math.max(1,res.n)), z=seP>0?md.m/seP:0;
+        var poolAvg=0; res.rows.forEach(function(r){ poolAvg+=r.pool; }); poolAvg/=res.rows.length;
+        out.push({ W:W, name:cb[0], n:res.n, pool:poolAvg, mean:ms.m, base:mp.m, diff:md.m, z:z });
+      });
+    });
+    out.sort(function(a,b){ return b.mean-a.mean; });
+    var top=out.slice(0,12);
+    var h='<tr><th>#</th><th>窗口 W</th><th>計分規則變體</th><th>回測期數</th><th>平均池大小</th><th>策略平均命中</th><th>池隨機基準</th><th>策略−池隨機</th><th>z 值</th></tr>';
+    top.forEach(function(r,i){
+      h+='<tr'+(i===0?' style="background:rgba(245,179,1,.08)"':'')+'><td>'+(i+1)+'</td><td><b>'+r.W+'</b></td><td>'+r.name+'</td><td>'+r.n+'</td><td>'+r.pool.toFixed(1)+'</td><td><b>'+r.mean.toFixed(4)+'</b></td><td>'+r.base.toFixed(4)+'</td><td class="'+(r.diff>=0?"pos":"neg")+'">'+fmt(r.diff,4)+'</td><td>'+r.z.toFixed(2)+(Math.abs(r.z)>=2?' <span class="sig">顯著</span>':'')+'</td></tr>';
+    });
+    $("scanTable").innerHTML=h;
+    $("scanNote").textContent="已掃描 "+out.length+" 組（W×規則變體，N=5，小球號拆序；資料來源＝"+(cfg.src==="real"?"官網真實":cfg.src==="custom"?"自訂":"隨機模擬")+" "+draws.length+" 期）。注意：在同一段資料上從 "+out.length+" 個組合挑最大的，屬多重比較——樣本內最佳幾乎必然高估未來表現，z≥2 在此篩選後也不足為憑；要驗證請前半掃描、後半確認（拆段樣本外），資料越長越可信。";
+  }catch(e){ $("scanNote").textContent="掃描失敗："+e.message; }
+}
+$("scanBtn").addEventListener("click", runScan);
+
+function runLoop(cfg, draws, wins, tieMode){
+  var len=draws.length, deepest=0;
+  for (var w=0;w<wins.length;w++) deepest=Math.max(deepest,wins[w].b);
+  var rk=mulberry32(cfg.seed+13), tieKeys=new Array(40).fill(0);
+  for (var n0=1;n0<=39;n0++) tieKeys[n0]=rk();
+  var maxN=cfg.nlist[cfg.nlist.length-1];
+  var hitsA={}, poolA={}, globA={}, tieRate={}, rows=[];
+  for (var q=0;q<cfg.nlist.length;q++){ hitsA[cfg.nlist[q]]=[]; poolA[cfg.nlist[q]]=[]; globA[cfg.nlist[q]]=[]; tieRate[cfg.nlist[q]]=0; }
+  var tStart=deepest, tEnd=len-2;
+  for (var t=tStart; t<=tEnd; t++){
+    var cnts=windowFreqs(draws,t,wins);
+    var nb=neighbors(draws[t].nums,cfg);
+    var sc=scorePool(cnts,nb.pool,nb.mult,cfg);
+    var ranked=rankPool(nb.pool,sc,tieKeys,tieMode);
+    var next=draws[t+1].nums, nset={};
+    for (var z=0;z<next.length;z++) nset[next[z]]=1;
+    var poolHit=0;
+    for (var p=0;p<nb.pool.length;p++) if (nset[nb.pool[p]]) poolHit++;
+    var M=nb.pool.length, row={issue:draws[t+1].issue, draw:draws[t].nums, next:next, pool:M, sel:{}, expPool:0};
+    for (var q2=0;q2<cfg.nlist.length;q2++){
+      var N=cfg.nlist[q2];
+      var sel=ranked.slice(0,Math.min(N,M));
+      var h=hitsOf(sel,next);
+      hitsA[N].push(h);
+      poolA[N].push(M>0 ? N*Math.min(poolHit,M)/M : 0);
+      globA[N].push(h - N*5/39);
+      if (M>N && sc[ranked[N-1]]===sc[ranked[N]]) tieRate[N]++;
+      row.sel[N]=sel; row.expPool=poolA[N][poolA[N].length-1];
+    }
+    row.top=ranked.slice(0,8).map(function(x){ return {n:x,s:sc[x]}; });
+    rows.push(row);
+  }
+  return { rows:rows, hitsA:hitsA, poolA:poolA, globA:globA, tieRate:tieRate, n:Math.max(0,tEnd-tStart+1), tStart:tStart };
+}
+
+function render(cfg, draws){
+  var ew=enabledWindows(cfg,draws.length);
+  if (!ew.wins.length){
+    $("warnMsg").style.display="block";
+    $("warnMsg").textContent="資料期數不足：連最小的 "+cfg.Wlist[0]+" 期窗口都放不下（目前 "+draws.length+" 期）。請改用模擬／自訂完整資料。";
+    $("kpis").innerHTML=""; $("mainTable").innerHTML=""; $("tieTable").innerHTML=""; $("blockTable").innerHTML=""; $("detailTable").innerHTML=""; $("nextPick").innerHTML="";
+    return;
+  }
+  $("warnMsg").style.display="none";
+  var res=runLoop(cfg,draws,ew.wins,cfg.tie);
+  var resAlt=(cfg.tie==="small") ? runLoop(cfg,draws,ew.wins,"rand") : res;
+  var resSmall=(cfg.tie==="small") ? res : runLoop(cfg,draws,ew.wins,"small");
+  var nT=res.n;
+  var deepest=0; for (var w=0;w<ew.wins.length;w++) deepest=Math.max(deepest,ew.wins[w].b);
+
+  var wlText=ew.wins.map(function(x){ return x.a+"–"+x.b; }).join("、");
+  var kpiHtml=
+    '<div class="kpi"><div class="k">資料期數 / 回測期數</div><div class="v neu">'+draws.length+' / '+nT+'</div></div>'+
+    '<div class="kpi"><div class="k">窗口切分（'+(cfg.wmode==="seg"?"不重疊":"巢狀重疊")+'）</div><div class="v neu" style="font-size:13px">'+wlText+'</div></div>'+
+    '<div class="kpi"><div class="k">平均候選池大小</div><div class="v neu">'+ (nT? (res.rows.reduce(function(a,r){return a+r.pool;},0)/nT).toFixed(1):"—")+' 碼</div></div>'+
+    '<div class="kpi"><div class="k">最深窗口需求期數</div><div class="v neu">'+(deepest+2)+'</div></div>';
+  $("kpis").innerHTML=kpiHtml;
+
+  var mh='<tr><th>前 N 名</th><th>策略平均命中</th><th>相鄰池隨機</th><th>全局隨機 N×5/39</th><th>策略−池隨機</th><th>配對 SE</th><th>z 值</th><th>策略−全局</th><th>z 值</th><th>邊界同分率</th></tr>';
+  for (var q=0;q<cfg.nlist.length;q++){
+    var N=cfg.nlist[q];
+    var sh=meanSd(res.hitsA[N]), se_=meanSd(res.hitsA[N].map(function(h,i){ return h-res.poolA[N][i]; }));
+    var sg=meanSd(res.globA[N]);
+    var sePool=se_.s/Math.sqrt(Math.max(1,nT)), zPool=sePool>0?se_.m/sePool:0;
+    var seGlob=sg.s/Math.sqrt(Math.max(1,nT)), zGlob=seGlob>0?sg.m/seGlob:0;
+    var trP=Math.abs(zPool)>=2?'<span class="sig">顯著</span>':'<span class="nosig">不顯著</span>';
+    var trG=Math.abs(zGlob)>=2?'<span class="sig">顯著</span>':'<span class="nosig">不顯著</span>';
+    mh+='<tr><td><b>'+N+'</b></td><td>'+sh.m.toFixed(4)+'</td><td>'+(res.poolA[N].reduce(function(a,b){return a+b;},0)/Math.max(1,nT)).toFixed(4)+'</td><td>'+(N*5/39).toFixed(4)+'</td><td class="'+(se_.m>=0?'pos':'neg')+'">'+fmt(se_.m,4)+'</td><td>'+sePool.toFixed(4)+'</td><td>'+zPool.toFixed(2)+' '+trP+'</td><td class="'+(sg.m>=0?'pos':'neg')+'">'+fmt(sg.m,4)+'</td><td>'+zGlob.toFixed(2)+' '+trG+'</td><td>'+(nT?(res.tieRate[N]/nT*100).toFixed(1):"0")+'%</td></tr>';
+  }
+  $("mainTable").innerHTML=mh;
+  $("winNote").textContent = ew.skipped.length ? "注意：資料只有 "+draws.length+" 期，窗口 "+ew.skipped.join("、")+" 期放不下，已自動停用；完整驗證 200 期窗口需 201＋期以上資料。" : "全部窗口均已啟用。z＝平均差÷配對標準誤，|z|≥2 視為有訊號；多組 N 同表比較仍屬多重篩選，請配合分塊表與拆序偏檢下結論。";
+
+  var th='<tr><th>前 N 名</th><th>小球號優先</th><th>隨機拆序</th><th>差值</th><th>解讀</th></tr>';
+  for (var q3=0;q3<cfg.nlist.length;q3++){
+    var N3=cfg.nlist[q3];
+    var ms=meanSd(resSmall.hitsA[N3]).m, mr=meanSd(resAlt.hitsA[N3]).m;
+    if (cfg.tie==="rand"){ ms=meanSd(resSmall.hitsA[N3]).m; mr=meanSd(res.hitsA[N3]).m; }
+    var d=ms-mr;
+    var note=Math.abs(d)<0.01?"同分規則影響極小":(d>0?"績效部分來自小球號偏好":"隨機拆序較佳（原始規則拖后腿）");
+    th+='<tr><td><b>'+N3+'</b></td><td>'+ms.toFixed(4)+'</td><td>'+mr.toFixed(4)+'</td><td class="'+(d>=0?'pos':'neg')+'">'+fmt(d,4)+'</td><td>'+note+'</td></tr>';
+  }
+  $("tieTable").innerHTML=th;
+
+  var K=4, bh='<tr><th>分塊</th>';
+  for (var q4=0;q4<cfg.nlist.length;q4++) bh+='<th>N='+cfg.nlist[q4]+'</th>';
+  bh+='<th>區間</th></tr>';
+  for (var kk=0;kk<K;kk++){
+    var lo=Math.floor(nT*kk/K), hi=Math.floor(nT*(kk+1)/K);
+    bh+='<tr><td>第 '+(kk+1)+' 塊</td>';
+    for (var q5=0;q5<cfg.nlist.length;q5++){
+      var N5=cfg.nlist[q5], seg=res.hitsA[N5].slice(lo,hi);
+      bh+='<td>'+(seg.length?meanSd(seg).m.toFixed(3):"—")+'</td>';
+    }
+    bh+='<td>'+(lo<hi? (res.rows[lo]?res.rows[lo].issue:"")+" ～ "+(res.rows[hi-1]?res.rows[hi-1].issue:"") : "—")+'</td></tr>';
+  }
+  $("blockTable").innerHTML=bh;
+
+  if (draws.length>=2){
+    var tL=draws.length-1;
+    var cntsL=windowFreqs(draws,tL,ew.wins);
+    var nbL=neighbors(draws[tL].nums,cfg);
+    var scL=scorePool(cntsL,nbL.pool,nbL.mult,cfg);
+    var mainL=draws[tL].nums.slice().sort(function(a,b){ return a-b; });
+    var adjL=nbL.pool.slice(); // neighbors() 已回傳由小排到大
+    function rdBall(n,cls){ return '<span class="ball'+(cls?" "+cls:"")+'">'+String(n).padStart(2,"0")+'</span>'; }
+    $("nextPick").innerHTML=
+      '<div style="flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin:4px 0">'+
+        '<span style="color:var(--muted);font-size:12px;margin-right:6px">主線（最後一期 '+draws[tL].issue+' 獎號）：</span>'+
+        mainL.map(function(x){ return rdBall(x,""); }).join("")+'</div>'+
+      '<div style="flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin:4px 0">'+
+        '<span style="color:var(--muted);font-size:12px;margin-right:6px">相鄰候選（由小排到大）：</span>'+
+        adjL.map(function(x){ return rdBall(x,"pred"); }).join("")+'</div>';
+    $("nextNote").textContent="第 "+draws[tL].issue+" 期（"+(draws[tL].date||"")+"）開出後之相鄰候補池共 "+adjL.length+" 碼，已全部由小排到大展示（窗口分數："+(adjL.length?adjL.map(function(x){return String(x).padStart(2,"0")+"="+scL[x].toFixed(1);}).join("、"):"無")+"；同分拆序＝"+(cfg.tie==="rand"?"隨機":"小球號優先")+"）。池＝當期 5 碼各取 ±1 相鄰數再依設定排除/環繞。依分數排名取前 N 名請看下方逐期明細；本區僅為教學示範，非中獎預測。";
+  }
+
+  var cap=Math.min(res.rows.length,200), st=res.rows.length-cap;
+  var dh='<tr><th>#</th><th>對照期號</th><th>來源期獎號</th><th>池大小</th>';
+  for (var q6=0;q6<cfg.nlist.length;q6++) dh+='<th>N='+cfg.nlist[q6]+' 選號（命中）</th>';
+  dh+='<th>下期開獎</th></tr>';
+  for (var r=res.rows.length-1;r>=st;r--){
+    var row=res.rows[r], aset={};
+    row.next.forEach(function(x){ aset[x]=1; });
+    dh+='<tr><td>'+(r+1)+'</td><td>'+row.issue+'</td><td>'+ballsHtml(row.draw,null)+'</td><td>'+row.pool+'</td>';
+    for (var q7=0;q7<cfg.nlist.length;q7++){
+      var N7=cfg.nlist[q7], sel=row.sel[N7], hh=hitsOf(sel,row.next);
+      dh+='<td>'+ballsHtml(sel,aset)+'<b>'+hh+'</b></td>';
+    }
+    dh+='<td>'+ballsHtml(row.next,null)+'</td></tr>';
+  }
+  if (res.rows.length>cap) dh+='<tr><td colspan="'+(6+cfg.nlist.length)+'" style="color:var(--muted)">僅顯示最後 '+cap+' 期（共 '+res.rows.length+' 期，排列由新到舊）</td></tr>';
+  $("detailTable").innerHTML=dh;
+  $("detailTag").textContent="共 "+res.rows.length+" 期回測（每行＝用第 t 期候選排名對照第 t+1 期）";
+}
+function ballsHtml(nums, hitSet){
+  return '<span class="balls">'+nums.map(function(n){
+    return '<span class="ball'+(hitSet&&hitSet[n]?" hit":"")+'">'+String(n).padStart(2,"0")+'</span>';
+  }).join("")+'</span>';
+}
+
+function saveCfg(cfg){
+  try{
+    localStorage.setItem("adj539.config", JSON.stringify({
+      src:cfg.src,simN:cfg.simN,seed:cfg.seed,wlist:$("wlist").value,nlist:$("nlist").value,
+      wmode:cfg.wmode,tie:cfg.tie,vstep:cfg.vstep,dup:cfg.dup,wrap:cfg.wrap,excl:cfg.excl
+    }));
+    if (cfg.src==="custom") localStorage.setItem("adj539.custom", cfg.customText);
+  }catch(e){}
+}
+function loadCfg(){
+  try{
+    var c=JSON.parse(localStorage.getItem("adj539.config")||"null");
+    if (c){
+      $("dataSrc").value=c.src||"real";
+      $("simN").value=c.simN||600; $("seed").value=c.seed||20261029;
+      $("wlist").value=c.wlist||defaultWlist(); $("nlist").value=c.nlist||"5,8,10,12";
+      $("wmode").value=c.wmode||"seg"; $("tie").value=c.tie||"small";
+      $("vstep").value=(c.vstep!=null?c.vstep:0);
+      $("dupScore").checked=!!c.dup; $("wrap").checked=!!c.wrap; $("exclNow").checked=(c.excl==null?true:!!c.excl);
+    }
+    if (!c) $("wlist").value=defaultWlist();
+    var cu=localStorage.getItem("adj539.custom");
+    if (cu) $("customText").value=cu;
+  }catch(e){}
+}
+function syncSrcUI(){
+  var v=$("dataSrc").value;
+  $("boxN").style.display=v==="sim"?"":"none";
+  $("boxSeed").style.display=v==="sim"?"":"none";
+  $("boxCustom").style.display=v==="custom"?"":"none";
+}
+function updateRealLabel(){
+  var opt=document.querySelector('#dataSrc option[value="real"]');
+  var rows=REAL_ROWS;
+  opt.textContent="官網真實資料（"+rows.length+" 期："+rows[0][1]+" ～ "+rows[rows.length-1][1]+"）";
+}
+function defaultWlist(){
+  var fit=[20,50,100,200].filter(function(x){ return x<=REAL_ROWS.length-2; });
+  return (fit.length?fit:[20]).join(",");
+}
+function run(){
+  try{
+    var cfg=readCfg();
+    var draws=getDataset(cfg);
+    saveCfg(cfg);
+    if (!draws.length){
+      $("warnMsg").style.display="block";
+      $("warnMsg").textContent="自訂資料解析結果為空，請依格式每行貼一期（獎號 1–39 放行尾）。";
+      return;
+    }
+    render(cfg,draws);
+  }catch(e){
+    $("warnMsg").style.display="block";
+    $("warnMsg").textContent="試算失敗："+e.message;
+  }
+}
+["dataSrc","simN","seed","wlist","nlist","wmode","tie","vstep","dupScore","wrap","exclNow","customText"].forEach(function(id){
+  $(id).addEventListener("change", function(){ if(id==="dataSrc") syncSrcUI(); run(); });
+});
+let initialized = false;
+NumerisDrawFeed.watch("daily539", (draws) => {
+  REAL_ROWS = NumerisDrawFeed.workbenchRows(draws);
+  if (initialized) {
+    updateRealLabel();
+    if ($("dataSrc").value === "real") run();
+    return;
+  }
+  initialized = true;
+  loadCfg();
+  syncSrcUI();
+  if (REAL_ROWS.length) updateRealLabel();
+  if ($("dataSrc").value==="custom" && !$("customText").value){
+    $("customText").value=REAL_ROWS.map(function(r){ return r[0]+","+r[1]+","+r[2]; }).join("\n");
+  }
+  if (REAL_ROWS.length || $("dataSrc").value !== "real") run();
+});
+</script>
+</body>
+</html>

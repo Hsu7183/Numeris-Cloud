@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>大樂透歷史紀錄｜Numeris Cloud</title>
+  <link rel="stylesheet" href="../home.css?v=2">
+  <link rel="stylesheet" href="workbench.css">
+</head>
+<body>
+<nav class="workbench-nav" aria-label="試算工具導覽"><a href="index.html">← 試算工具</a><span id="draw-feed-status" role="status">正在讀取開獎資料…</span></nav>
+<main>
+  <section class="intro"><h1>大樂透歷史紀錄</h1><p>最近 200 期官方開獎紀錄，依期別由新到舊。</p></section>
+  <div class="history-table">
+    <table aria-label="大樂透開獎紀錄">
+      <thead><tr><th scope="col">期別</th><th scope="col">開獎日期</th><th scope="col">主號</th><th scope="col">特別號</th></tr></thead>
+      <tbody id="draw-history"></tbody>
+    </table>
+  </div>
+</main>
+<script src="draw-feed.js"></script>
+<script>
+  NumerisDrawFeed.watch("lotto649", (draws) => {
+    const rows = draws.map((draw) => {
+      const row = document.createElement("tr");
+      const format = NumerisDrawFeed.formatBall;
+      for (const value of [draw.draw_no, draw.draw_date, draw.numbers.map(format).join("　"), format(draw.special_numbers[0])]) {
+        row.insertCell().textContent = value;
+      }
+      return row;
+    });
+    document.getElementById("draw-history").replaceChildren(...rows);
+  });
+</script>
+</body>
+</html>
