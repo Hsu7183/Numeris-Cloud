@@ -49,7 +49,8 @@ th{color:var(--muted);text-align:left;font-weight:600;padding:6px 8px;border-bot
 td{padding:6px 8px;border-bottom:1px solid #1c2440;vertical-align:middle}
 .scroll{max-height:320px;overflow:auto}
 .recent-winning-table{min-width:640px}
-.recent-winning-table td:nth-child(-n+3){white-space:nowrap}
+.recent-winning-table td:nth-child(-n+3),.recent-winning-table .f{white-space:nowrap}
+.current-draw-count{display:inline-block;padding:0 3px;border-radius:4px;background:#ffdb8a;color:#382100;font-weight:700}
 .heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px}
 .hcell{border-radius:8px;border:1px solid var(--line);padding:5px 4px;text-align:center;background:var(--panel2)}
 .hcell .n{font-size:14px;font-weight:700}
@@ -212,7 +213,7 @@ footer b{color:var(--text)}
 
   <div class="card c12" id="recent-winning-stats">
     <h2>最近 20 期中獎號碼頻率與遺漏 <span class="tagn" id="recentWinningRange"></span></h2>
-    <p class="hint">頻次含當期，往前共計 20 期（資料不足時按現有期數計算）。遺漏算到上一期，表示該主號在本期開獎前已連續幾期沒開。「≥」表示可用資料內尚未看到該號碼開出。只列 6 個主號，頻次由高到低，同頻按號碼由小到大。</p>
+    <p class="hint">黃色 <span class="current-draw-count">+1</span> 代表當期開出。頻次＝前 19 期出現次數＋當期 1 次（資料不足時按現有期數計算）。遺漏算到上一期，表示該主號在本期開獎前已連續幾期沒開。「≥」表示可用資料內尚未看到該號碼開出。只列 6 個主號，頻次由高到低，同頻按號碼由小到大。</p>
     <div style="overflow:auto"><table class="recent-winning-table" aria-label="最近20期中獎主號的頻率與遺漏">
       <thead><tr><th scope="col">期號</th><th scope="col">日期</th><th scope="col">遺漏計至</th><th scope="col">第 1 碼</th><th scope="col">第 2 碼</th><th scope="col">第 3 碼</th><th scope="col">第 4 碼</th><th scope="col">第 5 碼</th><th scope="col">第 6 碼</th></tr></thead>
       <tbody id="recentWinningRows"></tbody>
@@ -516,7 +517,8 @@ function renderRecentWinningStats(draws){
       row.insertCell().innerHTML =
         '<div class="hcell' + (frequency >= 4 ? ' hot4' : '') + '">' +
         '<div class="n">' + String(n).padStart(2, "0") + '</div>' +
-        '<div class="f">頻 ' + frequency + '</div>' +
+        '<div class="f">頻 ' + (frequency - 1) +
+        ' <span class="current-draw-count" title="當期開出">+1</span> = ' + frequency + '</div>' +
         '<div class="g">漏 ' + previousGapLabel(draws, i, n) + '</div></div>';
     });
     rows.appendChild(row);
