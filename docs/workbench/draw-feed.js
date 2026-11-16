@@ -6,11 +6,13 @@ window.NumerisDrawFeed = (() => {
   const options = {
     daily539: { file: "539-workbench.json", size: 5, max: 39 },
     lotto649: { file: "lotto649.json", size: 6, max: 49 },
+    lotto649History: { file: "649-history.json", size: 6, max: 49 },
   };
   const formatBall = (ball) => String(ball).padStart(2, "0");
 
   async function fetchDraws(game) {
     const { file, size, max } = options[game];
+    const periodPattern = game === "lotto649History" ? /^\d{8,9}$/ : /^\d{9}$/;
     const response = await fetch(base + file, {
       cache: "no-store",
       signal: AbortSignal.timeout(12000),
@@ -19,10 +21,10 @@ window.NumerisDrawFeed = (() => {
     const { draws } = await response.json();
     if (!Array.isArray(draws) || !draws.length || new Set(draws.map(row => row.draw_no)).size !== draws.length ||
         draws.some(({ draw_no, draw_date, numbers, special_numbers }) =>
-          !/^\d{9}$/.test(draw_no) || !/^\d{4}-\d{2}-\d{2}$/.test(draw_date) ||
+          !periodPattern.test(draw_no) || !/^\d{4}-\d{2}-\d{2}$/.test(draw_date) ||
           !Array.isArray(numbers) || numbers.length !== size || new Set(numbers).size !== size ||
           numbers.some(ball => !Number.isInteger(ball) || ball < 1 || ball > max) ||
-          (game === "lotto649" && (!Array.isArray(special_numbers) || special_numbers.length !== 1 ||
+          (size === 6 && (!Array.isArray(special_numbers) || special_numbers.length !== 1 ||
             !Number.isInteger(special_numbers[0]) || special_numbers[0] < 1 ||
             special_numbers[0] > max || numbers.includes(special_numbers[0]))))) {
       throw new Error("開獎資料格式不符");

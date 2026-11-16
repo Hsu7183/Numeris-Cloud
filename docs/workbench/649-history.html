@@ -10,7 +10,8 @@
 <body>
 <nav class="workbench-nav" aria-label="試算工具導覽"><a href="index.html">← 試算工具</a><span id="draw-feed-status" role="status">正在讀取開獎資料…</span></nav>
 <main>
-  <section class="intro"><h1>大樂透歷史紀錄</h1><p>最近 200 期官方開獎紀錄，依期別由新到舊。</p></section>
+  <section class="intro"><h1>大樂透歷史紀錄</h1><p>台灣彩券公開的官方開獎紀錄，依開獎日期由新到舊。</p></section>
+  <p><label for="draw-year">開獎年份</label> <select id="draw-year"><option value="">全部年份</option></select> <span id="draw-range" aria-live="polite"></span></p>
   <div class="history-table">
     <table aria-label="大樂透開獎紀錄">
       <thead><tr><th scope="col">期別</th><th scope="col">開獎日期</th><th scope="col">主號</th><th scope="col">特別號</th></tr></thead>
@@ -18,9 +19,15 @@
     </table>
   </div>
 </main>
-<script src="draw-feed.js"></script>
+<script src="draw-feed.js?v=2"></script>
 <script>
-  NumerisDrawFeed.watch("lotto649", (draws) => {
+  const yearFilter = document.getElementById("draw-year");
+  const range = document.getElementById("draw-range");
+  const table = document.getElementById("draw-history");
+  let history = [];
+  function renderHistory() {
+    const year = yearFilter.value;
+    const draws = year ? history.filter(draw => draw.draw_date.startsWith(year)) : history;
     const rows = draws.map((draw) => {
       const row = document.createElement("tr");
       const format = NumerisDrawFeed.formatBall;
@@ -29,7 +36,20 @@
       }
       return row;
     });
-    document.getElementById("draw-history").replaceChildren(...rows);
+    table.replaceChildren(...rows);
+    range.textContent = draws.length
+      ? `${draws.at(-1).draw_date} 至 ${draws[0].draw_date}，共 ${draws.length} 期`
+      : "";
+  }
+  yearFilter.addEventListener("change", renderHistory);
+  NumerisDrawFeed.watch("lotto649History", (draws) => {
+    history = draws;
+    const selected = yearFilter.value;
+    const years = new Set(draws.map(draw => draw.draw_date.slice(0, 4)));
+    yearFilter.replaceChildren(new Option("全部年份", ""),
+      ...Array.from(years, year => new Option(year, year)));
+    if (years.has(selected)) yearFilter.value = selected;
+    renderHistory();
   });
 </script>
 </body>
