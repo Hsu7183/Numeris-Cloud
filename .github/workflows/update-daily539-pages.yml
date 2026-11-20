@@ -31,6 +31,11 @@ jobs:
           python-version: "3.12"
       - name: 安裝 Numeris
         run: pip install .
+      - name: 安裝A4報表字型與套件
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-wqy-zenhei
+          pip install -r scripts/daily-report-requirements.txt
       - name: 抓取官方資料並產生靜態統計
         run: |
           python -m scripts.export_daily539_static
@@ -62,6 +67,8 @@ jobs:
           else:
               print('快報與開獎截止日不同，保留已標示截止日的合併排名。')
           PY
+      - name: 重建每日A4總表、預覽及下載存檔
+        run: python -m scripts.build_539_daily_report
       - name: 儲存更新後的資料
         run: |
           git config user.name "github-actions[bot]"
@@ -73,6 +80,7 @@ jobs:
           git add reports/539-adjacent-source.json
           git add docs/lotto649 docs/data/lotto649.json
           git add docs/data/649-*.json reports/649-adjacent-source.json
+          git add docs/reports/daily539
           git diff --cached --quiet && exit 0
           git commit -m "chore(data): update Daily 539 statistics"
           git push
