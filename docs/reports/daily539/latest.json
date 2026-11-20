@@ -1,13 +1,13 @@
 {
   "cutoff": {
-    "draw_no": "115000280",
-    "draw_date": "2026-11-19",
+    "draw_no": "115000281",
+    "draw_date": "2026-11-20",
     "numbers": [
-      2,
-      10,
-      23,
-      24,
-      37
+      3,
+      5,
+      7,
+      11,
+      20
     ]
   },
   "W": 18,
@@ -15,63 +15,63 @@
   "simN": 600,
   "realCount": 420,
   "windowStart": {
-    "issue": "115000263",
-    "date": "2026-10-30",
+    "issue": "115000264",
+    "date": "2026-10-31",
     "nums": [
-      9,
-      11,
-      12,
-      31,
+      2,
+      5,
+      17,
+      28,
       37
     ]
   },
   "ranking": [
     {
-      "number": 19,
-      "score": 3.2
+      "number": 9,
+      "score": 4.3
     },
     {
-      "number": 26,
+      "number": 6,
+      "score": 4.1
+    },
+    {
+      "number": 13,
+      "score": 3.1
+    },
+    {
+      "number": 1,
+      "score": 3
+    },
+    {
+      "number": 3,
+      "score": 3
+    },
+    {
+      "number": 8,
       "score": 3
     },
     {
       "number": 11,
-      "score": 2.1
+      "score": 3
     },
     {
-      "number": 14,
-      "score": 2.1
-    },
-    {
-      "number": 32,
-      "score": 2.1
-    },
-    {
-      "number": 1,
-      "score": 2
-    },
-    {
-      "number": 6,
-      "score": 2
-    },
-    {
-      "number": 8,
-      "score": 2
-    },
-    {
-      "number": 9,
-      "score": 2
-    },
-    {
-      "number": 15,
-      "score": 2
-    },
-    {
-      "number": 16,
-      "score": 2
+      "number": 2,
+      "score": 2.2
     },
     {
       "number": 17,
+      "score": 2.1
+    },
+    {
+      "number": 5,
+      "score": 2
+    },
+    {
+      "number": 7,
+      "score": 2
+    },
+    {
+      "number": 18,
       "score": 2
     },
     {
@@ -79,11 +79,7 @@
       "score": 2
     },
     {
-      "number": 22,
-      "score": 2
-    },
-    {
-      "number": 28,
+      "number": 23,
       "score": 2
     },
     {
@@ -91,19 +87,19 @@
       "score": 2
     },
     {
-      "number": 31,
-      "score": 2
-    },
-    {
-      "number": 27,
+      "number": 19,
       "score": 1.1
     },
     {
-      "number": 3,
-      "score": 1
+      "number": 21,
+      "score": 1.1
     },
     {
       "number": 4,
+      "score": 1
+    },
+    {
+      "number": 10,
       "score": 1
     },
     {
@@ -111,11 +107,15 @@
       "score": 1
     },
     {
-      "number": 21,
+      "number": 14,
       "score": 1
     },
     {
-      "number": 23,
+      "number": 15,
+      "score": 1
+    },
+    {
+      "number": 16,
       "score": 1
     },
     {
@@ -123,47 +123,47 @@
       "score": 1
     },
     {
+      "number": 25,
+      "score": 1
+    },
+    {
+      "number": 28,
+      "score": 1
+    },
+    {
       "number": 30,
       "score": 1
     },
     {
+      "number": 31,
+      "score": 1
+    },
+    {
+      "number": 37,
+      "score": 1
+    },
+    {
+      "number": 38,
+      "score": 1
+    },
+    {
+      "number": 22,
+      "score": 0
+    },
+    {
+      "number": 26,
+      "score": 0
+    },
+    {
+      "number": 27,
+      "score": 0
+    },
+    {
+      "number": 32,
+      "score": 0
+    },
+    {
       "number": 33,
-      "score": 1
-    },
-    {
-      "number": 35,
-      "score": 1
-    },
-    {
-      "number": 39,
-      "score": 1
-    },
-    {
-      "number": 2,
-      "score": 0
-    },
-    {
-      "number": 5,
-      "score": 0
-    },
-    {
-      "number": 7,
-      "score": 0
-    },
-    {
-      "number": 10,
-      "score": 0
-    },
-    {
-      "number": 13,
-      "score": 0
-    },
-    {
-      "number": 18,
-      "score": 0
-    },
-    {
-      "number": 25,
       "score": 0
     },
     {
@@ -171,15 +171,15 @@
       "score": 0
     },
     {
+      "number": 35,
+      "score": 0
+    },
+    {
       "number": 36,
       "score": 0
     },
     {
-      "number": 37,
-      "score": 0
-    },
-    {
-      "number": 38,
+      "number": 39,
       "score": 0
     }
   ],
@@ -229,53 +229,52 @@
     {
       "strategy": "hot",
       "numbers": [
-        37,
         32,
+        20,
+        37,
         30,
-        2,
-        20
+        5
       ]
     },
     {
       "strategy": "cold",
       "numbers": [
         4,
+        12,
         13,
         15,
-        16,
-        25
+        16
       ]
     },
     {
       "strategy": "overdue",
       "numbers": [
         4,
+        12,
         13,
         15,
-        16,
-        25
+        16
       ]
     },
     {
       "strategy": "hybrid",
       "numbers": [
-        37,
         32,
-        30,
+        20,
+        37,
         4,
-        13
+        12
       ]
     }
   ],
-  "report_date": "2026-11-20",
+  "report_date": "2026-11-21",
   "target_date": "2026-11-21",
-  "provisional": true,
+  "provisional": false,
   "remaining_groups": [
     {
       "source_date": "2026-11-17",
       "offset": 4,
       "numbers": [
-        5,
         17,
         26,
         32,
@@ -318,7 +317,6 @@
   "remaining_numbers": [
     1,
     2,
-    5,
     10,
     14,
     17,
@@ -334,45 +332,45 @@
   ],
   "stars": [
     {
-      "number": 3,
-      "star": 6
-    },
-    {
-      "number": 6,
-      "star": 3
-    },
-    {
-      "number": 14,
+      "number": 1,
       "star": 1
     },
     {
-      "number": 16,
+      "number": 3,
+      "star": 2
+    },
+    {
+      "number": 7,
       "star": 4
+    },
+    {
+      "number": 10,
+      "star": 6
+    },
+    {
+      "number": 11,
+      "star": 3
+    },
+    {
+      "number": 21,
+      "star": 5
     },
     {
       "number": 24,
       "star": 7
     },
     {
-      "number": 25,
-      "star": 10
-    },
-    {
-      "number": 31,
-      "star": 5
-    },
-    {
-      "number": 32,
-      "star": 2
-    },
-    {
-      "number": 33,
+      "number": 28,
       "star": 8
     },
     {
-      "number": 39,
+      "number": 31,
       "star": 9
+    },
+    {
+      "number": 33,
+      "star": 10
     }
   ],
-  "generated_at": "2026-11-20T20:06:31.189703+08:00"
+  "generated_at": "2026-11-21T05:38:26.871596+08:00"
 }
