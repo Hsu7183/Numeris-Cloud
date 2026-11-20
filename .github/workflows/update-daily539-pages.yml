@@ -83,6 +83,7 @@ jobs:
           git add docs/reports/daily539
           git diff --cached --quiet && exit 0
           git commit -m "chore(data): update Daily 539 statistics"
+          git pull --rebase origin main
           git push
       - name: 發布更新後的看板
         uses: actions/configure-pages@v5
