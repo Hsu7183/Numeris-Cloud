@@ -14,16 +14,18 @@ pending=True
 import argparse,subprocess,tempfile,shutil,os
 from datetime import datetime,date,timedelta
 from zoneinfo import ZoneInfo
-from scripts.daily539_report_data import remaining_groups,star_pairs
+from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--date',default=datetime.now(ZoneInfo('Asia/Taipei')).date().isoformat())
 parser.add_argument('--target-date')
 args=parser.parse_args()
 report_date=date.fromisoformat(args.date)
-target_date=date.fromisoformat(args.target_date) if args.target_date else report_date+timedelta(days=1)
 data=json.loads(subprocess.check_output(['node',str(ROOT/'scripts/calculate_539_daily_report.cjs')],cwd=ROOT,text=True,encoding='utf-8'))
 if data['cutoff']['draw_date']>report_date.isoformat():raise ValueError('Future dated source')
+previous_file=ROOT/'docs/reports/daily539/latest.json'
+previous_target=json.loads(previous_file.read_text(encoding='utf-8')).get('target_date') if previous_file.exists() else None
+target_date=date.fromisoformat(args.target_date) if args.target_date else choose_target_date(report_date.isoformat(),data['cutoff']['draw_date'],previous_target)
 groups=remaining_groups(data['draws'],target_date.isoformat(),data['cutoff']['draw_date'])
 union=sorted({n for g in groups for n in g['numbers']})
 provisional=data['cutoff']['draw_date']<(target_date-timedelta(days=1)).isoformat()

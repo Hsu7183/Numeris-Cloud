@@ -1,9 +1,14 @@
 import unittest
 
-from scripts.daily539_report_data import remaining_groups, star_pairs
+from scripts.daily539_report_data import remaining_groups, star_pairs, choose_target_date
 
 
 class DailyReportTests(unittest.TestCase):
+    def test_preview_target_does_not_skip_on_midnight(self):
+        self.assertEqual(str(choose_target_date('2026-11-21', '2026-11-20', '2026-11-21')), '2026-11-21')
+        self.assertEqual(str(choose_target_date('2026-11-20', '2026-11-19', '2026-11-21')), '2026-11-21')
+        self.assertEqual(str(choose_target_date('2026-11-21', '2026-11-21', '2026-11-21')), '2026-11-22')
+
     def setUp(self):
         self.rows = [
             {'draw_date': day, 'numbers': nums} for day, nums in [

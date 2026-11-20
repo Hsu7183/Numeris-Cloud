@@ -2,6 +2,15 @@
 from datetime import date, timedelta
 
 
+def choose_target_date(report_date, cutoff_date, previous_target=None):
+    """Keep the requested preview target until it is reached; never use a drawn target."""
+    candidates = [date.fromisoformat(report_date),
+                  date.fromisoformat(cutoff_date) + timedelta(days=1)]
+    if previous_target:
+        candidates.append(date.fromisoformat(previous_target))
+    return max(candidates)
+
+
 def remaining_groups(draws, target_date, cutoff_date):
     """Use exact calendar dates; never substitute another draw for a missing day."""
     target = date.fromisoformat(target_date)

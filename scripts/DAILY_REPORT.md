@@ -11,7 +11,9 @@ python -m scripts.build_539_daily_report
 python -m unittest discover -s tests/unit -p test_daily539_report_data.py
 ```
 
-日期採 Asia/Taipei，預設報表日期為今天、日期選號目標為明天。
+日期採 Asia/Taipei，預設報表日期為今天。日期選號目標沿用使用者指定的預覽日，
+換日後至少推至當日；目標日開獎資料公布後，再移至下一日。因此11/20預覽11/21，
+到了11/21開獎前仍是11/21名單，不會提早跳到11/22。
 可使用 `--date YYYY-MM-DD --target-date YYYY-MM-DD` 明確指定。
 程式不抓取或猜測未來獎號；資料來源不得晚於報表日，且必須早於選號目標日。
 
