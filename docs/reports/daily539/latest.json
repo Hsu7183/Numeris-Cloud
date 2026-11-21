@@ -372,5 +372,37 @@
       "star": 10
     }
   ],
-  "generated_at": "2026-11-21T06:38:11.361202+08:00"
+  "generated_at": "2026-11-21T17:30:24.133345+08:00",
+  "score_colors": [
+    {
+      "minimum": 4,
+      "label": "4分以上",
+      "foreground": "#7c2bbd",
+      "background": "#f2e6fb"
+    },
+    {
+      "minimum": 3,
+      "label": "3分段",
+      "foreground": "#c42938",
+      "background": "#fde8ec"
+    },
+    {
+      "minimum": 2,
+      "label": "2分段",
+      "foreground": "#a85a00",
+      "background": "#fff0d9"
+    },
+    {
+      "minimum": 1,
+      "label": "1分段",
+      "foreground": "#145ab4",
+      "background": "#e6f0ff"
+    },
+    {
+      "minimum": 0,
+      "label": "0分",
+      "foreground": "#69736f",
+      "background": "#edf0ec"
+    }
+  ]
 }

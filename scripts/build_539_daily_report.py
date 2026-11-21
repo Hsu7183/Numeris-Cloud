@@ -41,6 +41,16 @@ c.setTitle('今彩539 A4每日總表 '+report_date.isoformat())
 L=20; TOP=22; TOTAL=PW-40; left=32; right=52; cw=(TOTAL-left-right)/39; rh=15.25; hh=45
 X=L+left; R=X+cw*39; BOT=TOP+hh+31*rh
 ink='#222a25';note='#153f67';muted='#778078'
+score_bands=[
+ (4,'4分以上','#7c2bbd','#f2e6fb'),
+ (3,'3分段','#c42938','#fde8ec'),
+ (2,'2分段','#a85a00','#fff0d9'),
+ (1,'1分段','#145ab4','#e6f0ff'),
+ (0,'0分','#69736f','#edf0ec'),
+]
+scores_by_number={r['number']:r['score'] for r in data['ranking']}
+def score_style(number):
+ return next((foreground,background) for minimum,_,foreground,background in score_bands if scores_by_number[number]>=minimum)
 def rect(x,y,w,h,fill,stroke=None):
  c.setFillColor(HexColor(fill));c.setStrokeColor(HexColor(stroke or fill));c.rect(x,PH-y-h,w,h,fill=1,stroke=bool(stroke))
 def line(x1,y1,x2,y2,color='#a3a8a0',width=.3,dash=None):
@@ -84,12 +94,16 @@ for row in [15,22]:
  for col,label in [(4,'4*1'),(5,'5*2'),(7,'7*3'),(11,'11*4'),(17,'17*5'),(19,'19*6'),(26,'26*8'),(28,'28*9'),(35,'35*10')]:txt(cx(col),cy(row),label,4.6,'#8f968b')
 for col,label in [(12,'*4'),(17,'*5'),(19,'*6'),(26,'*8')]:txt(cx(col),cy(17),label,8,'#91988c')
 ranking=[r['number'] for r in data['ranking']]
-for col,n in enumerate(ranking,1):txt(cx(col),cy(16),f'{n:02}',8.8,note)
+for col,n in enumerate(ranking,1):
+ foreground,background=score_style(n)
+ rect(X+(col-1)*cw+.4,TOP+hh+15*rh+.5,cw-.8,rh-1,background)
+ txt(cx(col),cy(16),f'{n:02}',8.8,foreground)
 matrix=[ranking[row::4] for row in range(4)]
 for row,nums in enumerate(matrix,18):
  for j,n in enumerate(nums):
-  rect(X+(20+j)*cw,TOP+hh+(row-1)*rh+.5,cw,rh-1,'#f3f5f0')
-  txt(X+20*cw+(j+.5)*cw,cy(row),f'{n:02}',8.8,note)
+  foreground,background=score_style(n)
+  rect(X+(20+j)*cw+.4,TOP+hh+(row-1)*rh+.5,cw-.8,rh-1,background)
+  txt(X+20*cw+(j+.5)*cw,cy(row),f'{n:02}',8.8,foreground)
 def circle(col,row,double=False,question=False):
  if question:
   c.setFillColor(HexColor('#ffffff'));c.circle(cx(col),PH-cy(row),6.5,fill=1,stroke=0)
@@ -132,7 +146,7 @@ if combined:
  for j,(n,star) in enumerate(pairs):
   a=sx+j*sw/10
   if j:line(a,sy+15,a,sy+sh,'#b4bfb0',.4)
-  txt(a+sw/20,sy+25,f'{n:02}',11,note)
+  txt(a+sw/20,sy+25,f'{n:02}',11,score_style(n)[0])
   txt(a+sw/20,sy+39,f'{star}*',7.8,muted)
  if pending:
   selected=[(g['source_date'][5:].replace('-','/'),g['numbers']) for g in groups]
@@ -150,14 +164,20 @@ if combined:
  txt(L+TOTAL,10,f"{report_date.isoformat()}　資料截至 {data['cutoff']['draw_date']}",6.5,muted,'right')
 else:
  txt(L,10,'今彩539｜依照片重繪・保留可辨識筆記',7,align='left')
-txt(L,BOT+10,'藍字每日更新；灰圈為原底圖固定記號，非每日計算。日期選號：目標日前4、2、10、11日；未開獎日不替補。',6.5,align='left')
-txt(L,BOT+20,'相鄰排名與八組號碼沿用網站算法；模擬600期、種子20261025、窗口18期。統計供參考，非開獎預測。',6.5,muted,align='left')
+txt(L,BOT+9,'相鄰排名／星號分色：',6.5,align='left')
+for i,(_,label,foreground,background) in enumerate(score_bands):
+ lx=L+83+i*70
+ rect(lx,BOT+3,8,8,background,foreground)
+ txt(lx+12,BOT+7,label,6.8,foreground,'left')
+txt(L,BOT+20,'號碼每日依相鄰分數自動分色；灰圈為原底圖固定記號。日期選號：目標日前4、2、10、11日；未開獎日不替補。',6.5,align='left')
+txt(L,BOT+30,'相鄰排名與八組號碼沿用網站算法；模擬600期、種子20261025、窗口18期。統計供參考，非開獎預測。',6.5,muted,align='left')
 c.showPage();c.save()
 assert len(PdfReader(p).pages)==1
 doc=pdfium.PdfDocument(str(p));doc[0].render(scale=2).to_pil().save(p.with_suffix('.png'))
 doc.close()
 metadata={k:v for k,v in data.items() if k!='draws'}
 metadata.update(report_date=report_date.isoformat(),target_date=target_date.isoformat(),provisional=provisional,remaining_groups=groups,remaining_numbers=union,stars=[{'number':n,'star':s} for n,s in pairs],generated_at=datetime.now(ZoneInfo('Asia/Taipei')).isoformat())
+metadata['score_colors']=[{'minimum':minimum,'label':label,'foreground':foreground,'background':background} for minimum,label,foreground,background in score_bands]
 (stage/'latest.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 # Promote only after the complete one-page PDF and preview render successfully.
 for name in ['latest.pdf','latest.png','latest.json']:shutil.copyfile(stage/name,out/name)
