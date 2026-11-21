@@ -1,13 +1,13 @@
 {
   "cutoff": {
-    "draw_no": "115000281",
-    "draw_date": "2026-11-20",
+    "draw_no": "115000282",
+    "draw_date": "2026-11-21",
     "numbers": [
-      3,
-      5,
       7,
-      11,
-      20
+      19,
+      20,
+      28,
+      32
     ]
   },
   "W": 18,
@@ -15,55 +15,47 @@
   "simN": 600,
   "realCount": 420,
   "windowStart": {
-    "issue": "115000264",
-    "date": "2026-10-31",
+    "issue": "115000265",
+    "date": "2026-11-02",
     "nums": [
-      2,
-      5,
-      17,
-      28,
-      37
+      29,
+      31,
+      33,
+      35,
+      38
     ]
   },
   "ranking": [
     {
-      "number": 9,
-      "score": 4.3
-    },
-    {
-      "number": 6,
-      "score": 4.1
-    },
-    {
-      "number": 13,
+      "number": 14,
       "score": 3.1
     },
     {
-      "number": 1,
-      "score": 3
+      "number": 30,
+      "score": 3.1
     },
     {
-      "number": 3,
+      "number": 28,
       "score": 3
-    },
-    {
-      "number": 8,
-      "score": 3
-    },
-    {
-      "number": 11,
-      "score": 3
-    },
-    {
-      "number": 2,
-      "score": 2.2
     },
     {
       "number": 17,
+      "score": 2.2
+    },
+    {
+      "number": 2,
       "score": 2.1
     },
     {
-      "number": 5,
+      "number": 19,
+      "score": 2.1
+    },
+    {
+      "number": 23,
+      "score": 2.1
+    },
+    {
+      "number": 6,
       "score": 2
     },
     {
@@ -71,7 +63,7 @@
       "score": 2
     },
     {
-      "number": 18,
+      "number": 12,
       "score": 2
     },
     {
@@ -79,35 +71,35 @@
       "score": 2
     },
     {
-      "number": 23,
-      "score": 2
-    },
-    {
       "number": 29,
       "score": 2
     },
     {
-      "number": 19,
-      "score": 1.1
+      "number": 32,
+      "score": 2
     },
     {
-      "number": 21,
-      "score": 1.1
-    },
-    {
-      "number": 4,
+      "number": 3,
       "score": 1
     },
     {
-      "number": 10,
+      "number": 5,
       "score": 1
     },
     {
-      "number": 12,
+      "number": 8,
       "score": 1
     },
     {
-      "number": 14,
+      "number": 9,
+      "score": 1
+    },
+    {
+      "number": 11,
+      "score": 1
+    },
+    {
+      "number": 13,
       "score": 1
     },
     {
@@ -115,7 +107,15 @@
       "score": 1
     },
     {
-      "number": 16,
+      "number": 18,
+      "score": 1
+    },
+    {
+      "number": 21,
+      "score": 1
+    },
+    {
+      "number": 22,
       "score": 1
     },
     {
@@ -123,15 +123,7 @@
       "score": 1
     },
     {
-      "number": 25,
-      "score": 1
-    },
-    {
-      "number": 28,
-      "score": 1
-    },
-    {
-      "number": 30,
+      "number": 26,
       "score": 1
     },
     {
@@ -139,19 +131,35 @@
       "score": 1
     },
     {
+      "number": 34,
+      "score": 1
+    },
+    {
+      "number": 35,
+      "score": 1
+    },
+    {
       "number": 37,
       "score": 1
     },
     {
-      "number": 38,
-      "score": 1
-    },
-    {
-      "number": 22,
+      "number": 1,
       "score": 0
     },
     {
-      "number": 26,
+      "number": 4,
+      "score": 0
+    },
+    {
+      "number": 10,
+      "score": 0
+    },
+    {
+      "number": 16,
+      "score": 0
+    },
+    {
+      "number": 25,
       "score": 0
     },
     {
@@ -159,23 +167,15 @@
       "score": 0
     },
     {
-      "number": 32,
-      "score": 0
-    },
-    {
       "number": 33,
       "score": 0
     },
     {
-      "number": 34,
-      "score": 0
-    },
-    {
-      "number": 35,
-      "score": 0
-    },
-    {
       "number": 36,
+      "score": 0
+    },
+    {
+      "number": 38,
       "score": 0
     },
     {
@@ -231,9 +231,9 @@
       "numbers": [
         32,
         20,
-        37,
         30,
-        5
+        37,
+        38
       ]
     },
     {
@@ -261,118 +261,110 @@
       "numbers": [
         32,
         20,
-        37,
+        30,
         4,
         12
       ]
     }
   ],
-  "report_date": "2026-11-21",
-  "target_date": "2026-11-21",
+  "report_date": "2026-11-22",
+  "target_date": "2026-11-22",
   "provisional": false,
   "remaining_groups": [
     {
-      "source_date": "2026-11-17",
+      "source_date": "2026-11-18",
       "offset": 4,
       "numbers": [
-        17,
-        26,
-        32,
-        38
+        22,
+        27,
+        35,
+        39
       ],
       "available": true
     },
     {
-      "source_date": "2026-11-19",
+      "source_date": "2026-11-20",
       "offset": 2,
       "numbers": [
-        2,
-        10,
-        23,
-        24,
-        37
+        3,
+        5,
+        11
+      ],
+      "available": true
+    },
+    {
+      "source_date": "2026-11-12",
+      "offset": 10,
+      "numbers": [
+        9
       ],
       "available": true
     },
     {
       "source_date": "2026-11-11",
-      "offset": 10,
+      "offset": 11,
       "numbers": [
         14,
         29
       ],
       "available": true
-    },
-    {
-      "source_date": "2026-11-10",
-      "offset": 11,
-      "numbers": [
-        1,
-        19,
-        34
-      ],
-      "available": true
     }
   ],
   "remaining_numbers": [
-    1,
-    2,
-    10,
+    3,
+    5,
+    9,
+    11,
     14,
-    17,
-    19,
-    23,
-    24,
-    26,
+    22,
+    27,
     29,
-    32,
-    34,
-    37,
-    38
+    35,
+    39
   ],
   "stars": [
     {
-      "number": 1,
-      "star": 1
-    },
-    {
-      "number": 3,
+      "number": 2,
       "star": 2
     },
     {
-      "number": 7,
-      "star": 4
+      "number": 9,
+      "star": 5
     },
     {
-      "number": 10,
+      "number": 13,
       "star": 6
     },
     {
-      "number": 11,
-      "star": 3
+      "number": 17,
+      "star": 1
     },
     {
-      "number": 21,
-      "star": 5
+      "number": 20,
+      "star": 4
+    },
+    {
+      "number": 23,
+      "star": 3
     },
     {
       "number": 24,
       "star": 7
     },
     {
-      "number": 28,
-      "star": 8
+      "number": 27,
+      "star": 10
     },
     {
       "number": 31,
-      "star": 9
+      "star": 8
     },
     {
-      "number": 33,
-      "star": 10
+      "number": 35,
+      "star": 9
     }
   ],
-  "generated_at": "2026-11-21T17:31:40.343591+08:00",
+  "generated_at": "2026-11-22T04:19:44.515668+08:00",
   "score_colors": [
     {
       "minimum": 4,
