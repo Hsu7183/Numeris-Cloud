@@ -267,60 +267,64 @@
       ]
     }
   ],
-  "report_date": "2026-11-22",
-  "target_date": "2026-11-22",
-  "provisional": false,
+  "report_date": "2026-11-23",
+  "target_date": "2026-11-23",
+  "provisional": true,
   "remaining_groups": [
     {
-      "source_date": "2026-11-18",
+      "source_date": "2026-11-19",
       "offset": 4,
       "numbers": [
-        22,
-        27,
-        35,
-        39
+        2,
+        10,
+        23,
+        24,
+        37
       ],
       "available": true
     },
     {
-      "source_date": "2026-11-20",
+      "source_date": "2026-11-21",
       "offset": 2,
       "numbers": [
-        3,
-        5,
-        11
+        7,
+        19,
+        20,
+        28,
+        32
+      ],
+      "available": true
+    },
+    {
+      "source_date": "2026-11-13",
+      "offset": 10,
+      "numbers": [
+        8
       ],
       "available": true
     },
     {
       "source_date": "2026-11-12",
-      "offset": 10,
-      "numbers": [
-        9
-      ],
-      "available": true
-    },
-    {
-      "source_date": "2026-11-11",
       "offset": 11,
       "numbers": [
-        14,
-        29
+        9
       ],
       "available": true
     }
   ],
   "remaining_numbers": [
-    3,
-    5,
+    2,
+    7,
+    8,
     9,
-    11,
-    14,
-    22,
-    27,
-    29,
-    35,
-    39
+    10,
+    19,
+    20,
+    23,
+    24,
+    28,
+    32,
+    37
   ],
   "stars": [
     {
@@ -364,7 +368,7 @@
       "star": 9
     }
   ],
-  "generated_at": "2026-11-22T05:37:10.022373+08:00",
+  "generated_at": "2026-11-23T04:32:40.949235+08:00",
   "score_colors": [
     {
       "minimum": 4,
