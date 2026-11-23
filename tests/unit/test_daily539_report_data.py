@@ -1,9 +1,29 @@
 import unittest
 
-from scripts.daily539_report_data import remaining_groups, star_pairs, choose_target_date
+from scripts.daily539_report_data import remaining_groups, star_pairs, choose_target_date, figure_nine
 
 
 class DailyReportTests(unittest.TestCase):
+    def test_figure_nine_confirmed_november_23(self):
+        numbers = [14,30,28,17,2,19,23,6,7,12,20,29,32,3,5,8,9]
+        scores = [3.2,3.1,3.0] + [2.0]*10 + [1.0]*4
+        result = figure_nine([{'number': n, 'score': s} for n,s in zip(numbers,scores)])
+        self.assertEqual(result['shape'], [3,2,2,2])
+        self.assertEqual(result['numbers'], [14,30,28,17,2,6,7,29,32])
+        self.assertEqual(result['sorted_numbers'], [2,6,7,14,17,28,29,30,32])
+
+    def test_figure_nine_photo_shapes_and_score_resets(self):
+        for counts, expected in [([1,4,3,1],[1,4,3,1]),
+                                 ([2,5,8],[2,3,1,3]),
+                                 ([4,2,2,1],[4,2,2,1])]:
+            ranking=[]
+            for i,count in enumerate(counts):
+                for _ in range(count):
+                    ranking.append({'number':len(ranking)+1,'score':4-i})
+            result=figure_nine(ranking)
+            self.assertEqual(result['shape'],expected)
+            self.assertEqual(len(set(result['numbers'])),9)
+
     def test_preview_target_does_not_skip_on_midnight(self):
         self.assertEqual(str(choose_target_date('2026-11-21', '2026-11-20', '2026-11-21')), '2026-11-21')
         self.assertEqual(str(choose_target_date('2026-11-20', '2026-11-19', '2026-11-21')), '2026-11-21')

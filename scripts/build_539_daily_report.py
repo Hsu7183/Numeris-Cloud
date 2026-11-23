@@ -14,7 +14,7 @@ pending=True
 import argparse,subprocess,tempfile,shutil,os
 from datetime import datetime,date,timedelta
 from zoneinfo import ZoneInfo
-from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date
+from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date,figure_nine
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--date',default=datetime.now(ZoneInfo('Asia/Taipei')).date().isoformat())
@@ -28,6 +28,7 @@ previous_target=json.loads(previous_file.read_text(encoding='utf-8')).get('targe
 target_date=date.fromisoformat(args.target_date) if args.target_date else choose_target_date(report_date.isoformat(),data['cutoff']['draw_date'],previous_target)
 groups=remaining_groups(data['draws'],target_date.isoformat(),data['cutoff']['draw_date'])
 union=sorted({n for g in groups for n in g['numbers']})
+figure=figure_nine(data['ranking'])
 provisional=data['cutoff']['draw_date']<(target_date-timedelta(days=1)).isoformat()
 fonts=[os.environ.get('NUMERIS_REPORT_FONT',''),'C:/Windows/Fonts/msjh.ttc','/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc']
 font=next((f for f in fonts if f and Path(f).is_file()),None)
@@ -160,6 +161,16 @@ if combined:
   line(px,py+52,px+pw,py+52,'#c0cabe',.35)
   txt(px+6,py+58,f'共{len(union)}碼：'+' '.join(f'{n:02}' for n in union),6.9,note,'left')
   txt(px+6,py+67,f"截至{data['cutoff']['draw_date'][5:]}；"+('尚待前一日開獎資料，非最終名單。' if provisional else '已扣除來源日之後至截止日重複獎號。'),6.6,'#a65322','left')
+ if pending:
+  fx=X+6; fy=TOP+hh+21*rh+3; fw=19*cw-12; fh=55
+  rect(fx,fy,fw,fh,'#fffefb','#a5b5a6')
+  rect(fx,fy,fw,13,'#edf3ef','#a5b5a6')
+  shape='、'.join(str(n) for n in figure['shape'])
+  txt(fx+6,fy+6.5,'每日圖形9碼｜'+report_date.strftime('%m/%d')+'・'+shape,7.6,note,'left')
+  txt(fx+6,fy+24,'　'.join(f'{n:02}' for n in figure['sorted_numbers']),11.3,note,'left')
+  order='｜'.join('、'.join(f'{n:02}' for n in col['numbers']) for col in figure['columns'])
+  txt(fx+6,fy+40,'左起順序：'+order,6.9,note,'left')
+  txt(fx+6,fy+50,'依最新排名及整數分組重算；統計參考。',6,muted,'left')
  txt(L,10,'今彩539｜A4 格表・八組號碼、星號對照'+('及日期選號' if pending else ''),7,align='left')
  txt(L+TOTAL,10,f"{report_date.isoformat()}　資料截至 {data['cutoff']['draw_date']}",6.5,muted,'right')
 else:
@@ -177,6 +188,7 @@ doc=pdfium.PdfDocument(str(p));doc[0].render(scale=2).to_pil().save(p.with_suffi
 doc.close()
 metadata={k:v for k,v in data.items() if k!='draws'}
 metadata.update(report_date=report_date.isoformat(),target_date=target_date.isoformat(),provisional=provisional,remaining_groups=groups,remaining_numbers=union,stars=[{'number':n,'star':s} for n,s in pairs],generated_at=datetime.now(ZoneInfo('Asia/Taipei')).isoformat())
+metadata['figure_nine']=figure
 metadata['score_colors']=[{'minimum':minimum,'label':label,'foreground':foreground,'background':background} for minimum,label,foreground,background in score_bands]
 (stage/'latest.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 # Promote only after the complete one-page PDF and preview render successfully.

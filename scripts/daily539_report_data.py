@@ -33,3 +33,30 @@ def remaining_groups(draws, target_date, cutoff_date):
 def star_pairs(ranking):
     columns = (4, 5, 7, 11, 17, 19, 24, 26, 28, 35)
     return sorted((ranking[col - 1]['number'], star) for star, col in enumerate(columns, 1))
+
+
+def figure_nine(ranking):
+    """Read score-anchored four-row columns from the left, ignoring decimals."""
+    groups = []
+    for row in ranking:
+        score = int(row['score'])
+        if not groups or groups[-1]['score'] != score:
+            groups.append({'score': score, 'numbers': []})
+        groups[-1]['numbers'].append(row['number'])
+    if not groups:
+        raise ValueError('Ranking is empty')
+    first_height = min(4, len(groups[0]['numbers']))
+    following_height = max(2, 5 - first_height)
+    columns = []
+    selected = []
+    for group_index, group in enumerate(groups):
+        for start in range(0, len(group['numbers']), 4):
+            height = first_height if group_index == 0 and start == 0 else following_height
+            numbers = group['numbers'][start:start + min(height, 9 - len(selected))]
+            if numbers:
+                columns.append({'score': group['score'], 'numbers': numbers})
+                selected.extend(numbers)
+            if len(selected) == 9:
+                return {'columns': columns, 'shape': [len(c['numbers']) for c in columns],
+                        'numbers': selected, 'sorted_numbers': sorted(selected)}
+    raise ValueError('Ranking does not provide nine figure numbers')
