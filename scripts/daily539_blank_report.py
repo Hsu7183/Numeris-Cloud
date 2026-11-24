@@ -4,10 +4,11 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 import os
+import json
 from playwright.sync_api import sync_playwright
 
 
-def calculate_blank_summaries(root):
+def calculate_blank_summaries(root, include_ai=False):
     class QuietHandler(SimpleHTTPRequestHandler):
         def log_message(self, *args):
             pass
@@ -28,13 +29,27 @@ def calculate_blank_summaries(root):
                 status = page.locator('#overlay-status').inner_text()
                 if not status.startswith('已更新至'):
                     raise RuntimeError(status)
-                return page.locator('#blank-difference-panels .overlay-panel').evaluate_all("""panels => panels.map(panel => ({
+                summaries = page.locator('#blank-difference-panels .overlay-panel').evaluate_all("""panels => panels.map(panel => ({
                     long: Number(panel.dataset.blankLong), short: Number(panel.dataset.blankShort),
                     groups: [...panel.querySelectorAll('tbody tr')].map(row => ({
                         count: Number(row.querySelector('th').textContent),
                         numbers: [...row.querySelectorAll('td.blank-changed .comparison-ball')].map(ball => Number(ball.textContent))
                     })).filter(group => group.numbers.length)
                 })).filter(panel => panel.groups.length)""")
+                if not include_ai:
+                    return summaries
+                brief = json.loads((root / 'docs/data/539-aibrief.json').read_text(encoding='utf-8'))
+                mentioned = brief['mentioned_numbers']
+                if not all(type(n) is int and 1 <= n <= 39 for n in mentioned):
+                    raise ValueError('Invalid AI brief ball numbers')
+                groups = page.locator('#adjacent-table tbody tr').evaluate_all("""rows => rows.map(row => ({
+                    count: Number(row.querySelector('th').textContent),
+                    numbers: [...row.querySelectorAll('td span')].map(ball => Number(ball.textContent))
+                }))""")
+                for group in groups:
+                    group['numbers'] = [n for n in group['numbers'] if n in mentioned]
+                return {'blank_summaries': summaries, 'ai_brief': {
+                    'source_draw_date': brief['source_draw_date'], 'groups': groups}}
             finally:
                 browser.close()
     finally:

@@ -30,7 +30,9 @@ target_date=date.fromisoformat(args.target_date) if args.target_date else choose
 groups=remaining_groups(data['draws'],target_date.isoformat(),data['cutoff']['draw_date'])
 union=sorted({n for g in groups for n in g['numbers']})
 figure=figure_nine(data['ranking'])
-blank_summaries=calculate_blank_summaries(ROOT)
+report_tables=calculate_blank_summaries(ROOT, include_ai=True)
+blank_summaries=report_tables['blank_summaries']
+ai_brief=report_tables['ai_brief']
 provisional=data['cutoff']['draw_date']<(target_date-timedelta(days=1)).isoformat()
 fonts=[os.environ.get('NUMERIS_REPORT_FONT',''),'C:/Windows/Fonts/msjh.ttc','/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc']
 font=next((f for f in fonts if f and Path(f).is_file()),None)
@@ -166,6 +168,25 @@ if combined:
   order='｜'.join('、'.join(f'{n:02}' for n in col['numbers']) for col in figure['columns'])
   txt(fx+6,fy+40,'左起順序：'+order,6.9,note,'left')
   txt(fx+6,fy+50,'依最新排名及整數分組重算；統計參考。',6,muted,'left')
+ # AI brief intersection sits in the remaining lower-left table cells.
+ ax=X+6; ay=TOP+hh+25*rh+3; aw=19*cw-12; ah=6*rh-6
+ rect(ax,ay,aw,ah,'#ffffff','#000000')
+ split=ax+52
+ line(split,ay,split,ay+ah)
+ txt(ax+26,ay+9,'相鄰次數',8)
+ txt(split+8,ay+9,'AI快報也有提及',9,ink,'left')
+ line(ax,ay+17,ax+aw,ay+17)
+ for i,group in enumerate(ai_brief['groups']):
+  yy=ay+26+i*11.5
+  txt(ax+26,yy,f"{group['count']}次",9)
+  label='、'.join(f'{n:02}' for n in group['numbers']) or '無'
+  color=next(fg for minimum,_,fg,_ in score_bands if group['count']>=minimum)
+  txt(split+8,yy,label,9.5,color,'left')
+  line(ax,yy+6,ax+aw,yy+6)
+ brief_note='來源 '+ai_brief['source_draw_date']+'；共同提及不等於命中。'
+ if ai_brief['source_draw_date']!=data['cutoff']['draw_date']:
+  brief_note+='注意：資料日期不同。'
+ txt(ax+5,ay+ah-4,brief_note,6,ink,'left')
  # Compact summaries are painted inside the original table, not below the image.
  bx=X+20*cw+3; by=TOP+hh+21*rh+3; bw=R-bx-6; bh=10*rh-6
  rect(bx,by,bw,bh,'#fffefb','#a5b5a6')
@@ -206,6 +227,7 @@ metadata={k:v for k,v in data.items() if k!='draws'}
 metadata.update(report_date=report_date.isoformat(),target_date=target_date.isoformat(),provisional=provisional,remaining_groups=groups,remaining_numbers=union,stars=[{'number':n,'star':s} for n,s in pairs],generated_at=datetime.now(ZoneInfo('Asia/Taipei')).isoformat())
 metadata['figure_nine']=figure
 metadata['blank_summaries']=blank_summaries
+metadata['ai_brief_comparison']=ai_brief
 metadata['score_colors']=[{'minimum':minimum,'label':label,'foreground':foreground,'background':background} for minimum,label,foreground,background in score_bands]
 (stage/'latest.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 # Promote only after the complete one-page PDF and preview render successfully.

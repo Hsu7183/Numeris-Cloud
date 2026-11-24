@@ -366,7 +366,7 @@
       "star": 3
     }
   ],
-  "generated_at": "2026-11-24T15:17:09.861590+08:00",
+  "generated_at": "2026-11-24T15:22:52.391310+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -555,6 +555,55 @@
       ]
     }
   ],
+  "ai_brief_comparison": {
+    "source_draw_date": "2026-11-23",
+    "groups": [
+      {
+        "count": 4,
+        "numbers": [
+          28
+        ]
+      },
+      {
+        "count": 3,
+        "numbers": [
+          8
+        ]
+      },
+      {
+        "count": 2,
+        "numbers": [
+          20,
+          24,
+          25,
+          29
+        ]
+      },
+      {
+        "count": 1,
+        "numbers": [
+          1,
+          12,
+          15,
+          32,
+          33,
+          35,
+          39
+        ]
+      },
+      {
+        "count": 0,
+        "numbers": [
+          4,
+          14,
+          22,
+          30,
+          36,
+          37
+        ]
+      }
+    ]
+  },
   "score_colors": [
     {
       "minimum": 4,
