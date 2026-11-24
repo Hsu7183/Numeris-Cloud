@@ -72,6 +72,8 @@ jobs:
           PY
       - name: 重建每日A4總表、預覽及下載存檔
         run: python -m scripts.build_539_daily_report
+      - name: 更新6個月開獎號碼表
+        run: python -m scripts.build_539_monthly_sheet --months 6 --publish
       - name: 儲存更新後的資料
         run: |
           git config user.name "github-actions[bot]"
@@ -83,7 +85,7 @@ jobs:
           git add reports/539-adjacent-source.json
           git add docs/lotto649 docs/data/lotto649.json
           git add docs/data/649-*.json reports/649-adjacent-source.json
-          git add docs/reports/daily539 docs/data/california-daily.json
+          git add docs/reports/daily539 docs/data/california-daily.json docs/reports/539-6-months
           git diff --cached --quiet && exit 0
           git commit -m "chore(data): update Daily 539 statistics"
           git pull --rebase --autostash origin main
