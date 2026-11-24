@@ -82,3 +82,6 @@ tbody tr:nth-child(5n) td,tbody tr:nth-child(5n) th { border-bottom:2px solid #5
 .score-section .rank-pair b.score-orange{color:#c56a08}
 .score-section .rank-pair b.score-blue{color:#2563eb}
 .score-section .rank-pair b.score-gray{color:#9ca3af}
+
+/* Enlarge ranked ball numbers and outlines by 36%, keeping their centers. */
+.score-line-item .rank-pair b,.score-item .rank-pair b{transform:translate(-50%,-50%) scale(1.36)}
