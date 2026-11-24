@@ -31,6 +31,7 @@
           target.querySelector('.report-blank-status').textContent = `資料截至 ${cutoff}；依實際開獎期計算，每日隨資料更新。`;
           const container = target.querySelector('.report-blank-panels');
           for (const panel of panels) {
+            if (!panel.querySelector('td.blank-changed .comparison-ball')) continue;
             const card = document.createElement('article');
             const heading = document.createElement('h3');
             heading.textContent = panel.querySelector('header strong').textContent;
