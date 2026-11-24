@@ -140,8 +140,8 @@ if combined:
     bx=px+panelw-118+q*24
     ball_color=score_style(n)[0]
     c.setFillColor(HexColor('#fffefb'));c.setStrokeColor(HexColor(ball_color));c.setLineWidth(.6)
-    c.setDash([2,1.5]);c.circle(bx,PH-(ry+rowh/2),8,fill=1,stroke=1);c.setDash([])
-    txt(bx,ry+rowh/2,f'{n:02}',10,ball_color)
+    c.setDash([2,1.5]);c.circle(bx,PH-(ry+rowh/2),8*1.36,fill=1,stroke=1);c.setDash([])
+    txt(bx,ry+rowh/2,f'{n:02}',10*1.36,ball_color)
  pairs=star_pairs(data['ranking'])
  sy=TOP+hh+rh*10+5; sx=X+6; sw=R-X-12; sh=rh*4-11
  rect(sx,sy,sw,sh,'#fffefb','#a5b5a6');rect(sx,sy,sw,15,'#edf1eb','#a5b5a6')
