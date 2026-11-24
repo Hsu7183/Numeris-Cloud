@@ -80,10 +80,10 @@
   })).sort((first, second) => second.score - first.score || first.number - second.number);
   const scoreColor = (value) => value >= 3 ? "score-red" : value >= 2 ? "score-orange" : value >= 1 ? "score-blue" : "score-gray";
   const scoreStrip = scores.map((item, index) => `<div class="score-item">
-    <span>${index + 1}</span><div class="rank-pair"><b>${String(item.number).padStart(2, "0")}</b><strong class="${scoreColor(item.score)}">${item.score.toFixed(1)}</strong></div>
+    <span>${index + 1}</span><div class="rank-pair"><b class="${scoreColor(item.score)}">${String(item.number).padStart(2, "0")}</b><strong class="${scoreColor(item.score)}">${item.score.toFixed(1)}</strong></div>
   </div>`).join("");
   const scoreLine = scores.map((item, index) => `<div class="score-line-item">
-    <span>${index + 1}</span><div class="rank-pair"><b>${String(item.number).padStart(2, "0")}</b><strong class="${scoreColor(item.score)}">${item.score.toFixed(1)}</strong></div>
+    <span>${index + 1}</span><div class="rank-pair"><b class="${scoreColor(item.score)}">${String(item.number).padStart(2, "0")}</b><strong class="${scoreColor(item.score)}">${item.score.toFixed(1)}</strong></div>
   </div>`).join("");
   document.querySelector("#output-meta").textContent = `最新 ${payload.latest_draw_no} 期 · ${payload.latest_draw_date} · 每期數範圍各顯示 6 顆主球（特別號不計）與相鄰球`;
   const columns = '<col class="range-col"><col class="index-col"><col class="value-col">' + '<col class="matrix-col">'.repeat(49);

@@ -122,7 +122,7 @@
         }).join("");
         return `<tr><th>${rowLabel}</th>${cells}</tr>`;
       }).join("");
-      return `<section class="overlay-panel"><header><strong>近 ${long} → ${short} 期</strong></header><table><thead><tr><th class="blank-summary" colspan="${columnCount + 1}">空白格增加 ${changed} 格</th></tr><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><p class="overlay-note">有→空：${changed} 格；兩者皆空：${blank} 格；兩者皆有：${columnCount * 5 - changed - blank} 格。</p></section>`;
+      return `<section class="overlay-panel" data-blank-long="${long}" data-blank-short="${short}"><header><strong>近 ${long} → ${short} 期</strong></header><table><thead><tr><th class="blank-summary" colspan="${columnCount + 1}">空白格增加 ${changed} 格</th></tr><tr><th>次數</th>${headers}</tr></thead><tbody>${rows}</tbody></table><div class="blank-number-summary"></div><p class="overlay-note">有→空：${changed} 格；兩者皆空：${blank} 格；兩者皆有：${columnCount * 5 - changed - blank} 格。</p></section>`;
     }).join("");
   };
 
@@ -170,6 +170,22 @@
     });
   };
 
+  const summarizeBlankNumbers = () => {
+    document.querySelectorAll("#blank-difference-panels .overlay-panel").forEach((panel) => {
+      const groups = [...panel.querySelectorAll("tbody tr")].map((row) => ({
+        count: row.querySelector("th").textContent,
+        numbers: [...row.querySelectorAll("td.blank-changed .comparison-ball")]
+          .map((ball) => String(Number(ball.textContent)).padStart(2, "0")),
+      }));
+      const allNumbers = groups.flatMap(({ numbers }) => numbers);
+      const grouped = panel.dataset.blankLong === "18" && panel.dataset.blankShort === "6";
+      panel.querySelector(".blank-number-summary").innerHTML = grouped
+        ? groups.filter(({ numbers }) => numbers.length)
+          .map(({ count, numbers }) => `<p><strong>次數 ${count}</strong>／數字為 ${numbers.join("、")}</p>`).join("") || "<p>數字為 0</p>"
+        : `<p>數字為 ${allNumbers.length ? allNumbers.join("、") : "0"}</p>`;
+    });
+  };
+
   async function load() {
     try {
       const response = await fetch(`../data/lotto649.json?load=${Date.now()}`, { cache: "no-store" });
@@ -193,6 +209,7 @@
       const adjacentDate = dates.at(-1);
       document.querySelector("#adjacent-table").innerHTML = await loadAdjacentTable(adjacentDate);
       placeAdjacentBalls();
+      summarizeBlankNumbers();
       document.querySelector("#adjacent-date").textContent = `${adjacentDate.replaceAll("-", "/")} 本期相鄰`;
       document.querySelector(".overlay-header span").textContent = `依最近 ${rangeLabel} 個實際開獎期累加；休假日不計（截至 ${adjacentDate}）`;
       status.textContent = `已更新至 ${adjacentDate} · 近 ${rangeLabel} 期疊加 · 每日自動更新已開啟。`;
