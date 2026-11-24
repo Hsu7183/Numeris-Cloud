@@ -366,7 +366,7 @@
       "star": 3
     }
   ],
-  "generated_at": "2026-11-24T12:29:50.486892+08:00",
+  "generated_at": "2026-11-24T14:41:31.375913+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -428,6 +428,133 @@
       38
     ]
   },
+  "blank_summaries": [
+    {
+      "long": 36,
+      "short": 30,
+      "groups": [
+        {
+          "count": 0,
+          "numbers": [
+            14
+          ]
+        }
+      ]
+    },
+    {
+      "long": 24,
+      "short": 18,
+      "groups": [
+        {
+          "count": 2,
+          "numbers": [
+            29
+          ]
+        },
+        {
+          "count": 1,
+          "numbers": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "long": 18,
+      "short": 12,
+      "groups": [
+        {
+          "count": 3,
+          "numbers": [
+            5
+          ]
+        },
+        {
+          "count": 0,
+          "numbers": [
+            37
+          ]
+        }
+      ]
+    },
+    {
+      "long": 12,
+      "short": 6,
+      "groups": [
+        {
+          "count": 2,
+          "numbers": [
+            2,
+            17,
+            24
+          ]
+        },
+        {
+          "count": 1,
+          "numbers": [
+            1,
+            11,
+            12,
+            13,
+            15,
+            19,
+            23,
+            35
+          ]
+        },
+        {
+          "count": 0,
+          "numbers": [
+            18,
+            26,
+            36
+          ]
+        }
+      ]
+    },
+    {
+      "long": 18,
+      "short": 6,
+      "groups": [
+        {
+          "count": 3,
+          "numbers": [
+            5
+          ]
+        },
+        {
+          "count": 2,
+          "numbers": [
+            2,
+            17,
+            24
+          ]
+        },
+        {
+          "count": 1,
+          "numbers": [
+            1,
+            11,
+            12,
+            13,
+            15,
+            19,
+            23,
+            35
+          ]
+        },
+        {
+          "count": 0,
+          "numbers": [
+            18,
+            26,
+            36,
+            37
+          ]
+        }
+      ]
+    }
+  ],
   "score_colors": [
     {
       "minimum": 4,

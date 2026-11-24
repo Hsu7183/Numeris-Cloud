@@ -15,6 +15,7 @@ import argparse,subprocess,tempfile,shutil,os
 from datetime import datetime,date,timedelta
 from zoneinfo import ZoneInfo
 from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date,figure_nine
+from scripts.daily539_blank_report import calculate_blank_summaries
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--date',default=datetime.now(ZoneInfo('Asia/Taipei')).date().isoformat())
@@ -29,6 +30,7 @@ target_date=date.fromisoformat(args.target_date) if args.target_date else choose
 groups=remaining_groups(data['draws'],target_date.isoformat(),data['cutoff']['draw_date'])
 union=sorted({n for g in groups for n in g['numbers']})
 figure=figure_nine(data['ranking'])
+blank_summaries=calculate_blank_summaries(ROOT)
 provisional=data['cutoff']['draw_date']<(target_date-timedelta(days=1)).isoformat()
 fonts=[os.environ.get('NUMERIS_REPORT_FONT',''),'C:/Windows/Fonts/msjh.ttc','/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc']
 font=next((f for f in fonts if f and Path(f).is_file()),None)
@@ -173,6 +175,29 @@ if combined:
   order='｜'.join('、'.join(f'{n:02}' for n in col['numbers']) for col in figure['columns'])
   txt(fx+6,fy+40,'左起順序：'+order,6.9,note,'left')
   txt(fx+6,fy+50,'依最新排名及整數分組重算；統計參考。',6,muted,'left')
+ # Compact summaries are painted inside the original table, not below the image.
+ bx=X+20*cw+3; by=TOP+hh+21*rh+3; bw=R-bx-6; bh=10*rh-6
+ rect(bx,by,bw,bh,'#fffefb','#a5b5a6')
+ cursor=by+9
+ for summary in blank_summaries:
+  text=f"近 {summary['long']} → {summary['short']} 期"
+  txt(bx+6,cursor,text,7.3,note,'left');cursor+=10
+  grouped=summary['long']==18 and summary['short']==6
+  entries=summary['groups'] if grouped else [{'numbers':[n for g in summary['groups'] for n in g['numbers']]}]
+  for entry in entries:
+   prefix=f"次數 {entry['count']}／" if grouped else ''
+   tokens=[f'{n:02}' for n in entry['numbers']]
+   text=prefix+'、'.join(tokens)
+   lines=[];current=''
+   for char in text:
+    if pdfmetrics.stringWidth(current+char,'CJK',7)>bw-12:
+     lines.append(current);current=''
+    current+=char
+   if current:lines.append(current)
+   for textline in lines:
+    if cursor>by+bh-4:raise ValueError('Blank summaries exceed table area')
+    txt(bx+6,cursor,textline,7,note,'left');cursor+=9
+  cursor+=2
  txt(L,10,'今彩539｜A4 格表・八組號碼、星號對照'+('及日期選號' if pending else ''),7,align='left')
  txt(L+TOTAL,10,f"{report_date.isoformat()}　資料截至 {data['cutoff']['draw_date']}",6.5,muted,'right')
 else:
@@ -191,6 +216,7 @@ doc.close()
 metadata={k:v for k,v in data.items() if k!='draws'}
 metadata.update(report_date=report_date.isoformat(),target_date=target_date.isoformat(),provisional=provisional,remaining_groups=groups,remaining_numbers=union,stars=[{'number':n,'star':s} for n,s in pairs],generated_at=datetime.now(ZoneInfo('Asia/Taipei')).isoformat())
 metadata['figure_nine']=figure
+metadata['blank_summaries']=blank_summaries
 metadata['score_colors']=[{'minimum':minimum,'label':label,'foreground':foreground,'background':background} for minimum,label,foreground,background in score_bands]
 (stage/'latest.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 # Promote only after the complete one-page PDF and preview render successfully.
