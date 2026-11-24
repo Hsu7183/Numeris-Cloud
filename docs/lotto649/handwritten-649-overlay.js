@@ -202,7 +202,10 @@
       const dates = (payload.draws || []).slice(0, maxPeriods).map((draw) => draw.draw_date).reverse();
       if (dates.length < maxPeriods) throw new Error(`不足 ${maxPeriods} 期開獎資料`);
       status.textContent = `正在載入最近 ${maxPeriods} 期資料（截至 ${dates.at(-1)}）…`;
-      const dailyCells = await Promise.all(dates.map(loadMappedCells));
+      const dailyCells = [];
+      for (let start = 0; start < dates.length; start += 6) {
+        dailyCells.push(...await Promise.all(dates.slice(start, start + 6).map(loadMappedCells)));
+      }
       const datedCells = dates.map((date, index) => ({ date, cells: dailyCells[index] }));
       document.querySelector("#overlay-panels").innerHTML = rangeDays.map((periods) => renderPanel(periods, datedCells)).join("");
       document.querySelector("#blank-difference-panels").innerHTML = renderBlankDifferences(datedCells);

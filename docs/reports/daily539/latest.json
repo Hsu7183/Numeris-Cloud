@@ -1,13 +1,13 @@
 {
   "cutoff": {
-    "draw_no": "115000283",
-    "draw_date": "2026-11-23",
+    "draw_no": "115000284",
+    "draw_date": "2026-11-24",
     "numbers": [
-      4,
-      7,
-      22,
-      30,
-      34
+      15,
+      19,
+      23,
+      24,
+      39
     ]
   },
   "W": 18,
@@ -15,111 +15,119 @@
   "simN": 600,
   "realCount": 420,
   "windowStart": {
-    "issue": "115000266",
-    "date": "2026-11-03",
+    "issue": "115000267",
+    "date": "2026-11-04",
     "nums": [
-      5,
-      10,
-      30,
-      32,
-      34
+      2,
+      8,
+      18,
+      33,
+      39
     ]
   },
   "ranking": [
     {
-      "number": 28,
+      "number": 11,
       "score": 4
     },
     {
-      "number": 5,
-      "score": 3.1
-    },
-    {
-      "number": 8,
-      "score": 3
-    },
-    {
-      "number": 24,
-      "score": 2.2
-    },
-    {
-      "number": 2,
-      "score": 2.1
-    },
-    {
-      "number": 29,
-      "score": 2.1
-    },
-    {
-      "number": 38,
-      "score": 2.1
-    },
-    {
-      "number": 6,
-      "score": 2
-    },
-    {
-      "number": 10,
-      "score": 2
+      "number": 22,
+      "score": 3.2
     },
     {
       "number": 17,
-      "score": 2
+      "score": 3.1
+    },
+    {
+      "number": 5,
+      "score": 3
+    },
+    {
+      "number": 19,
+      "score": 3
     },
     {
       "number": 20,
-      "score": 2
+      "score": 3
     },
     {
       "number": 21,
-      "score": 2
-    },
-    {
-      "number": 25,
-      "score": 2
+      "score": 3
     },
     {
       "number": 13,
-      "score": 1.1
+      "score": 2.1
     },
     {
-      "number": 1,
-      "score": 1
+      "number": 34,
+      "score": 2.1
+    },
+    {
+      "number": 37,
+      "score": 2.1
+    },
+    {
+      "number": 2,
+      "score": 2
+    },
+    {
+      "number": 7,
+      "score": 2
+    },
+    {
+      "number": 14,
+      "score": 2
+    },
+    {
+      "number": 23,
+      "score": 2
+    },
+    {
+      "number": 27,
+      "score": 2
+    },
+    {
+      "number": 29,
+      "score": 2
+    },
+    {
+      "number": 32,
+      "score": 2
+    },
+    {
+      "number": 38,
+      "score": 2
     },
     {
       "number": 3,
       "score": 1
     },
     {
-      "number": 9,
+      "number": 6,
       "score": 1
     },
     {
-      "number": 11,
+      "number": 10,
       "score": 1
     },
     {
-      "number": 12,
+      "number": 18,
       "score": 1
     },
     {
-      "number": 15,
+      "number": 24,
       "score": 1
     },
     {
-      "number": 19,
+      "number": 26,
       "score": 1
     },
     {
-      "number": 23,
+      "number": 28,
       "score": 1
     },
     {
-      "number": 31,
-      "score": 1
-    },
-    {
-      "number": 32,
+      "number": 30,
       "score": 1
     },
     {
@@ -127,23 +135,27 @@
       "score": 1
     },
     {
-      "number": 35,
-      "score": 1
-    },
-    {
-      "number": 39,
-      "score": 1
+      "number": 1,
+      "score": 0
     },
     {
       "number": 4,
       "score": 0
     },
     {
-      "number": 7,
+      "number": 8,
       "score": 0
     },
     {
-      "number": 14,
+      "number": 9,
+      "score": 0
+    },
+    {
+      "number": 12,
+      "score": 0
+    },
+    {
+      "number": 15,
       "score": 0
     },
     {
@@ -151,27 +163,15 @@
       "score": 0
     },
     {
-      "number": 18,
+      "number": 25,
       "score": 0
     },
     {
-      "number": 22,
+      "number": 31,
       "score": 0
     },
     {
-      "number": 26,
-      "score": 0
-    },
-    {
-      "number": 27,
-      "score": 0
-    },
-    {
-      "number": 30,
-      "score": 0
-    },
-    {
-      "number": 34,
+      "number": 35,
       "score": 0
     },
     {
@@ -179,7 +179,7 @@
       "score": 0
     },
     {
-      "number": 37,
+      "number": 39,
       "score": 0
     }
   ],
@@ -229,11 +229,11 @@
     {
       "strategy": "hot",
       "numbers": [
+        20,
         32,
         30,
-        20,
-        7,
-        34
+        24,
+        39
       ]
     },
     {
@@ -241,9 +241,9 @@
       "numbers": [
         12,
         13,
-        15,
         16,
-        25
+        25,
+        31
       ]
     },
     {
@@ -251,35 +251,33 @@
       "numbers": [
         12,
         13,
-        15,
         16,
-        25
+        25,
+        31
       ]
     },
     {
       "strategy": "hybrid",
       "numbers": [
+        20,
         32,
         30,
-        20,
         12,
         13
       ]
     }
   ],
-  "report_date": "2026-11-24",
-  "target_date": "2026-11-24",
+  "report_date": "2026-11-25",
+  "target_date": "2026-11-25",
   "provisional": false,
   "remaining_groups": [
     {
-      "source_date": "2026-11-19",
+      "source_date": "2026-11-20",
       "offset": 5,
       "numbers": [
-        2,
-        10,
-        23,
-        24,
-        37
+        3,
+        5,
+        11
       ],
       "available": true
     },
@@ -287,7 +285,6 @@
       "source_date": "2026-11-21",
       "offset": 3,
       "numbers": [
-        19,
         20,
         28,
         32
@@ -295,140 +292,149 @@
       "available": true
     },
     {
-      "source_date": "2026-11-13",
+      "source_date": "2026-11-14",
       "offset": 11,
       "numbers": [
-        8
+        6
       ],
       "available": true
     },
     {
-      "source_date": "2026-11-12",
+      "source_date": "2026-11-13",
       "offset": 12,
       "numbers": [
-        9
+        8
       ],
       "available": true
     }
   ],
   "remaining_numbers": [
-    2,
+    3,
+    5,
+    6,
     8,
-    9,
-    10,
-    19,
+    11,
     20,
-    23,
-    24,
     28,
-    32,
-    37
+    32
   ],
   "stars": [
     {
-      "number": 2,
-      "star": 2
-    },
-    {
-      "number": 4,
+      "number": 1,
       "star": 9
     },
     {
-      "number": 9,
-      "star": 5
-    },
-    {
-      "number": 12,
-      "star": 6
-    },
-    {
-      "number": 20,
+      "number": 2,
       "star": 4
     },
     {
-      "number": 24,
+      "number": 3,
+      "star": 6
+    },
+    {
+      "number": 5,
       "star": 1
     },
     {
-      "number": 27,
+      "number": 19,
+      "star": 2
+    },
+    {
+      "number": 21,
+      "star": 3
+    },
+    {
+      "number": 25,
       "star": 10
     },
     {
-      "number": 32,
+      "number": 26,
       "star": 7
     },
     {
-      "number": 35,
+      "number": 30,
       "star": 8
     },
     {
-      "number": 38,
-      "star": 3
+      "number": 32,
+      "star": 5
     }
   ],
-  "generated_at": "2026-11-24T21:16:21.396800+08:00",
+  "generated_at": "2026-11-25T07:21:31.528612+08:00",
   "figure_nine": {
     "columns": [
       {
         "score": 4,
         "numbers": [
-          28
+          11
         ]
       },
       {
         "score": 3,
         "numbers": [
+          22,
+          17,
           5,
-          8
+          19
+        ]
+      },
+      {
+        "score": 3,
+        "numbers": [
+          20,
+          21
         ]
       },
       {
         "score": 2,
         "numbers": [
-          24,
-          2,
-          29,
-          38
-        ]
-      },
-      {
-        "score": 2,
-        "numbers": [
-          6,
-          10
+          13,
+          34
         ]
       }
     ],
     "shape": [
       1,
-      2,
       4,
+      2,
       2
     ],
     "numbers": [
-      28,
+      11,
+      22,
+      17,
       5,
-      8,
-      24,
-      2,
-      29,
-      38,
-      6,
-      10
+      19,
+      20,
+      21,
+      13,
+      34
     ],
     "sorted_numbers": [
-      2,
       5,
-      6,
-      8,
-      10,
-      24,
-      28,
-      29,
-      38
+      11,
+      13,
+      17,
+      19,
+      20,
+      21,
+      22,
+      34
     ]
   },
   "blank_summaries": [
+    {
+      "long": 42,
+      "short": 36,
+      "groups": [
+        {
+          "count": 3,
+          "numbers": [
+            22
+          ]
+        }
+      ]
+    },
     {
       "long": 36,
       "short": 30,
@@ -436,25 +442,19 @@
         {
           "count": 0,
           "numbers": [
-            14
+            8
           ]
         }
       ]
     },
     {
-      "long": 24,
-      "short": 18,
+      "long": 30,
+      "short": 24,
       "groups": [
         {
-          "count": 2,
+          "count": 0,
           "numbers": [
-            29
-          ]
-        },
-        {
-          "count": 1,
-          "numbers": [
-            3
+            12
           ]
         }
       ]
@@ -466,13 +466,26 @@
         {
           "count": 3,
           "numbers": [
-            5
+            17
+          ]
+        },
+        {
+          "count": 2,
+          "numbers": [
+            34
+          ]
+        },
+        {
+          "count": 1,
+          "numbers": [
+            26,
+            33
           ]
         },
         {
           "count": 0,
           "numbers": [
-            37
+            16
           ]
         }
       ]
@@ -485,29 +498,22 @@
           "count": 2,
           "numbers": [
             2,
-            17,
-            24
+            38
           ]
         },
         {
           "count": 1,
           "numbers": [
-            1,
-            11,
-            12,
-            13,
-            15,
-            19,
-            23,
-            35
+            3,
+            10,
+            18,
+            28
           ]
         },
         {
           "count": 0,
           "numbers": [
-            18,
-            26,
-            36
+            35
           ]
         }
       ]
@@ -519,37 +525,33 @@
         {
           "count": 3,
           "numbers": [
-            5
+            17
           ]
         },
         {
           "count": 2,
           "numbers": [
             2,
-            17,
-            24
+            34,
+            38
           ]
         },
         {
           "count": 1,
           "numbers": [
-            1,
-            11,
-            12,
-            13,
-            15,
-            19,
-            23,
-            35
+            3,
+            10,
+            18,
+            26,
+            28,
+            33
           ]
         },
         {
           "count": 0,
           "numbers": [
-            18,
-            26,
-            36,
-            37
+            16,
+            35
           ]
         }
       ]
@@ -560,66 +562,54 @@
     "groups": [
       {
         "count": 4,
-        "numbers": [
-          28
-        ]
+        "numbers": []
       },
       {
         "count": 3,
         "numbers": [
-          8
+          20,
+          22
         ]
       },
       {
         "count": 2,
         "numbers": [
-          20,
-          24,
-          25,
-          29
+          14,
+          29,
+          32,
+          37
         ]
       },
       {
         "count": 1,
         "numbers": [
-          1,
-          12,
-          15,
-          32,
-          33,
-          35,
-          39
+          24,
+          28,
+          30,
+          33
         ]
       },
       {
         "count": 0,
         "numbers": [
+          1,
           4,
-          14,
-          22,
-          30,
+          8,
+          12,
+          15,
+          25,
+          35,
           36,
-          37
+          39
         ]
       }
     ]
   },
   "california_daily": {
-    "report_date": "2026-11-24",
-    "status": "current",
-    "draw": {
-      "draw_date": "2026-11-24",
-      "draw_no": "12070",
-      "numbers": [
-        13,
-        15,
-        17,
-        31,
-        34
-      ],
-      "source_url": "https://www.sc888.net/index.php?id=winningnum&s=/LotteryFan/index"
-    },
-    "checked_at": "2026-11-24T21:16:15.025889+08:00",
+    "report_date": "2026-11-25",
+    "status": "pending",
+    "draw": null,
+    "checked_at": "2026-11-25T07:21:26.513133+08:00",
     "errors": []
   },
   "score_colors": [

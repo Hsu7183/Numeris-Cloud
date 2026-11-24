@@ -5,11 +5,27 @@
   "main_number_count": 6,
   "draw_count": 200,
   "requested_limit": 200,
-  "latest_draw_no": "115000107",
-  "latest_draw_date": "2026-11-20",
-  "generated_at": "2026-11-24T14:48:11.245209+08:00",
+  "latest_draw_no": "115000108",
+  "latest_draw_date": "2026-11-24",
+  "generated_at": "2026-11-25T07:21:13.373303+08:00",
   "source": "台灣彩券官方資料",
   "draws": [
+    {
+      "draw_no": "115000108",
+      "draw_date": "2026-11-24",
+      "numbers": [
+        10,
+        11,
+        23,
+        24,
+        33,
+        42
+      ],
+      "special_numbers": [
+        40
+      ],
+      "source_status": "official"
+    },
     {
       "draw_no": "115000107",
       "draw_date": "2026-11-20",
@@ -3191,22 +3207,6 @@
       ],
       "special_numbers": [
         34
-      ],
-      "source_status": "official"
-    },
-    {
-      "draw_no": "114000026",
-      "draw_date": "2025-02-12",
-      "numbers": [
-        12,
-        30,
-        31,
-        37,
-        47,
-        49
-      ],
-      "special_numbers": [
-        38
       ],
       "source_status": "official"
     }
