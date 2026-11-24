@@ -138,8 +138,10 @@ if combined:
    a,b=names[g['strategy']];txt(px+7,ry+7,a,7.6,ink,'left');txt(px+7,ry+16,b,5.8,muted,'left')
    for q,n in enumerate(g['numbers']):
     bx=px+panelw-118+q*24
-    c.setFillColor(HexColor('#fffefb'));c.setStrokeColor(HexColor(color));c.setLineWidth(.6);c.circle(bx,PH-(ry+rowh/2),8,fill=1,stroke=1)
-    txt(bx,ry+rowh/2,f'{n:02}',10,color)
+    ball_color=score_style(n)[0]
+    c.setFillColor(HexColor('#fffefb'));c.setStrokeColor(HexColor(ball_color));c.setLineWidth(.6)
+    c.setDash([2,1.5]);c.circle(bx,PH-(ry+rowh/2),8,fill=1,stroke=1);c.setDash([])
+    txt(bx,ry+rowh/2,f'{n:02}',10,ball_color)
  pairs=star_pairs(data['ranking'])
  sy=TOP+hh+rh*10+5; sx=X+6; sw=R-X-12; sh=rh*4-11
  rect(sx,sy,sw,sh,'#fffefb','#a5b5a6');rect(sx,sy,sw,15,'#edf1eb','#a5b5a6')
