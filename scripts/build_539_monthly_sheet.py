@@ -62,7 +62,7 @@ def make_sheet(months, end_month, draws, output, publish=False):
     rows_per_column = (len(included) + 20) // 3
     data_top = 94
     row_height = (height - 132) / rows_per_column
-    number_size = 10 if months == 3 else 9
+    number_size = 10 if months == 3 else 9.45
     month_starts = {min(row['draw_date'] for row in included if row['draw_date'][:7] == ym)
                     for ym in {row['draw_date'][:7] for row in included}}
     c.setLineWidth(.45)
@@ -129,7 +129,7 @@ def make_sheet(months, end_month, draws, output, publish=False):
     document[0].render(scale=2).to_pil().save(path.with_suffix('.png'))
     document.close()
     path.with_suffix('.json').write_text(json.dumps(dict(months=months, start_date=displayed_start.isoformat(),
-        end_date=end.isoformat(), cutoff=cutoff, draw_count=len(included), blank_draw_rows=20, writing_cells_at_end=100,
+        end_date=end.isoformat(), cutoff=cutoff, draw_count=len(included), blank_draw_rows=20, writing_cells_at_end=100, number_font_pt=number_size,
         draws=sorted(included, key=lambda row: row['draw_date'])), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(f'{path}: {len(included)} draws, one A4 page')
 

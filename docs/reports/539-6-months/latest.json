@@ -6,6 +6,7 @@
   "draw_count": 151,
   "blank_draw_rows": 20,
   "writing_cells_at_end": 100,
+  "number_font_pt": 9.45,
   "draws": [
     {
       "draw_no": "115000133",
