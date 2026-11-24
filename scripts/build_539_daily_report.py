@@ -180,7 +180,7 @@ for i,(_,label,foreground,background) in enumerate(score_bands):
  lx=L+83+i*70
  rect(lx,BOT+3,8,8,background,foreground)
  txt(lx+12,BOT+7,label,6.8,foreground,'left')
-txt(L,BOT+20,'號碼每日依相鄰分數自動分色；灰圈為原底圖固定記號。日期選號：目標日前4、2、10、11日；未開獎日不替補。',6.5,align='left')
+txt(L,BOT+20,'號碼每日依相鄰分數自動分色；灰圈為原底圖固定記號。日期選號：目標日前5、3、11、12日；未開獎日不替補。',6.5,align='left')
 txt(L,BOT+30,'相鄰排名與八組號碼沿用網站算法；模擬600期、種子20261025、窗口18期。統計供參考，非開獎預測。',6.5,muted,align='left')
 c.showPage();c.save()
 assert len(PdfReader(p).pages)==1

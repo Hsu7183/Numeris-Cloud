@@ -20,7 +20,7 @@ def remaining_groups(draws, target_date, cutoff_date):
     available = [r for r in draws if date.fromisoformat(r['draw_date']) <= cutoff]
     by_date = {r['draw_date']: r for r in available}
     groups = []
-    for offset in (4, 2, 10, 11):
+    for offset in (5, 3, 11, 12):
         source_date = (target - timedelta(days=offset)).isoformat()
         row = by_date.get(source_date)
         later = {n for r in available if r['draw_date'] > source_date for n in r['numbers']}

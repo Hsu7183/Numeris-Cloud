@@ -272,26 +272,25 @@
   "provisional": false,
   "remaining_groups": [
     {
-      "source_date": "2026-11-20",
-      "offset": 4,
+      "source_date": "2026-11-19",
+      "offset": 5,
       "numbers": [
-        3,
-        5,
-        11
+        2,
+        10,
+        23,
+        24,
+        37
       ],
       "available": true
     },
     {
-      "source_date": "2026-11-22",
-      "offset": 2,
-      "numbers": [],
-      "available": false
-    },
-    {
-      "source_date": "2026-11-14",
-      "offset": 10,
+      "source_date": "2026-11-21",
+      "offset": 3,
       "numbers": [
-        6
+        19,
+        20,
+        28,
+        32
       ],
       "available": true
     },
@@ -302,14 +301,28 @@
         8
       ],
       "available": true
+    },
+    {
+      "source_date": "2026-11-12",
+      "offset": 12,
+      "numbers": [
+        9
+      ],
+      "available": true
     }
   ],
   "remaining_numbers": [
-    3,
-    5,
-    6,
+    2,
     8,
-    11
+    9,
+    10,
+    19,
+    20,
+    23,
+    24,
+    28,
+    32,
+    37
   ],
   "stars": [
     {
@@ -353,7 +366,7 @@
       "star": 3
     }
   ],
-  "generated_at": "2026-11-24T06:22:42.882065+08:00",
+  "generated_at": "2026-11-24T09:18:27.950180+08:00",
   "figure_nine": {
     "columns": [
       {
