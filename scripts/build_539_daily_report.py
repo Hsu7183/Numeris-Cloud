@@ -41,36 +41,31 @@ tmp=tempfile.TemporaryDirectory();stage=Path(tmp.name)
 p=stage/'latest.pdf'
 c=canvas.Canvas(str(p),pagesize=landscape(A4));PW,PH=landscape(A4)
 c.setTitle('今彩539 A4每日總表 '+report_date.isoformat())
-L=20; TOP=22; TOTAL=PW-40; left=32; right=52; cw=(TOTAL-left-right)/39; rh=15.25; hh=45
+L=20; TOP=22; TOTAL=PW-40; left=32; right=0; cw=(TOTAL-left-right)/39; rh=15.25; hh=45
 X=L+left; R=X+cw*39; BOT=TOP+hh+31*rh
-ink='#222a25';note='#153f67';muted='#778078'
+ink='#000000';note='#000000';muted='#000000'
 score_bands=[
- (4,'4分以上','#7c2bbd','#f2e6fb'),
- (3,'3分段','#c42938','#fde8ec'),
- (2,'2分段','#a85a00','#fff0d9'),
- (1,'1分段','#145ab4','#e6f0ff'),
- (0,'0分','#69736f','#edf0ec'),
+ (4,'4分以上','#7c2bbd','#ffffff'),
+ (3,'3分段','#c42938','#ffffff'),
+ (2,'2分段','#a85a00','#ffffff'),
+ (1,'1分段','#145ab4','#ffffff'),
+ (0,'0分','#000000','#ffffff'),
 ]
 scores_by_number={r['number']:r['score'] for r in data['ranking']}
 def score_style(number):
  return next((foreground,background) for minimum,_,foreground,background in score_bands if scores_by_number[number]>=minimum)
 def rect(x,y,w,h,fill,stroke=None):
- c.setFillColor(HexColor(fill));c.setStrokeColor(HexColor(stroke or fill));c.rect(x,PH-y-h,w,h,fill=1,stroke=bool(stroke))
+ c.setFillColor(HexColor('#ffffff'));c.setStrokeColor(HexColor('#000000'));c.setLineWidth(.25);c.rect(x,PH-y-h,w,h,fill=1,stroke=bool(stroke))
 def line(x1,y1,x2,y2,color='#a3a8a0',width=.3,dash=None):
- c.setStrokeColor(HexColor(color));c.setLineWidth(width);c.setDash(dash or []);c.line(x1,PH-y1,x2,PH-y2);c.setDash([])
+ c.setStrokeColor(HexColor('#000000'));c.setLineWidth(min(width,.3));c.setDash(dash or []);c.line(x1,PH-y1,x2,PH-y2);c.setDash([])
 def txt(x,y,s,size=8,color=ink,align='center'):
  c.setFillColor(HexColor(color));c.setFont('CJK',size)
  getattr(c,{'center':'drawCentredString','left':'drawString','right':'drawRightString'}[align])(x,PH-y-size*.35,str(s))
 def cy(row):return TOP+hh+(row-.5)*rh
 def cx(col):return X+(col-.5)*cw
 rect(L,TOP,TOTAL,BOT-TOP,'#ffffff')
-for col in range(1,40):
- if col%2==0:rect(X+(col-1)*cw,TOP+15,cw,BOT-TOP-15,'#e2e4df')
-for row in range(1,32):
- if row%2==0:
-  for col in range(1,40):rect(X+(col-1)*cw,TOP+hh+(row-1)*rh,cw,rh,'#e9ebe7' if col%2 else '#d4d8d1')
 for i in range(40):line(X+i*cw,TOP+15,X+i*cw,BOT,'#9da49b',.35)
-for x in [L,L+16,X,R,R+20,R+36,L+TOTAL]:line(x,TOP,x,BOT,'#525c52',.55)
+for x in [L,L+16,X,R]:line(x,TOP,x,BOT,'#525c52',.55)
 for y in [TOP,TOP+15,TOP+30,TOP+hh,BOT]:line(L,y,L+TOTAL,y,'#525c52',.55)
 for row in range(1,31):line(L,TOP+hh+row*rh,L+TOTAL,TOP+hh+row*rh,'#969e92',.3)
 for row in [5,10,14,16,17,20,21,22,24,26,30]:line(L,TOP+hh+row*rh,R,TOP+hh+row*rh,'#4b574b',.75,[3,2])
@@ -79,12 +74,8 @@ for group in range(10):
  a=group*4;b=min(a+4,39);txt(X+(a+b)*cw/2,TOP+7.5,group+1,9)
 for col,label in [(4,'1*'),(5,'2*'),(7,'3*'),(11,'4*'),(17,'5*'),(19,'6*'),(24,'7*'),(26,'8*'),(28,'9*'),(35,'10*')]:txt(cx(col),TOP+23,label,7,muted)
 for col in range(1,40):txt(cx(col),TOP+37.5,col,9)
-txt(R+10,TOP+23,str(report_date.year-1911)+'年',6.5)
 for row in range(1,32):
  txt(L+24,cy(row),row if row<=27 else row-27,9)
- txt(R+28,cy(row),row,8)
- txt(R+44,cy(row),['一','二','三','四','五','六'][(row-1)%6],8)
- if row%2==0 and row<=24:txt(R+10,cy(row),f'{row//2}月',7)
 labels={1:'20',2:'2',3:'3',4:'4',5:'5',6:'50',7:'2',8:'3',9:'4',10:'5',11:'100',12:'2',13:'3',14:'4',15:'1',16:'滿',17:'2',18:'1~3',19:'3',20:'3',21:'4',22:'1~2',23:'5',24:'2',25:'6',26:'2~3',27:'7',28:'1',29:'8',30:'有'}
 for row,label in labels.items():txt(L+8,cy(row),label,7)
 for row in range(1,32):
@@ -141,7 +132,7 @@ if combined:
    for q,n in enumerate(g['numbers']):
     bx=px+panelw-118+q*24
     ball_color=score_style(n)[0]
-    c.setFillColor(HexColor('#fffefb'));c.setStrokeColor(HexColor(ball_color));c.setLineWidth(.6)
+    c.setFillColor(HexColor('#ffffff'));c.setStrokeColor(HexColor(ball_color));c.setLineWidth(.6)
     c.setDash([2,1.5]);c.circle(bx,PH-(ry+rowh/2),8*1.36,fill=1,stroke=1);c.setDash([])
     txt(bx,ry+rowh/2,f'{n:02}',10*1.36,ball_color)
  pairs=star_pairs(data['ranking'])
@@ -178,26 +169,25 @@ if combined:
  # Compact summaries are painted inside the original table, not below the image.
  bx=X+20*cw+3; by=TOP+hh+21*rh+3; bw=R-bx-6; bh=10*rh-6
  rect(bx,by,bw,bh,'#fffefb','#a5b5a6')
- cursor=by+9
+ cursor=by+12
  for summary in blank_summaries:
-  text=f"近 {summary['long']} → {summary['short']} 期"
-  txt(bx+6,cursor,text,7.3,note,'left');cursor+=10
+  label=f"近 {summary['long']} → {summary['short']} 期"
   grouped=summary['long']==18 and summary['short']==6
-  entries=summary['groups'] if grouped else [{'numbers':[n for g in summary['groups'] for n in g['numbers']]}]
-  for entry in entries:
-   prefix=f"次數 {entry['count']}／" if grouped else ''
-   tokens=[f'{n:02}' for n in entry['numbers']]
-   text=prefix+'、'.join(tokens)
+  if grouped:
+   entries=[label]+[f"次數 {g['count']}／"+'、'.join(f'{n:02}' for n in g['numbers']) for g in summary['groups']]
+  else:
+   entries=[label+'：'+'、'.join(f'{n:02}' for g in summary['groups'] for n in g['numbers'])]
+  for text in entries:
    lines=[];current=''
    for char in text:
-    if pdfmetrics.stringWidth(current+char,'CJK',7)>bw-12:
+    if pdfmetrics.stringWidth(current+char,'CJK',9.5)>bw-12:
      lines.append(current);current=''
     current+=char
    if current:lines.append(current)
    for textline in lines:
-    if cursor>by+bh-4:raise ValueError('Blank summaries exceed table area')
-    txt(bx+6,cursor,textline,7,note,'left');cursor+=9
-  cursor+=2
+    if cursor>by+bh-5:raise ValueError('Blank summaries exceed table area')
+    txt(bx+6,cursor,textline,9.5,ink,'left');cursor+=12
+  cursor+=4
  txt(L,10,'今彩539｜A4 格表・八組號碼、星號對照'+('及日期選號' if pending else ''),7,align='left')
  txt(L+TOTAL,10,f"{report_date.isoformat()}　資料截至 {data['cutoff']['draw_date']}",6.5,muted,'right')
 else:
@@ -205,8 +195,7 @@ else:
 txt(L,BOT+9,'相鄰排名／星號分色：',6.5,align='left')
 for i,(_,label,foreground,background) in enumerate(score_bands):
  lx=L+83+i*70
- rect(lx,BOT+3,8,8,background,foreground)
- txt(lx+12,BOT+7,label,6.8,foreground,'left')
+ txt(lx,BOT+7,label,6.8,foreground,'left')
 txt(L,BOT+20,'號碼每日依相鄰分數自動分色；灰圈為原底圖固定記號。日期選號：目標日前5、3、11、12日；無開獎日往前取最近一期。',6.5,align='left')
 txt(L,BOT+30,'相鄰排名與八組號碼沿用網站算法；模擬600期、種子20261025、窗口18期。統計供參考，非開獎預測。',6.5,muted,align='left')
 c.showPage();c.save()

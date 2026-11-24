@@ -366,7 +366,7 @@
       "star": 3
     }
   ],
-  "generated_at": "2026-11-24T14:48:28.658355+08:00",
+  "generated_at": "2026-11-24T15:08:39.531122+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -560,31 +560,31 @@
       "minimum": 4,
       "label": "4分以上",
       "foreground": "#7c2bbd",
-      "background": "#f2e6fb"
+      "background": "#ffffff"
     },
     {
       "minimum": 3,
       "label": "3分段",
       "foreground": "#c42938",
-      "background": "#fde8ec"
+      "background": "#ffffff"
     },
     {
       "minimum": 2,
       "label": "2分段",
       "foreground": "#a85a00",
-      "background": "#fff0d9"
+      "background": "#ffffff"
     },
     {
       "minimum": 1,
       "label": "1分段",
       "foreground": "#145ab4",
-      "background": "#e6f0ff"
+      "background": "#ffffff"
     },
     {
       "minimum": 0,
       "label": "0分",
-      "foreground": "#69736f",
-      "background": "#edf0ec"
+      "foreground": "#000000",
+      "background": "#ffffff"
     }
   ]
 }
