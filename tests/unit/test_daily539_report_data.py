@@ -27,7 +27,7 @@ class DailyReportTests(unittest.TestCase):
     def test_preview_target_does_not_skip_on_midnight(self):
         self.assertEqual(str(choose_target_date('2026-11-21', '2026-11-20', '2026-11-21')), '2026-11-21')
         self.assertEqual(str(choose_target_date('2026-11-20', '2026-11-19', '2026-11-21')), '2026-11-21')
-        self.assertEqual(str(choose_target_date('2026-11-21', '2026-11-21', '2026-11-21')), '2026-11-22')
+        self.assertEqual(str(choose_target_date('2026-11-21', '2026-11-21', '2026-11-21')), '2026-11-23')
 
     def setUp(self):
         self.rows = [
@@ -66,9 +66,24 @@ class DailyReportTests(unittest.TestCase):
         self.assertEqual(groups[1]['numbers'], [])
 
     def test_corrected_november_24_source_dates(self):
-        groups = remaining_groups(self.rows, '2026-11-24', '2026-11-23')
+        groups = remaining_groups(self.rows + [{'draw_date': '2026-11-21', 'numbers': [19,20,28,30,32]}], '2026-11-24', '2026-11-23')
         self.assertEqual([g['source_date'] for g in groups],
                          ['2026-11-19', '2026-11-21', '2026-11-13', '2026-11-12'])
+
+    def test_sunday_source_moves_to_saturday(self):
+        groups = remaining_groups(self.rows + [{'draw_date': '2026-11-21', 'numbers': [19,20,28,30,32]}], '2026-11-25', '2026-11-24')
+        self.assertEqual(groups[1]['source_date'], '2026-11-21')
+
+    def test_requested_four_dates(self):
+        groups = remaining_groups(self.rows + [{'draw_date': '2026-11-21', 'numbers': [19,20,28,30,32]}], '2026-11-24', '2026-11-23')
+        self.assertEqual([g['source_date'] for g in groups],
+                         ['2026-11-19', '2026-11-21', '2026-11-13', '2026-11-12'])
+
+    def test_missing_historical_date_uses_previous_draw(self):
+        rows = [r for r in self.rows if r['draw_date'] != '2026-11-19']
+        groups = remaining_groups(rows, '2026-11-24', '2026-11-23')
+        self.assertEqual(groups[0]['source_date'], '2026-11-18')
+        self.assertTrue(groups[0]['available'])
 
     def test_target_result_must_not_be_used(self):
         with self.assertRaises(ValueError):

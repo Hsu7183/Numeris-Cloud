@@ -8,11 +8,12 @@ def choose_target_date(report_date, cutoff_date, previous_target=None):
                   date.fromisoformat(cutoff_date) + timedelta(days=1)]
     if previous_target:
         candidates.append(date.fromisoformat(previous_target))
-    return max(candidates)
+    target = max(candidates)
+    return target + timedelta(days=1) if target.weekday() == 6 else target
 
 
 def remaining_groups(draws, target_date, cutoff_date):
-    """Use exact calendar dates; never substitute another draw for a missing day."""
+    """Use corrected calendar offsets; move Sunday sources back to Saturday."""
     target = date.fromisoformat(target_date)
     cutoff = date.fromisoformat(cutoff_date)
     if cutoff >= target:
@@ -21,7 +22,15 @@ def remaining_groups(draws, target_date, cutoff_date):
     by_date = {r['draw_date']: r for r in available}
     groups = []
     for offset in (5, 3, 11, 12):
-        source_date = (target - timedelta(days=offset)).isoformat()
+        source = target - timedelta(days=offset)
+        if source.weekday() == 6:
+            source -= timedelta(days=1)
+        source_date = source.isoformat()
+        # Only fall back within published history; pending dates remain pending.
+        if source <= cutoff and source_date not in by_date:
+            earlier = [day for day in by_date if day < source_date]
+            if earlier:
+                source_date = max(earlier)
         row = by_date.get(source_date)
         later = {n for r in available if r['draw_date'] > source_date for n in r['numbers']}
         groups.append({'source_date': source_date, 'offset': offset,
