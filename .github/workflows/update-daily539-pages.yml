@@ -83,7 +83,7 @@ jobs:
           git add reports/539-adjacent-source.json
           git add docs/lotto649 docs/data/lotto649.json
           git add docs/data/649-*.json reports/649-adjacent-source.json
-          git add docs/reports/daily539
+          git add docs/reports/daily539 docs/data/california-daily.json
           git diff --cached --quiet && exit 0
           git commit -m "chore(data): update Daily 539 statistics"
           git pull --rebase --autostash origin main

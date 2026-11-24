@@ -16,12 +16,14 @@ from datetime import datetime,date,timedelta
 from zoneinfo import ZoneInfo
 from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date,figure_nine
 from scripts.daily539_blank_report import calculate_blank_summaries
+from scripts.california_daily import refresh as refresh_california
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--date',default=datetime.now(ZoneInfo('Asia/Taipei')).date().isoformat())
 parser.add_argument('--target-date')
 args=parser.parse_args()
 report_date=date.fromisoformat(args.date)
+california=refresh_california(ROOT,report_date.isoformat())
 data=json.loads(subprocess.check_output(['node',str(ROOT/'scripts/calculate_539_daily_report.cjs')],cwd=ROOT,text=True,encoding='utf-8'))
 if data['cutoff']['draw_date']>report_date.isoformat():raise ValueError('Future dated source')
 previous_file=ROOT/'docs/reports/daily539/latest.json'
@@ -190,7 +192,7 @@ if combined:
  # Compact summaries are painted inside the original table, not below the image.
  bx=X+20*cw+3; by=TOP+hh+21*rh+3; bw=R-bx-6; bh=10*rh-6
  rect(bx,by,bw,bh,'#fffefb','#a5b5a6')
- cursor=by+12
+ summary_entries=[]
  for summary in blank_summaries:
   label=f"近 {summary['long']} → {summary['short']} 期"
   grouped=summary['long']==18 and summary['short']==6
@@ -198,17 +200,30 @@ if combined:
    entries=[label]+[f"次數 {g['count']}／"+'、'.join(f'{n:02}' for n in g['numbers']) for g in summary['groups']]
   else:
    entries=[label+'：'+'、'.join(f'{n:02}' for g in summary['groups'] for n in g['numbers'])]
-  for text in entries:
-   lines=[];current=''
-   for char in text:
-    if pdfmetrics.stringWidth(current+char,'CJK',9.5)>bw-12:
-     lines.append(current);current=''
-    current+=char
-   if current:lines.append(current)
-   for textline in lines:
-    if cursor>by+bh-5:raise ValueError('Blank summaries exceed table area')
-    txt(bx+6,cursor,textline,9.5,ink,'left');cursor+=12
-  cursor+=4
+  summary_entries.append(entries)
+ for summary_size in [9.5,9,8.5,8,7.5]:
+  summary_lines=[]
+  for entries in summary_entries:
+   for text in entries:
+    current=''
+    for char in text:
+     if pdfmetrics.stringWidth(current+char,'CJK',summary_size)>bw-12:
+      summary_lines.append(current);current=''
+     current+=char
+    if current:summary_lines.append(current)
+   summary_lines.append(None)
+  required=sum(summary_size+1.5 if v is not None else 2 for v in summary_lines)
+  if required<=bh-34:break
+ else:raise ValueError('Blank summaries exceed table area')
+ cursor=by+10
+ for textline in summary_lines:
+  if textline is None:cursor+=2
+  else:
+   txt(bx+6,cursor,textline,summary_size,ink,'left');cursor+=summary_size+1.5
+ line(bx+6,by+bh-26,bx+bw-6,by+bh-26)
+ ca=california['draw']
+ txt(bx+6,by+bh-18,'加州天天樂｜'+report_date.isoformat()+(f"｜第{ca['draw_no']}期" if ca else '｜當日資料待更新'),8,ink,'left')
+ txt(bx+6,by+bh-6,'開出獎號：'+'　'.join(f'{n:02}' for n in ca['numbers'])+'　（速彩）' if ca else '速彩尚未取得當日有效獎號；自動重試更新。',9,ink,'left')
  txt(L,10,'今彩539｜A4 格表・八組號碼、星號對照'+('及日期選號' if pending else ''),7,align='left')
  txt(L+TOTAL,10,f"{report_date.isoformat()}　資料截至 {data['cutoff']['draw_date']}",6.5,muted,'right')
 else:
@@ -228,6 +243,7 @@ metadata.update(report_date=report_date.isoformat(),target_date=target_date.isof
 metadata['figure_nine']=figure
 metadata['blank_summaries']=blank_summaries
 metadata['ai_brief_comparison']=ai_brief
+metadata['california_daily']={key:value for key,value in california.items() if key!='draws'}
 metadata['score_colors']=[{'minimum':minimum,'label':label,'foreground':foreground,'background':background} for minimum,label,foreground,background in score_bands]
 (stage/'latest.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 # Promote only after the complete one-page PDF and preview render successfully.

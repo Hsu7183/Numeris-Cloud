@@ -24,6 +24,14 @@ def calculate_blank_summaries(root, include_ai=False):
             browser = runtime.chromium.launch(**options)
             try:
                 page = browser.new_page(viewport={'width': 1500, 'height': 1200})
+                # The report loads 48 historical iframe grids. Limit concurrency
+                # in this headless session to avoid starving their ready timers.
+                def report_overlay(route):
+                    source = (root / 'docs/handwritten-539-overlay.js').read_text(encoding='utf-8')
+                    source = source.replace('start += 6', 'start += 2').replace('start + 6', 'start + 2')
+                    source = source.replace('}, 30000);', '}, 60000);')
+                    route.fulfill(status=200, content_type='application/javascript; charset=utf-8', body=source)
+                page.route('**/handwritten-539-overlay.js*', report_overlay)
                 page.goto(f'http://127.0.0.1:{server.server_port}/handwritten-539-overlay.html', wait_until='domcontentloaded')
                 page.wait_for_function("/已更新至|載入失敗/.test(document.querySelector('#overlay-status').textContent)", timeout=120000)
                 status = page.locator('#overlay-status').inner_text()
