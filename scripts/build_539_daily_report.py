@@ -181,7 +181,7 @@ if combined:
  for i,group in enumerate(ai_brief['groups']):
   yy=ay+26+i*11.5
   txt(ax+26,yy,f"{group['count']}次",9)
-  label='、'.join(f'{n:02}' for n in group['numbers']) or '無'
+  label='、'.join(f'{n:02}' for n in group['numbers']) or '— 0'
   color=next(fg for minimum,_,fg,_ in score_bands if group['count']>=minimum)
   txt(split+8,yy,label,9.5,color,'left')
   line(ax,yy+6,ax+aw,yy+6)
