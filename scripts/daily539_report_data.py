@@ -23,6 +23,9 @@ def remaining_groups(draws, target_date, cutoff_date):
     groups = []
     for offset in (5, 2, 11, 12):
         source = target - timedelta(days=offset)
+        # User-selected source for the 2026-11-26 report's third group.
+        if target_date == '2026-11-26' and offset == 11:
+            source = date(2026, 11, 16)
         if source.weekday() == 6:
             source -= timedelta(days=1)
         source_date = source.isoformat()

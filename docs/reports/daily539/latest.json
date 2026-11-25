@@ -293,9 +293,11 @@
       "available": true
     },
     {
-      "source_date": "2026-11-14",
+      "source_date": "2026-11-16",
       "offset": 11,
-      "numbers": [],
+      "numbers": [
+        21
+      ],
       "available": true
     },
     {
@@ -309,6 +311,7 @@
     15,
     19,
     20,
+    21,
     23,
     24,
     28,
@@ -356,7 +359,7 @@
       "star": 8
     }
   ],
-  "generated_at": "2026-11-26T06:40:28.226605+08:00",
+  "generated_at": "2026-11-26T06:40:27.796615+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -615,7 +618,7 @@
     "report_date": "2026-11-26",
     "status": "pending",
     "draw": null,
-    "checked_at": "2026-11-26T06:40:21.343521+08:00",
+    "checked_at": "2026-11-26T06:40:18.563929+08:00",
     "errors": []
   },
   "score_colors": [
