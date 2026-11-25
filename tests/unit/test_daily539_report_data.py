@@ -48,31 +48,36 @@ class DailyReportTests(unittest.TestCase):
     def test_user_example(self):
         groups = remaining_groups(self.rows, '2026-11-21', '2026-11-19')
         self.assertEqual([g['numbers'] for g in groups],
-                         [[11, 21], [20, 22, 27, 35, 39], [1, 19, 34], [7, 28, 33]])
+                         [[11, 21], [2, 10, 23, 24, 37], [1, 19, 34], [7, 28, 33]])
 
     def test_calendar_shift_and_future_draw_excluded(self):
         rows = self.rows + [{'draw_date': '2026-11-20', 'numbers': [1, 2, 5, 14, 19]}]
         provisional = remaining_groups(rows, '2026-11-22', '2026-11-19')
         self.assertEqual([g['numbers'] for g in provisional],
-                         [[5, 17, 26, 32, 38], [2, 10, 23, 24, 37], [14, 29], [1, 19, 34]])
+                         [[5, 17, 26, 32, 38], [], [14, 29], [1, 19, 34]])
         final = remaining_groups(rows, '2026-11-22', '2026-11-20')
         self.assertEqual([g['numbers'] for g in final],
-                         [[17, 26, 32, 38], [10, 23, 24, 37], [29], [34]])
+                         [[17, 26, 32, 38], [1, 2, 5, 14, 19], [29], [34]])
 
     def test_missing_source_is_not_substituted(self):
         groups = remaining_groups(self.rows, '2026-11-23', '2026-11-19')
         self.assertFalse(groups[1]['available'])
-        self.assertEqual(groups[1]['source_date'], '2026-11-20')
+        self.assertEqual(groups[1]['source_date'], '2026-11-21')
         self.assertEqual(groups[1]['numbers'], [])
 
-    def test_corrected_november_24_source_dates(self):
-        groups = remaining_groups(self.rows + [{'draw_date': '2026-11-21', 'numbers': [19,20,28,30,32]}], '2026-11-24', '2026-11-23')
-        self.assertEqual([g['source_date'] for g in groups],
-                         ['2026-11-19', '2026-11-21', '2026-11-13', '2026-11-12'])
-
     def test_sunday_source_moves_to_saturday(self):
-        groups = remaining_groups(self.rows + [{'draw_date': '2026-11-21', 'numbers': [19,20,28,30,32]}], '2026-11-25', '2026-11-24')
+        groups = remaining_groups(self.rows + [{'draw_date': '2026-11-21', 'numbers': [19,20,28,30,32]}], '2026-11-24', '2026-11-23')
         self.assertEqual(groups[1]['source_date'], '2026-11-21')
+
+    def test_november_23_correction(self):
+        rows = self.rows + [
+            {'draw_date': '2026-11-21', 'numbers': [7,19,20,28,32]},
+            {'draw_date': '2026-11-23', 'numbers': [4,7,22,30,34]},
+            {'draw_date': '2026-11-24', 'numbers': [15,19,23,24,39]},
+        ]
+        group = remaining_groups(rows, '2026-11-25', '2026-11-24')[1]
+        self.assertEqual(group['source_date'], '2026-11-23')
+        self.assertEqual(group['numbers'], [4,7,22,30,34])
 
     def test_requested_four_dates(self):
         groups = remaining_groups(self.rows + [{'draw_date': '2026-11-21', 'numbers': [19,20,28,30,32]}], '2026-11-24', '2026-11-23')

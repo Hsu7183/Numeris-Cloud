@@ -21,7 +21,7 @@ def remaining_groups(draws, target_date, cutoff_date):
     available = [r for r in draws if date.fromisoformat(r['draw_date']) <= cutoff]
     by_date = {r['draw_date']: r for r in available}
     groups = []
-    for offset in (5, 3, 11, 12):
+    for offset in (5, 2, 11, 12):
         source = target - timedelta(days=offset)
         if source.weekday() == 6:
             source -= timedelta(days=1)

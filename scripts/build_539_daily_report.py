@@ -63,6 +63,9 @@ def rect(x,y,w,h,fill,stroke=None):
  c.setFillColor(HexColor('#ffffff'));c.setStrokeColor(HexColor('#000000'));c.setLineWidth(.25);c.rect(x,PH-y-h,w,h,fill=1,stroke=bool(stroke))
 def line(x1,y1,x2,y2,color='#a3a8a0',width=.3,dash=None):
  c.setStrokeColor(HexColor('#000000'));c.setLineWidth(min(width,.3));c.setDash([]);c.line(x1,PH-y1,x2,PH-y2);c.setDash([])
+
+def middle_divider(x,y1,y2):
+ c.setStrokeColor(HexColor('#000000'));c.setLineWidth(.3);c.setDash([2,2]);c.line(x,PH-y1,x,PH-y2);c.setDash([])
 def txt(x,y,s,size=8,color=ink,align='center'):
  if color.lower() not in ('#000000', '#ffffff'):size*=.85
  c.setFillColor(HexColor(color));c.setFont('CJK',size)
@@ -70,12 +73,15 @@ def txt(x,y,s,size=8,color=ink,align='center'):
 def cy(row):return TOP+hh+(row-.5)*rh
 def cx(col):return X+(col-.5)*cw
 rect(L,TOP,TOTAL,BOT-TOP,'#ffffff')
-for i in range(40):line(X+i*cw,TOP+15,X+i*cw,BOT,'#9da49b',.35)
+for i in range(40):
+ if i!=20:line(X+i*cw,TOP+15,X+i*cw,BOT,'#9da49b',.35)
 for x in [L,L+16,X,R]:line(x,TOP,x,BOT,'#525c52',.55)
 for y in [TOP,TOP+15,TOP+30,TOP+hh,BOT]:line(L,y,L+TOTAL,y,'#525c52',.55)
 for row in range(1,31):line(L,TOP+hh+row*rh,L+TOTAL,TOP+hh+row*rh,'#969e92',.3)
 for row in [5,10,14,16,17,20,21,22,24,26,30]:line(L,TOP+hh+row*rh,R,TOP+hh+row*rh,'#4b574b',.75,[3,2])
-for col in range(0,40,4):line(X+col*cw,TOP,X+col*cw,BOT,'#5b655a',.7,[3,2])
+for col in range(0,40,4):
+ if col==20:middle_divider(X+col*cw,TOP,BOT)
+ else:line(X+col*cw,TOP,X+col*cw,BOT,'#5b655a',.7,[3,2])
 for group in range(10):
  a=group*4;b=min(a+4,39);txt(X+(a+b)*cw/2,TOP+7.5,group+1,9)
 for col,label in [(4,'1*'),(5,'2*'),(7,'3*'),(11,'4*'),(17,'5*'),(19,'6*'),(24,'7*'),(26,'8*'),(28,'9*'),(35,'10*')]:txt(cx(col),TOP+23,label,7,muted)
@@ -237,7 +243,7 @@ txt(L,BOT+9,'相鄰排名／星號分色：',6.5,align='left')
 for i,(_,label,foreground,background) in enumerate(score_bands):
  lx=L+83+i*70
  txt(lx,BOT+7,label,6.8,foreground,'left')
-txt(L,BOT+20,'號碼每日依相鄰分數自動分色。日期選號：目標日前5、3、11、12日；無開獎日往前取最近一期。',6.5,align='left')
+txt(L,BOT+20,'號碼每日依相鄰分數自動分色。日期選號：目標日前5、2、11、12日；無開獎日往前取最近一期。',6.5,align='left')
 txt(L,BOT+30,'相鄰排名與八組號碼沿用網站算法；模擬600期、種子20261025、窗口18期。統計供參考，非開獎預測。',6.5,muted,align='left')
 c.showPage();c.save()
 assert len(PdfReader(p).pages)==1
