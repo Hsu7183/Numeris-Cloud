@@ -2,8 +2,9 @@ name: 更新今彩539與大樂透 GitHub Pages 資料
 
 on:
   workflow_dispatch:
-  # 每天台灣時間22:00更新兩種彩券，23:00補同步；包含加開日。
+  # 每天台灣時間21:30、22:00、23:00更新官方獎號、AI快報及全部總表；包含加開日。
   schedule:
+    - cron: "30 13 * * *"
     - cron: "0 14,15 * * *"
   push:
     paths:
@@ -31,6 +32,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: 安裝 Numeris
         run: pip install .
       - name: 安裝A4報表字型與套件
@@ -92,8 +96,10 @@ jobs:
           git push
       - name: 發布更新後的看板
         uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: docs
+      - name: Wait for Pages artifact metadata
+        run: sleep 30
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -7,6 +7,7 @@ from reportlab.lib.colors import HexColor
 import pypdfium2 as pdfium
 from pypdf import PdfReader
 import sys,json
+from collections import Counter
 
 combined=True
 pending=True
@@ -61,8 +62,9 @@ def score_style(number):
 def rect(x,y,w,h,fill,stroke=None):
  c.setFillColor(HexColor('#ffffff'));c.setStrokeColor(HexColor('#000000'));c.setLineWidth(.25);c.rect(x,PH-y-h,w,h,fill=1,stroke=bool(stroke))
 def line(x1,y1,x2,y2,color='#a3a8a0',width=.3,dash=None):
- c.setStrokeColor(HexColor('#000000'));c.setLineWidth(min(width,.3));c.setDash(dash or []);c.line(x1,PH-y1,x2,PH-y2);c.setDash([])
+ c.setStrokeColor(HexColor('#000000'));c.setLineWidth(min(width,.3));c.setDash([]);c.line(x1,PH-y1,x2,PH-y2);c.setDash([])
 def txt(x,y,s,size=8,color=ink,align='center'):
+ if color.lower() not in ('#000000', '#ffffff'):size*=.85
  c.setFillColor(HexColor(color));c.setFont('CJK',size)
  getattr(c,{'center':'drawCentredString','left':'drawString','right':'drawRightString'}[align])(x,PH-y-size*.35,str(s))
 def cy(row):return TOP+hh+(row-.5)*rh
@@ -102,16 +104,6 @@ for row,nums in enumerate(matrix,18):
   foreground,background=score_style(n)
   rect(X+(20+j)*cw+.4,TOP+hh+(row-1)*rh+.5,cw-.8,rh-1,background)
   txt(X+20*cw+(j+.5)*cw,cy(row),f'{n:02}',8.8,foreground)
-def circle(col,row,double=False,question=False):
- if question:
-  c.setFillColor(HexColor('#ffffff'));c.circle(cx(col),PH-cy(row),6.5,fill=1,stroke=0)
- c.setStrokeColor(HexColor('#8c9489'));c.setLineWidth(.6);c.circle(cx(col),PH-cy(row),6.5,fill=0,stroke=1)
- if double:c.circle(cx(col),PH-cy(row),4.2,fill=0,stroke=1)
- if question:txt(cx(col),cy(row),'?',5.7,'#a65322')
-for row in [22,26]:
- for col in [4,5,8,12,13]:circle(col,row)
-for row in [25,28]:
- for col in [7,10,17,26,28]:circle(col,row,True,False)
 txt(X+4*cw,cy(31),'（2　4　5　7）',8)
 footer=[(10,'滿'),(12,'2'),(13,'1~3'),(15,'3'),(17,'4'),(18,'1~2'),(20,'5'),(21,'2'),(23,'6'),(24,'2~3'),(26,'7'),(27,'1'),(29,'8'),(30,'有')]
 for col,s in footer:txt(cx(col),cy(31),s,7)
@@ -126,19 +118,32 @@ if combined:
   rect(px,py,panelw,panelh,'#fffefb','#a5b5a6')
   rect(px,py,panelw,18,'#f4f0e4' if source=='sim' else '#edf4ee','#a5b5a6')
   txt(px+7,py+9,'隨機模擬資料' if source=='sim' else '官網真實資料',9,color,'left')
-  txt(px+panelw-6,py+9,'四組各 5 碼',6.3,muted,'right')
+  txt(px+panelw-6,py+9,'四組合併・不重複',6.3,muted,'right')
   meta='內建模擬 600 期｜種子 20261025｜W＝18 期' if source=='sim' else f"截至 {data['cutoff']['draw_date']}｜{data['cutoff']['draw_no']} 期｜W＝18"
   txt(px+7,py+25,meta,6.4,muted,'left')
-  rowh=(panelh-34)/4
-  for j,g in enumerate(data[source]):
-   ry=py+34+j*rowh;line(px,ry,px+panelw,ry,'#c0cabe',.35)
-   a,b=names[g['strategy']];txt(px+7,ry+7,a,7.6,ink,'left');txt(px+7,ry+16,b,5.8,muted,'left')
-   for q,n in enumerate(g['numbers']):
-    bx=px+panelw-118+q*24
-    ball_color=score_style(n)[0]
-    c.setFillColor(HexColor('#ffffff'));c.setStrokeColor(HexColor(ball_color));c.setLineWidth(.6)
-    c.setDash([2,1.5]);c.circle(bx,PH-(ry+rowh/2),8*1.36,fill=1,stroke=1);c.setDash([])
-    txt(bx,ry+rowh/2,f'{n:02}',10*1.36,ball_color)
+  for i,group in enumerate(data[source]):
+   yy=py+36+i*11
+   txt(px+7,yy,names[group['strategy']][0],7.5,ink,'left')
+   for j,n in enumerate(group['numbers']):
+    txt(px+85+j*40,yy,f'{n:02}',9,score_style(n)[0])
+   c.setStrokeColor(HexColor('#000000'));c.setLineWidth(.25);c.setDash([2,2])
+   c.line(px,PH-(yy+5.5),px+panelw,PH-(yy+5.5));c.setDash([])
+
+  numbers=sorted({n for g in data[source] for n in g['numbers']})
+  txt(px+7,py+79,f'四組合併去重｜共 {len(numbers)} 碼｜由小到大',7.6,ink,'left')
+  cols=10; cellw=panelw/cols; cellh=14
+  number_top=py+85
+  for q,n in enumerate(numbers):
+   row,col=divmod(q,cols)
+   bx=px+col*cellw; by=number_top+row*cellh
+   rect(bx,by,cellw,cellh,'#ffffff','#000000')
+   txt(bx+cellw/2,by+cellh/2,f'{n:02}',9.5,score_style(n)[0])
+  repeated=sorted(n for n,count in Counter(n for g in data[source] for n in g['numbers']).items() if count>1)
+  repeat_y=py+panelh-25
+  rect(px,repeat_y,panelw,25,'#ffffff','#000000')
+  txt(px+6,repeat_y+6,'重複號碼｜由小到大',6.5,ink,'left')
+  for j,n in enumerate(repeated):
+   txt(px+10+j*(panelw-20)/max(len(repeated),1),repeat_y+17,f'{n:02}',9,score_style(n)[0],'left')
  pairs=star_pairs(data['ranking'])
  sy=TOP+hh+rh*10+5; sx=X+6; sw=R-X-12; sh=rh*4-11
  rect(sx,sy,sw,sh,'#fffefb','#a5b5a6');rect(sx,sy,sw,15,'#edf1eb','#a5b5a6')
@@ -232,7 +237,7 @@ txt(L,BOT+9,'相鄰排名／星號分色：',6.5,align='left')
 for i,(_,label,foreground,background) in enumerate(score_bands):
  lx=L+83+i*70
  txt(lx,BOT+7,label,6.8,foreground,'left')
-txt(L,BOT+20,'號碼每日依相鄰分數自動分色；灰圈為原底圖固定記號。日期選號：目標日前5、3、11、12日；無開獎日往前取最近一期。',6.5,align='left')
+txt(L,BOT+20,'號碼每日依相鄰分數自動分色。日期選號：目標日前5、3、11、12日；無開獎日往前取最近一期。',6.5,align='left')
 txt(L,BOT+30,'相鄰排名與八組號碼沿用網站算法；模擬600期、種子20261025、窗口18期。統計供參考，非開獎預測。',6.5,muted,align='left')
 c.showPage();c.save()
 assert len(PdfReader(p).pages)==1
@@ -241,6 +246,8 @@ doc.close()
 metadata={k:v for k,v in data.items() if k!='draws'}
 metadata.update(report_date=report_date.isoformat(),target_date=target_date.isoformat(),provisional=provisional,remaining_groups=groups,remaining_numbers=union,stars=[{'number':n,'star':s} for n,s in pairs],generated_at=datetime.now(ZoneInfo('Asia/Taipei')).isoformat())
 metadata['figure_nine']=figure
+metadata['top_summary_numbers']={source:sorted({n for g in data[source] for n in g['numbers']}) for source in ['sim','real']}
+metadata['top_repeated_numbers']={source:sorted(n for n,count in Counter(n for g in data[source] for n in g['numbers']).items() if count>1) for source in ['sim','real']}
 metadata['blank_summaries']=blank_summaries
 metadata['ai_brief_comparison']=ai_brief
 metadata['california_daily']={key:value for key,value in california.items() if key!='draws'}
