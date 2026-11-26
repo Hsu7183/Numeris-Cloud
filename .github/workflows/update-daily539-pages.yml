@@ -9,6 +9,8 @@ on:
   push:
     paths:
       - "docs/data/.gitkeep"
+      - "docs/index.html"
+      - "docs/home.css"
       - "scripts/export_daily539_static.py"
       - "scripts/export_539_workbench.py"
       - ".github/workflows/update-daily539-pages.yml"
