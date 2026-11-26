@@ -464,9 +464,9 @@
       ]
     }
   ],
-  "report_date": "2026-11-26",
-  "target_date": "2026-11-26",
-  "provisional": false,
+  "report_date": "2026-11-27",
+  "target_date": "2026-11-27",
+  "provisional": true,
   "remaining_groups": [
     {
       "source_date": "2026-11-21",
@@ -478,14 +478,14 @@
       "available": true
     },
     {
-      "source_date": "2026-11-24",
+      "source_date": "2026-11-25",
       "offset": 2,
       "numbers": [
-        15,
-        19,
-        23,
-        24,
-        39
+        6,
+        12,
+        29,
+        32,
+        34
       ],
       "available": true
     },
@@ -505,14 +505,14 @@
     }
   ],
   "remaining_numbers": [
-    15,
-    19,
+    6,
+    12,
     20,
     21,
-    23,
-    24,
     28,
-    39
+    29,
+    32,
+    34
   ],
   "stars": [
     {
@@ -556,7 +556,7 @@
       "star": 8
     }
   ],
-  "generated_at": "2026-11-26T20:19:03.674215+08:00",
+  "generated_at": "2026-11-27T06:07:28.354793+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -625,7 +625,7 @@
     },
     {
       "number": 13,
-      "count": 15
+      "count": 14
     },
     {
       "number": 25,
@@ -640,15 +640,23 @@
       "count": 11
     },
     {
+      "number": 6,
+      "count": 10
+    },
+    {
+      "number": 29,
+      "count": 10
+    },
+    {
       "number": 30,
       "count": 10
     },
     {
-      "number": 10,
-      "count": 9
+      "number": 32,
+      "count": 10
     },
     {
-      "number": 15,
+      "number": 10,
       "count": 9
     },
     {
@@ -660,19 +668,7 @@
       "count": 9
     },
     {
-      "number": 19,
-      "count": 9
-    },
-    {
-      "number": 6,
-      "count": 8
-    },
-    {
       "number": 21,
-      "count": 8
-    },
-    {
-      "number": 24,
       "count": 8
     },
     {
@@ -680,23 +676,15 @@
       "count": 8
     },
     {
-      "number": 29,
-      "count": 8
-    },
-    {
-      "number": 32,
-      "count": 8
-    },
-    {
-      "number": 2,
+      "number": 12,
       "count": 7
     },
     {
-      "number": 4,
+      "number": 15,
       "count": 7
     },
     {
-      "number": 8,
+      "number": 19,
       "count": 7
     },
     {
@@ -704,11 +692,27 @@
       "count": 7
     },
     {
+      "number": 34,
+      "count": 7
+    },
+    {
       "number": 38,
       "count": 7
     },
     {
-      "number": 23,
+      "number": 2,
+      "count": 6
+    },
+    {
+      "number": 4,
+      "count": 6
+    },
+    {
+      "number": 8,
+      "count": 6
+    },
+    {
+      "number": 24,
       "count": 6
     },
     {
@@ -716,15 +720,7 @@
       "count": 6
     },
     {
-      "number": 34,
-      "count": 6
-    },
-    {
       "number": 35,
-      "count": 6
-    },
-    {
-      "number": 39,
       "count": 6
     },
     {
@@ -733,10 +729,6 @@
     },
     {
       "number": 3,
-      "count": 5
-    },
-    {
-      "number": 12,
       "count": 5
     },
     {
@@ -760,11 +752,19 @@
       "count": 4
     },
     {
+      "number": 23,
+      "count": 4
+    },
+    {
       "number": 26,
       "count": 4
     },
     {
       "number": 36,
+      "count": 4
+    },
+    {
+      "number": 39,
       "count": 4
     },
     {
@@ -970,21 +970,10 @@
     ]
   },
   "california_daily": {
-    "report_date": "2026-11-26",
-    "status": "current",
-    "draw": {
-      "draw_date": "2026-11-26",
-      "draw_no": "12072",
-      "numbers": [
-        2,
-        4,
-        8,
-        13,
-        34
-      ],
-      "source_url": "https://www.sc888.net/index.php?id=winningnum&s=/LotteryFan/index"
-    },
-    "checked_at": "2026-11-26T20:18:59.289771+08:00",
+    "report_date": "2026-11-27",
+    "status": "pending",
+    "draw": null,
+    "checked_at": "2026-11-27T06:07:23.458932+08:00",
     "errors": []
   },
   "score_colors": [
