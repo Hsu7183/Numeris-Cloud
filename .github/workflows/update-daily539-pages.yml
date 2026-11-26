@@ -11,6 +11,7 @@ on:
       - "docs/data/.gitkeep"
       - "docs/index.html"
       - "docs/home.css"
+      - "scripts/build_539_daily_report.py"
       - "scripts/export_daily539_static.py"
       - "scripts/export_539_workbench.py"
       - ".github/workflows/update-daily539-pages.yml"
