@@ -213,11 +213,11 @@ if combined:
   label=f"近 {summary['long']} → {summary['short']} 期"
   grouped=summary['long']==18 and summary['short']==6
   if grouped:
-   entries=[label]+[f"次數 {g['count']}／"+'、'.join(f'{n:02}' for n in g['numbers']) for g in summary['groups']]
+   entries=[label]+[f"次數 {g['count']}／"+' '.join(f'{n:02}' for n in g['numbers']) for g in summary['groups']]
   else:
-   entries=[label+'：'+'、'.join(f'{n:02}' for g in summary['groups'] for n in g['numbers'])]
+   entries=[label+'：'+' '.join(f'{n:02}' for g in summary['groups'] for n in g['numbers'])]
   summary_entries.append(entries)
- for summary_size in [9.5,9,8.5,8,7.5]:
+ for summary_size in [9.5,9,8.5,8,7.5,7,6.5]:
   summary_lines=[]
   for entries in summary_entries:
    for text in entries:
