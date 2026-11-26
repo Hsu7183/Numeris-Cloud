@@ -264,7 +264,12 @@ for i,ball in enumerate(data['lastWindowSnapshot']):
  xx=sx+i*cellw
  if i:line(xx,sy+16,xx,sy+55)
  txt(xx+cellw/2,sy+24,f"{ball['number']:02}",8.5,score_style(ball['number'])[0])
- txt(xx+cellw/2,sy+36,f"頻{ball['frequency']}",6)
+ frequency_size=6*1.15 if ball['frequency']>=3 else 6
+ frequency_label=str(ball['frequency'])
+ frequency_width=pdfmetrics.stringWidth('頻','CJK',frequency_size)
+ frequency_left=xx+(cellw-frequency_width-pdfmetrics.stringWidth(frequency_label,'CJK',6))/2
+ txt(frequency_left,sy+36,'頻',frequency_size,ink,'left')
+ txt(frequency_left+frequency_width,sy+36,frequency_label,6,ink,'left')
  txt(xx+cellw/2,sy+47,f"漏{ball['gap']}",6)
 c.showPage();c.save()
 assert len(PdfReader(p).pages)==1
