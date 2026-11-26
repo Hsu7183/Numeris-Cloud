@@ -108,8 +108,8 @@ matrix=[ranking[row::4] for row in range(4)]
 for row,nums in enumerate(matrix,18):
  for j,n in enumerate(nums):
   foreground,background=score_style(n)
-  rect(X+(20+j)*cw+.4,TOP+hh+(row-1)*rh+.5,cw-.8,rh-1,background)
-  txt(X+20*cw+(j+.5)*cw,cy(row),f'{n:02}',8.8,foreground)
+  rect(X+(20+j)*cw+.4,TOP+hh+16*rh+(row-18)*10+.5,cw-.8,9,background)
+  txt(X+20*cw+(j+.5)*cw,TOP+hh+16*rh+(row-18)*10+5,f'{n:02}',8.8,foreground)
 txt(X+4*cw,cy(31),'（2　4　5　7）',8)
 footer=[(10,'滿'),(12,'2'),(13,'1~3'),(15,'3'),(17,'4'),(18,'1~2'),(20,'5'),(21,'2'),(23,'6'),(24,'2~3'),(26,'7'),(27,'1'),(29,'8'),(30,'有')]
 for col,s in footer:txt(cx(col),cy(31),s,7)
@@ -201,7 +201,7 @@ if combined:
   brief_note+='注意：資料日期不同。'
  txt(ax+5,ay+ah-4,brief_note,6,ink,'left')
  # Compact summaries are painted inside the original table, not below the image.
- bx=X+20*cw+3; by=TOP+hh+21*rh+3; bw=R-bx-6; bh=10*rh-6
+ bx=X+20*cw+3; by=TOP+hh+16*rh+43; bw=R-bx-6; bh=25*rh-16*rh-46
  rect(bx,by,bw,bh,'#fffefb','#a5b5a6')
  summary_entries=[]
  for summary in blank_summaries:
@@ -224,18 +224,23 @@ if combined:
     if current:summary_lines.append(current)
    summary_lines.append(None)
   required=sum(summary_size+1.5 if v is not None else 2 for v in summary_lines)
-  if required<=bh-34:break
+  if required<=bh-12:break
  else:raise ValueError('Blank summaries exceed table area')
  cursor=by+10
  for textline in summary_lines:
   if textline is None:cursor+=2
   else:
    txt(bx+6,cursor,textline,summary_size,ink,'left');cursor+=summary_size+1.5
- line(bx+6,by+bh-26,bx+bw-6,by+bh-26)
+ # Morning-only sources share the bottom band, after all evening calculations.
+ mx=bx; my=ay; mw=bw; mh=ah
+ rect(mx,my,mw,mh,'#ffffff','#000000')
+ txt(mx+6,my+10,'白天 11:00 資料區｜加州天天樂',9,ink,'left')
+ line(mx,my+19,mx+mw,my+19)
  ca=california['draw']
- txt(bx+6,by+bh-18,'加州天天樂｜'+report_date.isoformat()+(f"｜第{ca['draw_no']}期" if ca else '｜當日資料待更新'),8,ink,'left')
- txt(bx+6,by+bh-6,'開出獎號：'+'　'.join(f'{n:02}' for n in ca['numbers'])+'　（速彩）' if ca else '速彩尚未取得當日有效獎號；自動重試更新。',9,ink,'left')
- txt(L,10,'今彩539｜A4 格表・八組號碼、星號對照'+('及日期選號' if pending else ''),7,align='left')
+ txt(mx+6,my+32,report_date.isoformat()+(f"｜第{ca['draw_no']}期" if ca else '｜當日資料待更新'),9,ink,'left')
+ txt(mx+6,my+50,'開出獎號：'+'　'.join(f'{n:02}' for n in ca['numbers']) if ca else '尚未取得當日有效獎號，等待更新。',11,ink,'left')
+ txt(mx+6,my+mh-8,'來源：速彩｜以實際公布時間為準',7,ink,'left')
+ txt(L,10,'今彩539｜上部：晚上 22:00 資料區　下部：白天 11:00 更新區',7,align='left')
  txt(L+TOTAL,10,f"{report_date.isoformat()}　資料截至 {data['cutoff']['draw_date']}",6.5,muted,'right')
 else:
  txt(L,10,'今彩539｜依照片重繪・保留可辨識筆記',7,align='left')
