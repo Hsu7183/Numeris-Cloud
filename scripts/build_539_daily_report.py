@@ -228,14 +228,14 @@ if combined:
      current+=char
     if current:summary_lines.append(current)
    summary_lines.append(None)
-  required=sum(summary_size+1.5 if v is not None else 2 for v in summary_lines)
-  if required<=bh-12:break
+  required=sum(summary_size+0.5 if v is not None else 1 for v in summary_lines)
+  if required<=bh-8:break
  else:raise ValueError('Blank summaries exceed table area')
- cursor=by+10
+ cursor=by+6
  for textline in summary_lines:
-  if textline is None:cursor+=2
+  if textline is None:cursor+=1
   else:
-   txt(bx+6,cursor,textline,summary_size,ink,'left');cursor+=summary_size+1.5
+   txt(bx+6,cursor,textline,summary_size,ink,'left');cursor+=summary_size+0.5
  # Morning-only sources share the bottom band, after all evening calculations.
  mx=bx; my=ay; mw=bw; mh=ah
  rect(mx,my,mw,mh,'#ffffff','#000000')
