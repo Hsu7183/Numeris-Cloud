@@ -1,13 +1,13 @@
 {
   "cutoff": {
-    "draw_no": "115000285",
-    "draw_date": "2026-11-25",
+    "draw_no": "115000286",
+    "draw_date": "2026-11-26",
     "numbers": [
-      6,
       12,
-      29,
-      32,
-      34
+      13,
+      14,
+      21,
+      36
     ]
   },
   "W": 18,
@@ -15,22 +15,17 @@
   "simN": 600,
   "realCount": 420,
   "windowStart": {
-    "issue": "115000268",
-    "date": "2026-11-05",
+    "issue": "115000269",
+    "date": "2026-11-06",
     "nums": [
+      14,
       20,
-      28,
-      32,
-      36,
-      37
+      23,
+      26,
+      29
     ]
   },
   "lastWindowSnapshot": [
-    {
-      "number": 13,
-      "frequency": 0,
-      "gap": 19
-    },
     {
       "number": 16,
       "frequency": 0,
@@ -52,207 +47,228 @@
       "gap": 19
     },
     {
-      "number": 36,
-      "frequency": 1,
-      "gap": 17
-    },
-    {
       "number": 33,
       "frequency": 1,
-      "gap": 14
+      "gap": 15
     },
     {
       "number": 1,
       "frequency": 1,
-      "gap": 13
-    },
-    {
-      "number": 14,
-      "frequency": 2,
-      "gap": 12
+      "gap": 14
     },
     {
       "number": 9,
       "frequency": 2,
-      "gap": 11
+      "gap": 12
     },
     {
       "number": 8,
       "frequency": 1,
-      "gap": 10
-    },
-    {
-      "number": 21,
-      "frequency": 3,
-      "gap": 8
+      "gap": 11
     },
     {
       "number": 38,
       "frequency": 3,
-      "gap": 7
+      "gap": 8
     },
     {
       "number": 17,
       "frequency": 2,
-      "gap": 7
+      "gap": 8
     },
     {
       "number": 26,
       "frequency": 2,
-      "gap": 7
+      "gap": 8
     },
     {
       "number": 35,
       "frequency": 2,
-      "gap": 6
+      "gap": 7
     },
     {
       "number": 27,
       "frequency": 1,
-      "gap": 6
+      "gap": 7
     },
     {
       "number": 37,
-      "frequency": 4,
-      "gap": 5
+      "frequency": 3,
+      "gap": 6
     },
     {
       "number": 2,
       "frequency": 2,
-      "gap": 5
+      "gap": 6
     },
     {
       "number": 10,
       "frequency": 2,
-      "gap": 5
+      "gap": 6
     },
     {
       "number": 11,
       "frequency": 3,
-      "gap": 4
+      "gap": 5
     },
     {
       "number": 3,
       "frequency": 2,
-      "gap": 4
+      "gap": 5
     },
     {
       "number": 5,
       "frequency": 2,
-      "gap": 4
+      "gap": 5
     },
     {
       "number": 20,
-      "frequency": 6,
-      "gap": 3
+      "frequency": 5,
+      "gap": 4
     },
     {
       "number": 28,
-      "frequency": 3,
-      "gap": 3
+      "frequency": 2,
+      "gap": 4
     },
     {
       "number": 30,
       "frequency": 5,
-      "gap": 2
+      "gap": 3
     },
     {
       "number": 7,
       "frequency": 4,
-      "gap": 2
+      "gap": 3
     },
     {
       "number": 22,
       "frequency": 3,
-      "gap": 2
+      "gap": 3
     },
     {
       "number": 4,
       "frequency": 1,
-      "gap": 2
+      "gap": 3
     },
     {
       "number": 24,
       "frequency": 4,
-      "gap": 1
+      "gap": 2
     },
     {
       "number": 19,
       "frequency": 3,
-      "gap": 1
+      "gap": 2
     },
     {
       "number": 23,
       "frequency": 3,
-      "gap": 1
+      "gap": 2
     },
     {
       "number": 39,
       "frequency": 3,
-      "gap": 1
+      "gap": 2
     },
     {
       "number": 15,
       "frequency": 1,
-      "gap": 1
+      "gap": 2
     },
     {
       "number": 32,
-      "frequency": 7,
-      "gap": 0
+      "frequency": 6,
+      "gap": 1
     },
     {
       "number": 29,
       "frequency": 4,
-      "gap": 0
+      "gap": 1
     },
     {
       "number": 34,
       "frequency": 4,
-      "gap": 0
+      "gap": 1
     },
     {
       "number": 6,
       "frequency": 2,
+      "gap": 1
+    },
+    {
+      "number": 21,
+      "frequency": 4,
+      "gap": 0
+    },
+    {
+      "number": 14,
+      "frequency": 3,
       "gap": 0
     },
     {
       "number": 12,
+      "frequency": 2,
+      "gap": 0
+    },
+    {
+      "number": 13,
+      "frequency": 1,
+      "gap": 0
+    },
+    {
+      "number": 36,
       "frequency": 1,
       "gap": 0
     }
   ],
   "ranking": [
     {
-      "number": 20,
-      "score": 3.1
+      "number": 17,
+      "score": 4
     },
     {
       "number": 28,
+      "score": 4
+    },
+    {
+      "number": 6,
+      "score": 3.2
+    },
+    {
+      "number": 11,
       "score": 3.1
     },
     {
-      "number": 5,
+      "number": 25,
       "score": 3
     },
     {
-      "number": 8,
-      "score": 2.2
+      "number": 27,
+      "score": 3
+    },
+    {
+      "number": 35,
+      "score": 3
+    },
+    {
+      "number": 24,
+      "score": 2.1
     },
     {
       "number": 4,
-      "score": 2.1
-    },
-    {
-      "number": 7,
-      "score": 2.1
-    },
-    {
-      "number": 2,
       "score": 2
     },
     {
-      "number": 3,
+      "number": 7,
+      "score": 2
+    },
+    {
+      "number": 8,
+      "score": 2
+    },
+    {
+      "number": 10,
       "score": 2
     },
     {
@@ -260,31 +276,35 @@
       "score": 2
     },
     {
-      "number": 23,
+      "number": 15,
       "score": 2
     },
     {
-      "number": 24,
+      "number": 19,
       "score": 2
     },
     {
-      "number": 17,
-      "score": 1.1
+      "number": 21,
+      "score": 2
     },
     {
-      "number": 29,
-      "score": 1.1
+      "number": 32,
+      "score": 2
     },
     {
       "number": 1,
       "score": 1
     },
     {
-      "number": 10,
+      "number": 5,
       "score": 1
     },
     {
-      "number": 15,
+      "number": 12,
+      "score": 1
+    },
+    {
+      "number": 13,
       "score": 1
     },
     {
@@ -296,19 +316,15 @@
       "score": 1
     },
     {
-      "number": 21,
+      "number": 22,
       "score": 1
     },
     {
-      "number": 26,
+      "number": 29,
       "score": 1
     },
     {
-      "number": 30,
-      "score": 1
-    },
-    {
-      "number": 32,
+      "number": 33,
       "score": 1
     },
     {
@@ -316,19 +332,11 @@
       "score": 1
     },
     {
-      "number": 35,
-      "score": 1
+      "number": 2,
+      "score": 0
     },
     {
-      "number": 37,
-      "score": 1
-    },
-    {
-      "number": 38,
-      "score": 1
-    },
-    {
-      "number": 6,
+      "number": 3,
       "score": 0
     },
     {
@@ -336,31 +344,19 @@
       "score": 0
     },
     {
-      "number": 11,
+      "number": 20,
       "score": 0
     },
     {
-      "number": 12,
+      "number": 23,
       "score": 0
     },
     {
-      "number": 13,
+      "number": 26,
       "score": 0
     },
     {
-      "number": 19,
-      "score": 0
-    },
-    {
-      "number": 22,
-      "score": 0
-    },
-    {
-      "number": 25,
-      "score": 0
-    },
-    {
-      "number": 27,
+      "number": 30,
       "score": 0
     },
     {
@@ -368,11 +364,15 @@
       "score": 0
     },
     {
-      "number": 33,
+      "number": 36,
       "score": 0
     },
     {
-      "number": 36,
+      "number": 37,
+      "score": 0
+    },
+    {
+      "number": 38,
       "score": 0
     },
     {
@@ -427,46 +427,46 @@
       "strategy": "hot",
       "numbers": [
         32,
-        20,
         30,
-        29,
-        34
+        20,
+        21,
+        29
       ]
     },
     {
       "strategy": "cold",
       "numbers": [
-        13,
         16,
         18,
         25,
-        31
+        31,
+        33
       ]
     },
     {
       "strategy": "overdue",
       "numbers": [
-        13,
         16,
         18,
         25,
-        31
+        31,
+        33
       ]
     },
     {
       "strategy": "hybrid",
       "numbers": [
         32,
-        20,
         30,
-        13,
-        16
+        20,
+        16,
+        18
       ]
     }
   ],
   "report_date": "2026-11-27",
   "target_date": "2026-11-27",
-  "provisional": true,
+  "provisional": false,
   "remaining_groups": [
     {
       "source_date": "2026-11-21",
@@ -482,7 +482,6 @@
       "offset": 2,
       "numbers": [
         6,
-        12,
         29,
         32,
         34
@@ -492,9 +491,7 @@
     {
       "source_date": "2026-11-16",
       "offset": 11,
-      "numbers": [
-        21
-      ],
+      "numbers": [],
       "available": true
     },
     {
@@ -506,9 +503,7 @@
   ],
   "remaining_numbers": [
     6,
-    12,
     20,
-    21,
     28,
     29,
     32,
@@ -517,158 +512,154 @@
   "stars": [
     {
       "number": 2,
-      "star": 3
-    },
-    {
-      "number": 4,
-      "star": 2
-    },
-    {
-      "number": 8,
-      "star": 1
-    },
-    {
-      "number": 9,
       "star": 9
     },
     {
-      "number": 16,
-      "star": 5
-    },
-    {
-      "number": 21,
+      "number": 5,
       "star": 6
     },
     {
-      "number": 24,
+      "number": 8,
       "star": 4
     },
     {
-      "number": 27,
-      "star": 10
+      "number": 11,
+      "star": 1
     },
     {
-      "number": 35,
+      "number": 22,
       "star": 7
     },
     {
-      "number": 38,
+      "number": 25,
+      "star": 2
+    },
+    {
+      "number": 31,
+      "star": 10
+    },
+    {
+      "number": 32,
+      "star": 5
+    },
+    {
+      "number": 33,
       "star": 8
+    },
+    {
+      "number": 35,
+      "star": 3
     }
   ],
-  "generated_at": "2026-11-27T06:12:02.238333+08:00",
+  "generated_at": "2026-11-27T06:14:38.859492+08:00",
   "figure_nine": {
     "columns": [
       {
-        "score": 3,
-        "numbers": [
-          20,
-          28,
-          5
-        ]
-      },
-      {
-        "score": 2,
-        "numbers": [
-          8,
-          4
-        ]
-      },
-      {
-        "score": 2,
-        "numbers": [
-          3,
-          14
-        ]
-      },
-      {
-        "score": 1,
+        "score": 4,
         "numbers": [
           17,
-          29
+          28
+        ]
+      },
+      {
+        "score": 3,
+        "numbers": [
+          6,
+          11,
+          25
+        ]
+      },
+      {
+        "score": 3,
+        "numbers": [
+          35
+        ]
+      },
+      {
+        "score": 2,
+        "numbers": [
+          24,
+          4,
+          7
         ]
       }
     ],
     "shape": [
+      2,
       3,
-      2,
-      2,
-      2
+      1,
+      3
     ],
     "numbers": [
-      20,
-      28,
-      5,
-      8,
-      4,
-      3,
-      14,
       17,
-      29
+      28,
+      6,
+      11,
+      25,
+      35,
+      24,
+      4,
+      7
     ],
     "sorted_numbers": [
-      3,
       4,
-      5,
-      8,
-      14,
+      6,
+      7,
+      11,
       17,
-      20,
+      24,
+      25,
       28,
-      29
+      35
     ]
   },
   "whole_report_number_counts": [
     {
-      "number": 16,
+      "number": 25,
       "count": 16
     },
     {
-      "number": 13,
-      "count": 14
+      "number": 6,
+      "count": 13
     },
     {
-      "number": 25,
-      "count": 14
+      "number": 16,
+      "count": 13
+    },
+    {
+      "number": 5,
+      "count": 12
     },
     {
       "number": 20,
       "count": 12
     },
     {
-      "number": 5,
-      "count": 11
-    },
-    {
-      "number": 6,
-      "count": 10
+      "number": 32,
+      "count": 12
     },
     {
       "number": 29,
       "count": 10
     },
     {
-      "number": 30,
+      "number": 31,
       "count": 10
     },
     {
-      "number": 32,
+      "number": 33,
       "count": 10
-    },
-    {
-      "number": 10,
-      "count": 9
     },
     {
       "number": 17,
       "count": 9
     },
     {
-      "number": 18,
-      "count": 9
+      "number": 13,
+      "count": 8
     },
     {
-      "number": 21,
+      "number": 18,
       "count": 8
     },
     {
@@ -676,11 +667,19 @@
       "count": 8
     },
     {
-      "number": 12,
+      "number": 30,
+      "count": 8
+    },
+    {
+      "number": 4,
       "count": 7
     },
     {
-      "number": 15,
+      "number": 10,
+      "count": 7
+    },
+    {
+      "number": 11,
       "count": 7
     },
     {
@@ -688,35 +687,19 @@
       "count": 7
     },
     {
-      "number": 31,
-      "count": 7
-    },
-    {
       "number": 34,
       "count": 7
     },
     {
-      "number": 38,
-      "count": 7
-    },
-    {
-      "number": 2,
+      "number": 7,
       "count": 6
     },
     {
-      "number": 4,
+      "number": 22,
       "count": 6
     },
     {
-      "number": 8,
-      "count": 6
-    },
-    {
-      "number": 24,
-      "count": 6
-    },
-    {
-      "number": 27,
+      "number": 23,
       "count": 6
     },
     {
@@ -728,35 +711,35 @@
       "count": 5
     },
     {
-      "number": 3,
-      "count": 5
-    },
-    {
-      "number": 14,
-      "count": 5
-    },
-    {
-      "number": 37,
-      "count": 5
-    },
-    {
-      "number": 7,
-      "count": 4
-    },
-    {
       "number": 9,
+      "count": 5
+    },
+    {
+      "number": 12,
+      "count": 5
+    },
+    {
+      "number": 15,
+      "count": 5
+    },
+    {
+      "number": 21,
+      "count": 5
+    },
+    {
+      "number": 24,
+      "count": 5
+    },
+    {
+      "number": 27,
+      "count": 5
+    },
+    {
+      "number": 2,
       "count": 4
     },
     {
-      "number": 11,
-      "count": 4
-    },
-    {
-      "number": 23,
-      "count": 4
-    },
-    {
-      "number": 26,
+      "number": 8,
       "count": 4
     },
     {
@@ -764,15 +747,27 @@
       "count": 4
     },
     {
+      "number": 38,
+      "count": 4
+    },
+    {
       "number": 39,
       "count": 4
     },
     {
-      "number": 22,
+      "number": 3,
       "count": 3
     },
     {
-      "number": 33,
+      "number": 14,
+      "count": 3
+    },
+    {
+      "number": 26,
+      "count": 3
+    },
+    {
+      "number": 37,
       "count": 3
     }
   ],
@@ -790,16 +785,16 @@
       25
     ],
     "real": [
-      13,
       16,
       18,
       20,
+      21,
       25,
       29,
       30,
       31,
       32,
-      34
+      33
     ]
   },
   "top_repeated_numbers": {
@@ -814,31 +809,49 @@
       25
     ],
     "real": [
-      13,
       16,
       18,
       20,
       25,
       30,
       31,
-      32
+      32,
+      33
     ]
   },
   "blank_summaries": [
     {
-      "long": 30,
-      "short": 24,
+      "long": 48,
+      "short": 42,
       "groups": [
         {
-          "count": 1,
+          "count": 2,
           "numbers": [
-            26
+            32
           ]
-        },
+        }
+      ]
+    },
+    {
+      "long": 36,
+      "short": 30,
+      "groups": [
         {
-          "count": 0,
+          "count": 3,
           "numbers": [
-            13
+            25
+          ]
+        }
+      ]
+    },
+    {
+      "long": 24,
+      "short": 18,
+      "groups": [
+        {
+          "count": 3,
+          "numbers": [
+            6
           ]
         }
       ]
@@ -848,9 +861,22 @@
       "short": 12,
       "groups": [
         {
-          "count": 2,
+          "count": 3,
           "numbers": [
-            24
+            27
+          ]
+        },
+        {
+          "count": 1,
+          "numbers": [
+            29,
+            33
+          ]
+        },
+        {
+          "count": 0,
+          "numbers": [
+            23
           ]
         }
       ]
@@ -862,29 +888,24 @@
         {
           "count": 2,
           "numbers": [
-            2
+            4
           ]
         },
         {
           "count": 1,
           "numbers": [
             1,
-            10,
-            15,
-            16,
-            18,
-            21,
-            30,
-            35,
-            37,
-            38
+            5,
+            22,
+            34
           ]
         },
         {
           "count": 0,
           "numbers": [
-            25,
-            27
+            9,
+            20,
+            31
           ]
         }
       ]
@@ -894,32 +915,35 @@
       "short": 6,
       "groups": [
         {
+          "count": 3,
+          "numbers": [
+            27
+          ]
+        },
+        {
           "count": 2,
           "numbers": [
-            2,
-            24
+            4
           ]
         },
         {
           "count": 1,
           "numbers": [
             1,
-            10,
-            15,
-            16,
-            18,
-            21,
-            30,
-            35,
-            37,
-            38
+            5,
+            22,
+            29,
+            33,
+            34
           ]
         },
         {
           "count": 0,
           "numbers": [
-            25,
-            27
+            9,
+            20,
+            23,
+            31
           ]
         }
       ]
@@ -930,40 +954,41 @@
     "groups": [
       {
         "count": 4,
-        "numbers": []
+        "numbers": [
+          28
+        ]
       },
       {
         "count": 3,
         "numbers": [
-          5,
-          20,
-          28
+          11,
+          25
         ]
       },
       {
         "count": 2,
         "numbers": [
           7,
-          23
+          32
         ]
       },
       {
         "count": 1,
         "numbers": [
+          5,
+          13,
           16,
-          29,
-          30,
-          32,
-          38
+          29
         ]
       },
       {
         "count": 0,
         "numbers": [
-          11,
-          13,
-          25,
+          20,
+          23,
+          30,
           36,
+          38,
           39
         ]
       }
@@ -973,7 +998,7 @@
     "report_date": "2026-11-27",
     "status": "pending",
     "draw": null,
-    "checked_at": "2026-11-27T06:11:57.260000+08:00",
+    "checked_at": "2026-11-27T06:14:33.946193+08:00",
     "errors": []
   },
   "score_colors": [

@@ -1,13 +1,35 @@
 {
   "months": 6,
-  "start_date": "2026-06-03",
+  "start_date": "2026-06-01",
   "end_date": "2026-11-30",
-  "cutoff": "2026-11-25",
-  "draw_count": 151,
+  "cutoff": "2026-11-26",
+  "draw_count": 154,
   "blank_draw_rows": 20,
   "writing_cells_at_end": 100,
   "number_font_pt": 9.45,
   "draws": [
+    {
+      "draw_no": "115000133",
+      "draw_date": "2026-06-01",
+      "numbers": [
+        5,
+        14,
+        19,
+        20,
+        28
+      ]
+    },
+    {
+      "draw_no": "115000134",
+      "draw_date": "2026-06-02",
+      "numbers": [
+        7,
+        12,
+        22,
+        26,
+        30
+      ]
+    },
     {
       "draw_no": "115000135",
       "draw_date": "2026-06-03",
@@ -1667,6 +1689,17 @@
         29,
         32,
         34
+      ]
+    },
+    {
+      "draw_no": "115000286",
+      "draw_date": "2026-11-26",
+      "numbers": [
+        12,
+        13,
+        14,
+        21,
+        36
       ]
     }
   ]
