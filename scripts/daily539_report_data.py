@@ -1,5 +1,30 @@
 """Calendar-based selection rules for the daily report."""
 from datetime import date, timedelta
+from collections import Counter
+
+
+def whole_report_counts(data, groups, figure, summaries, brief, california):
+    """Count displayed ball entries, excluding grid labels and this ranking itself."""
+    counts = Counter({n: 0 for n in range(1, 40)})
+    counts.update(ball['number'] for ball in data['lastWindowSnapshot'])
+    for source in ('sim', 'real'):
+        numbers = [n for group in data[source] for n in group['numbers']]
+        counts.update(numbers)
+        counts.update(set(numbers))
+        counts.update(n for n, count in Counter(numbers).items() if count > 1)
+    counts.update(n for n, _ in star_pairs(data['ranking']))
+    for _ in range(2):
+        counts.update(row['number'] for row in data['ranking'])
+    counts.update(n for group in groups for n in group['numbers'])
+    counts.update({n for group in groups for n in group['numbers']})
+    counts.update(figure['sorted_numbers'])
+    counts.update(figure['numbers'])
+    counts.update(n for summary in summaries for group in summary['groups'] for n in group['numbers'])
+    counts.update(n for group in brief['groups'] for n in group['numbers'])
+    if california['draw']:
+        counts.update(california['draw']['numbers'])
+    return [{'number': n, 'count': count}
+            for n, count in sorted(counts.items(), key=lambda item: (-item[1], item[0]))]
 
 
 def choose_target_date(report_date, cutoff_date, previous_target=None):

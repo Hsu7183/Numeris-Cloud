@@ -15,7 +15,7 @@ pending=True
 import argparse,subprocess,tempfile,shutil,os
 from datetime import datetime,date,timedelta
 from zoneinfo import ZoneInfo
-from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date,figure_nine
+from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date,figure_nine,whole_report_counts
 from scripts.daily539_blank_report import calculate_blank_summaries
 from scripts.california_daily import refresh as refresh_california
 ROOT=Path(__file__).resolve().parents[1]
@@ -36,6 +36,7 @@ figure=figure_nine(data['ranking'])
 report_tables=calculate_blank_summaries(ROOT, include_ai=True)
 blank_summaries=report_tables['blank_summaries']
 ai_brief=report_tables['ai_brief']
+report_counts=whole_report_counts(data,groups,figure,blank_summaries,ai_brief,california)
 provisional=data['cutoff']['draw_date']<(target_date-timedelta(days=1)).isoformat()
 fonts=[os.environ.get('NUMERIS_REPORT_FONT',''),'C:/Windows/Fonts/msjh.ttc','/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc']
 font=next((f for f in fonts if f and Path(f).is_file()),None)
@@ -48,8 +49,8 @@ c=canvas.Canvas(str(p),pagesize=landscape(A4));PW,PH=landscape(A4)
 c.setTitle('今彩539 A4每日總表 '+report_date.isoformat())
 # Reserve a top strip for the 39-ball snapshot while keeping one landscape A4.
 c.saveState()
-c.translate(0, PH*(1-.89)-70)
-c.scale(1,.89)
+c.translate(0, PH*(1-.81)-111)
+c.scale(1,.81)
 L=20; TOP=22; TOTAL=PW-40; left=32; right=0; cw=(TOTAL-left-right)/39; rh=15.25; hh=45
 X=L+left; R=X+cw*39; BOT=TOP+hh+31*rh
 ink='#000000';note='#000000';muted='#000000'
@@ -271,6 +272,16 @@ for i,ball in enumerate(data['lastWindowSnapshot']):
  txt(frequency_left,sy+36,'頻',frequency_size,ink,'left')
  txt(frequency_left+frequency_width,sy+36,frequency_label,6,ink,'left')
  txt(xx+cellw/2,sy+47,f"漏{ball['gap']}",6)
+ry=77; ranking_height=36
+rect(sx,ry,sw,ranking_height,'#ffffff','#000000')
+txt(sx+5,ry+7,'全表球號出現次數｜由多至少・同次數按球號升序',7.5,ink,'left')
+txt(sx+sw-5,ry+7,'不計底圖編號、日期、頻漏數值及本排序列',6,ink,'right')
+line(sx,ry+13,sx+sw,ry+13)
+for i,ball in enumerate(report_counts):
+ xx=sx+i*cellw
+ if i:line(xx,ry+13,xx,ry+ranking_height)
+ txt(xx+cellw/2,ry+21,f"{ball['number']:02}",8.5,score_style(ball['number'])[0])
+ txt(xx+cellw/2,ry+31,f"{ball['count']}次",6)
 c.showPage();c.save()
 assert len(PdfReader(p).pages)==1
 doc=pdfium.PdfDocument(str(p));doc[0].render(scale=2).to_pil().save(p.with_suffix('.png'))
@@ -278,6 +289,7 @@ doc.close()
 metadata={k:v for k,v in data.items() if k!='draws'}
 metadata.update(report_date=report_date.isoformat(),target_date=target_date.isoformat(),provisional=provisional,remaining_groups=groups,remaining_numbers=union,stars=[{'number':n,'star':s} for n,s in pairs],generated_at=datetime.now(ZoneInfo('Asia/Taipei')).isoformat())
 metadata['figure_nine']=figure
+metadata['whole_report_number_counts']=report_counts
 metadata['top_summary_numbers']={source:sorted({n for g in data[source] for n in g['numbers']}) for source in ['sim','real']}
 metadata['top_repeated_numbers']={source:sorted(n for n,count in Counter(n for g in data[source] for n in g['numbers']).items() if count>1) for source in ['sim','real']}
 metadata['blank_summaries']=blank_summaries
