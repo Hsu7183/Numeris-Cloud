@@ -25,6 +25,203 @@
       37
     ]
   },
+  "lastWindowSnapshot": [
+    {
+      "number": 13,
+      "frequency": 0,
+      "gap": 19
+    },
+    {
+      "number": 16,
+      "frequency": 0,
+      "gap": 19
+    },
+    {
+      "number": 18,
+      "frequency": 0,
+      "gap": 19
+    },
+    {
+      "number": 25,
+      "frequency": 0,
+      "gap": 19
+    },
+    {
+      "number": 31,
+      "frequency": 0,
+      "gap": 19
+    },
+    {
+      "number": 36,
+      "frequency": 1,
+      "gap": 17
+    },
+    {
+      "number": 33,
+      "frequency": 1,
+      "gap": 14
+    },
+    {
+      "number": 1,
+      "frequency": 1,
+      "gap": 13
+    },
+    {
+      "number": 14,
+      "frequency": 2,
+      "gap": 12
+    },
+    {
+      "number": 9,
+      "frequency": 2,
+      "gap": 11
+    },
+    {
+      "number": 8,
+      "frequency": 1,
+      "gap": 10
+    },
+    {
+      "number": 21,
+      "frequency": 3,
+      "gap": 8
+    },
+    {
+      "number": 38,
+      "frequency": 3,
+      "gap": 7
+    },
+    {
+      "number": 17,
+      "frequency": 2,
+      "gap": 7
+    },
+    {
+      "number": 26,
+      "frequency": 2,
+      "gap": 7
+    },
+    {
+      "number": 35,
+      "frequency": 2,
+      "gap": 6
+    },
+    {
+      "number": 27,
+      "frequency": 1,
+      "gap": 6
+    },
+    {
+      "number": 37,
+      "frequency": 4,
+      "gap": 5
+    },
+    {
+      "number": 2,
+      "frequency": 2,
+      "gap": 5
+    },
+    {
+      "number": 10,
+      "frequency": 2,
+      "gap": 5
+    },
+    {
+      "number": 11,
+      "frequency": 3,
+      "gap": 4
+    },
+    {
+      "number": 3,
+      "frequency": 2,
+      "gap": 4
+    },
+    {
+      "number": 5,
+      "frequency": 2,
+      "gap": 4
+    },
+    {
+      "number": 20,
+      "frequency": 6,
+      "gap": 3
+    },
+    {
+      "number": 28,
+      "frequency": 3,
+      "gap": 3
+    },
+    {
+      "number": 30,
+      "frequency": 5,
+      "gap": 2
+    },
+    {
+      "number": 7,
+      "frequency": 4,
+      "gap": 2
+    },
+    {
+      "number": 22,
+      "frequency": 3,
+      "gap": 2
+    },
+    {
+      "number": 4,
+      "frequency": 1,
+      "gap": 2
+    },
+    {
+      "number": 24,
+      "frequency": 4,
+      "gap": 1
+    },
+    {
+      "number": 19,
+      "frequency": 3,
+      "gap": 1
+    },
+    {
+      "number": 23,
+      "frequency": 3,
+      "gap": 1
+    },
+    {
+      "number": 39,
+      "frequency": 3,
+      "gap": 1
+    },
+    {
+      "number": 15,
+      "frequency": 1,
+      "gap": 1
+    },
+    {
+      "number": 32,
+      "frequency": 7,
+      "gap": 0
+    },
+    {
+      "number": 29,
+      "frequency": 4,
+      "gap": 0
+    },
+    {
+      "number": 34,
+      "frequency": 4,
+      "gap": 0
+    },
+    {
+      "number": 6,
+      "frequency": 2,
+      "gap": 0
+    },
+    {
+      "number": 12,
+      "frequency": 1,
+      "gap": 0
+    }
+  ],
   "ranking": [
     {
       "number": 20,
@@ -359,7 +556,7 @@
       "star": 8
     }
   ],
-  "generated_at": "2026-11-26T09:32:04.942928+08:00",
+  "generated_at": "2026-11-26T14:03:45.603627+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -616,9 +813,20 @@
   },
   "california_daily": {
     "report_date": "2026-11-26",
-    "status": "pending",
-    "draw": null,
-    "checked_at": "2026-11-26T09:31:58.564640+08:00",
+    "status": "current",
+    "draw": {
+      "draw_date": "2026-11-26",
+      "draw_no": "12072",
+      "numbers": [
+        2,
+        4,
+        8,
+        13,
+        34
+      ],
+      "source_url": "https://www.sc888.net/index.php?id=winningnum&s=/LotteryFan/index"
+    },
+    "checked_at": "2026-11-26T14:03:39.070295+08:00",
     "errors": []
   },
   "score_colors": [

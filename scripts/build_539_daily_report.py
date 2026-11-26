@@ -46,6 +46,10 @@ tmp=tempfile.TemporaryDirectory();stage=Path(tmp.name)
 p=stage/'latest.pdf'
 c=canvas.Canvas(str(p),pagesize=landscape(A4));PW,PH=landscape(A4)
 c.setTitle('今彩539 A4每日總表 '+report_date.isoformat())
+# Reserve a top strip for the 39-ball snapshot while keeping one landscape A4.
+c.saveState()
+c.translate(0, PH*(1-.89)-70)
+c.scale(1,.89)
 L=20; TOP=22; TOTAL=PW-40; left=32; right=0; cw=(TOTAL-left-right)/39; rh=15.25; hh=45
 X=L+left; R=X+cw*39; BOT=TOP+hh+31*rh
 ink='#000000';note='#000000';muted='#000000'
@@ -250,6 +254,18 @@ for i,(_,label,foreground,background) in enumerate(score_bands):
  txt(lx,BOT+7,label,6.8,foreground,'left')
 txt(L,BOT+20,'號碼每日依相鄰分數自動分色。日期選號：目標日前5、2、11、12日；無開獎日往前取最近一期。',6.5,align='left')
 txt(L,BOT+30,'相鄰排名與八組號碼沿用網站算法；模擬600期、種子20261025、窗口18期。統計供參考，非開獎預測。',6.5,muted,align='left')
+c.restoreState()
+sx=20; sy=16; sw=PW-40; cellw=sw/39
+rect(sx,sy,sw,55,'#ffffff','#000000')
+txt(sx+5,sy+8,'最後一窗快照｜官網真實資料｜最後18期｜'+data['windowStart']['date']+'～'+data['cutoff']['draw_date'],8,ink,'left')
+txt(sx+sw-5,sy+8,'依漏多→頻多排序；漏19＝整窗未出現',6.5,ink,'right')
+line(sx,sy+16,sx+sw,sy+16)
+for i,ball in enumerate(data['lastWindowSnapshot']):
+ xx=sx+i*cellw
+ if i:line(xx,sy+16,xx,sy+55)
+ txt(xx+cellw/2,sy+24,f"{ball['number']:02}",8.5,score_style(ball['number'])[0])
+ txt(xx+cellw/2,sy+36,f"頻{ball['frequency']}",6)
+ txt(xx+cellw/2,sy+47,f"漏{ball['gap']}",6)
 c.showPage();c.save()
 assert len(PdfReader(p).pages)==1
 doc=pdfium.PdfDocument(str(p));doc[0].render(scale=2).to_pil().save(p.with_suffix('.png'))

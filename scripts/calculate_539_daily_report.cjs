@@ -36,6 +36,10 @@ const groups = data => ['hot', 'cold', 'overdue', 'hybrid'].map(strategy => ({
   strategy, numbers: e.pickNums(strategy, e.windowStats(data, data.length, W)),
 }));
 const ranking = calculate(payload);
+const snapshotStats = e.windowStats(real, real.length, W);
+const lastWindowSnapshot = Array.from({length:39}, (_,i) => i+1)
+  .sort((a,b) => snapshotStats.gap[b]-snapshotStats.gap[a] || snapshotStats.freq[b]-snapshotStats.freq[a] || a-b)
+  .map(number => ({number, frequency:snapshotStats.freq[number], gap:snapshotStats.gap[number]}));
 if (ranking.length !== 39 || new Set(ranking.map(r => r.number)).size !== 39) throw Error('Invalid ranking');
 process.stdout.write(JSON.stringify({cutoff: draws[0], W, seed, simN, realCount: real.length,
-  windowStart: real[real.length - W], ranking, sim: groups(simulated), real: groups(real), draws}));
+  windowStart: real[real.length - W], lastWindowSnapshot, ranking, sim: groups(simulated), real: groups(real), draws}));
