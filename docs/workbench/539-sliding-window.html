@@ -155,6 +155,7 @@ footer b{color:var(--text)}
   <div class="card c12">
     <h2>多窗口對比 <span class="tagn">同一策略在多個 W 下各自回測 · 比較基準請用「每期平均淨損益」（不同 W 回測期數不同，累計值不可直接比）</span><span class="tagn" id="mwTime"></span></h2>
     <div style="overflow:auto"><table id="mwTable"></table></div>
+    <p class="hint" style="font-size:14px">最佳均值＝目前候選窗口中「累計淨損益 ÷ 回測期數」最高者；全部虧損時代表平均每期虧損最少。窗口 W＝15 表示每次用前 15 期資料選號。此標籤會隨資料與策略自動重算，僅代表歷史回測結果；均值完全相同時優先標示較小窗口。</p>
     <div class="legend" id="mwLegend" style="margin-top:12px"></div>
     <div id="mwChart"></div>
   </div>
