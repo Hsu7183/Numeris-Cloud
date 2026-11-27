@@ -1,13 +1,13 @@
 {
   "cutoff": {
-    "draw_no": "115000286",
-    "draw_date": "2026-11-26",
+    "draw_no": "115000287",
+    "draw_date": "2026-11-27",
     "numbers": [
-      12,
-      13,
-      14,
+      8,
       21,
-      36
+      28,
+      35,
+      39
     ]
   },
   "W": 18,
@@ -15,191 +15,191 @@
   "simN": 600,
   "realCount": 420,
   "windowStart": {
-    "issue": "115000269",
-    "date": "2026-11-06",
+    "issue": "115000270",
+    "date": "2026-11-07",
     "nums": [
-      14,
-      20,
-      23,
-      26,
-      29
+      10,
+      21,
+      24,
+      32,
+      34
     ]
   },
   "lastWindowSnapshot": [
     {
       "number": 32,
       "frequency": 6,
-      "gap": 1
-    },
-    {
-      "number": 20,
-      "frequency": 5,
-      "gap": 4
+      "gap": 2
     },
     {
       "number": 30,
       "frequency": 5,
-      "gap": 3
+      "gap": 4
+    },
+    {
+      "number": 21,
+      "frequency": 5,
+      "gap": 0
+    },
+    {
+      "number": 20,
+      "frequency": 4,
+      "gap": 5
     },
     {
       "number": 7,
       "frequency": 4,
-      "gap": 3
+      "gap": 4
     },
     {
       "number": 24,
       "frequency": 4,
-      "gap": 2
-    },
-    {
-      "number": 29,
-      "frequency": 4,
-      "gap": 1
+      "gap": 3
     },
     {
       "number": 34,
       "frequency": 4,
-      "gap": 1
+      "gap": 2
     },
     {
-      "number": 21,
+      "number": 39,
       "frequency": 4,
       "gap": 0
     },
     {
       "number": 38,
       "frequency": 3,
-      "gap": 8
+      "gap": 9
     },
     {
       "number": 37,
       "frequency": 3,
-      "gap": 6
+      "gap": 7
     },
     {
       "number": 11,
       "frequency": 3,
-      "gap": 5
+      "gap": 6
     },
     {
       "number": 22,
       "frequency": 3,
-      "gap": 3
+      "gap": 4
     },
     {
       "number": 19,
       "frequency": 3,
-      "gap": 2
+      "gap": 3
     },
     {
-      "number": 23,
+      "number": 29,
       "frequency": 3,
       "gap": 2
     },
     {
-      "number": 39,
+      "number": 28,
       "frequency": 3,
-      "gap": 2
+      "gap": 0
     },
     {
-      "number": 14,
+      "number": 35,
       "frequency": 3,
       "gap": 0
     },
     {
       "number": 9,
       "frequency": 2,
-      "gap": 12
+      "gap": 13
     },
     {
       "number": 17,
       "frequency": 2,
-      "gap": 8
-    },
-    {
-      "number": 26,
-      "frequency": 2,
-      "gap": 8
-    },
-    {
-      "number": 35,
-      "frequency": 2,
-      "gap": 7
+      "gap": 9
     },
     {
       "number": 2,
       "frequency": 2,
-      "gap": 6
+      "gap": 7
     },
     {
       "number": 10,
       "frequency": 2,
-      "gap": 6
+      "gap": 7
     },
     {
       "number": 3,
       "frequency": 2,
-      "gap": 5
+      "gap": 6
     },
     {
       "number": 5,
       "frequency": 2,
-      "gap": 5
+      "gap": 6
     },
     {
-      "number": 28,
+      "number": 23,
       "frequency": 2,
-      "gap": 4
+      "gap": 3
     },
     {
       "number": 6,
       "frequency": 2,
-      "gap": 1
+      "gap": 2
     },
     {
       "number": 12,
+      "frequency": 2,
+      "gap": 1
+    },
+    {
+      "number": 14,
+      "frequency": 2,
+      "gap": 1
+    },
+    {
+      "number": 8,
       "frequency": 2,
       "gap": 0
     },
     {
       "number": 33,
       "frequency": 1,
-      "gap": 15
+      "gap": 16
     },
     {
       "number": 1,
       "frequency": 1,
-      "gap": 14
+      "gap": 15
     },
     {
-      "number": 8,
+      "number": 26,
       "frequency": 1,
-      "gap": 11
+      "gap": 9
     },
     {
       "number": 27,
       "frequency": 1,
-      "gap": 7
+      "gap": 8
     },
     {
       "number": 4,
       "frequency": 1,
-      "gap": 3
+      "gap": 4
     },
     {
       "number": 15,
       "frequency": 1,
-      "gap": 2
+      "gap": 3
     },
     {
       "number": 13,
       "frequency": 1,
-      "gap": 0
+      "gap": 1
     },
     {
       "number": 36,
       "frequency": 1,
-      "gap": 0
+      "gap": 1
     },
     {
       "number": 16,
@@ -224,75 +224,67 @@
   ],
   "ranking": [
     {
-      "number": 17,
-      "score": 4
-    },
-    {
-      "number": 28,
-      "score": 4
-    },
-    {
-      "number": 6,
-      "score": 3.2
-    },
-    {
-      "number": 11,
+      "number": 23,
       "score": 3.1
     },
     {
-      "number": 25,
+      "number": 6,
       "score": 3
-    },
-    {
-      "number": 27,
-      "score": 3
-    },
-    {
-      "number": 35,
-      "score": 3
-    },
-    {
-      "number": 24,
-      "score": 2.1
-    },
-    {
-      "number": 4,
-      "score": 2
     },
     {
       "number": 7,
-      "score": 2
-    },
-    {
-      "number": 8,
-      "score": 2
-    },
-    {
-      "number": 10,
-      "score": 2
+      "score": 3
     },
     {
       "number": 14,
-      "score": 2
+      "score": 3
     },
     {
-      "number": 15,
-      "score": 2
+      "number": 29,
+      "score": 3
+    },
+    {
+      "number": 9,
+      "score": 2.1
+    },
+    {
+      "number": 25,
+      "score": 2.1
+    },
+    {
+      "number": 32,
+      "score": 2.1
     },
     {
       "number": 19,
       "score": 2
     },
     {
-      "number": 21,
+      "number": 27,
       "score": 2
     },
     {
-      "number": 32,
+      "number": 30,
       "score": 2
     },
     {
-      "number": 1,
+      "number": 35,
+      "score": 2
+    },
+    {
+      "number": 13,
+      "score": 1.1
+    },
+    {
+      "number": 37,
+      "score": 1.1
+    },
+    {
+      "number": 38,
+      "score": 1.1
+    },
+    {
+      "number": 2,
       "score": 1
     },
     {
@@ -304,7 +296,7 @@
       "score": 1
     },
     {
-      "number": 13,
+      "number": 15,
       "score": 1
     },
     {
@@ -312,27 +304,27 @@
       "score": 1
     },
     {
-      "number": 18,
+      "number": 17,
       "score": 1
     },
     {
-      "number": 22,
+      "number": 20,
       "score": 1
     },
     {
-      "number": 29,
+      "number": 24,
       "score": 1
     },
     {
-      "number": 33,
+      "number": 28,
       "score": 1
     },
     {
-      "number": 34,
+      "number": 39,
       "score": 1
     },
     {
-      "number": 2,
+      "number": 1,
       "score": 0
     },
     {
@@ -340,15 +332,31 @@
       "score": 0
     },
     {
-      "number": 9,
+      "number": 4,
       "score": 0
     },
     {
-      "number": 20,
+      "number": 8,
       "score": 0
     },
     {
-      "number": 23,
+      "number": 10,
+      "score": 0
+    },
+    {
+      "number": 11,
+      "score": 0
+    },
+    {
+      "number": 18,
+      "score": 0
+    },
+    {
+      "number": 21,
+      "score": 0
+    },
+    {
+      "number": 22,
       "score": 0
     },
     {
@@ -356,27 +364,19 @@
       "score": 0
     },
     {
-      "number": 30,
-      "score": 0
-    },
-    {
       "number": 31,
       "score": 0
     },
     {
+      "number": 33,
+      "score": 0
+    },
+    {
+      "number": 34,
+      "score": 0
+    },
+    {
       "number": 36,
-      "score": 0
-    },
-    {
-      "number": 37,
-      "score": 0
-    },
-    {
-      "number": 38,
-      "score": 0
-    },
-    {
-      "number": 39,
       "score": 0
     }
   ],
@@ -427,10 +427,10 @@
       "strategy": "hot",
       "numbers": [
         32,
-        30,
-        20,
         21,
-        29
+        30,
+        39,
+        34
       ]
     },
     {
@@ -457,170 +457,177 @@
       "strategy": "hybrid",
       "numbers": [
         32,
+        21,
         30,
-        20,
         16,
         18
       ]
     }
   ],
-  "report_date": "2026-11-27",
-  "target_date": "2026-11-27",
+  "report_date": "2026-11-28",
+  "target_date": "2026-11-28",
   "provisional": false,
   "remaining_groups": [
     {
-      "source_date": "2026-11-21",
+      "source_date": "2026-11-23",
       "offset": 5,
       "numbers": [
-        20,
-        28
+        4,
+        7,
+        22,
+        30
       ],
       "available": true
     },
     {
-      "source_date": "2026-11-25",
+      "source_date": "2026-11-26",
       "offset": 2,
       "numbers": [
-        6,
-        29,
-        32,
-        34
+        12,
+        13,
+        14,
+        36
+      ],
+      "available": true
+    },
+    {
+      "source_date": "2026-11-17",
+      "offset": 11,
+      "numbers": [
+        17,
+        26,
+        38
       ],
       "available": true
     },
     {
       "source_date": "2026-11-16",
-      "offset": 11,
-      "numbers": [],
-      "available": true
-    },
-    {
-      "source_date": "2026-11-14",
       "offset": 12,
       "numbers": [],
       "available": true
     }
   ],
   "remaining_numbers": [
-    6,
-    20,
-    28,
-    29,
-    32,
-    34
+    4,
+    7,
+    12,
+    13,
+    14,
+    17,
+    22,
+    26,
+    30,
+    36,
+    38
   ],
   "stars": [
     {
-      "number": 2,
+      "number": 1,
+      "star": 8
+    },
+    {
+      "number": 4,
       "star": 9
     },
     {
       "number": 5,
-      "star": 6
-    },
-    {
-      "number": 8,
-      "star": 4
-    },
-    {
-      "number": 11,
-      "star": 1
-    },
-    {
-      "number": 22,
-      "star": 7
-    },
-    {
-      "number": 25,
-      "star": 2
-    },
-    {
-      "number": 31,
-      "star": 10
-    },
-    {
-      "number": 32,
       "star": 5
     },
     {
-      "number": 33,
-      "star": 8
+      "number": 14,
+      "star": 1
     },
     {
-      "number": 35,
+      "number": 15,
+      "star": 6
+    },
+    {
+      "number": 25,
       "star": 3
+    },
+    {
+      "number": 26,
+      "star": 10
+    },
+    {
+      "number": 28,
+      "star": 7
+    },
+    {
+      "number": 29,
+      "star": 2
+    },
+    {
+      "number": 30,
+      "star": 4
     }
   ],
-  "generated_at": "2026-11-27T20:02:46.178379+08:00",
+  "generated_at": "2026-11-28T05:42:01.824860+08:00",
   "figure_nine": {
     "columns": [
       {
-        "score": 4,
-        "numbers": [
-          17,
-          28
-        ]
-      },
-      {
         "score": 3,
         "numbers": [
+          23,
           6,
-          11,
-          25
+          7,
+          14
         ]
       },
       {
         "score": 3,
         "numbers": [
-          35
+          29
         ]
       },
       {
         "score": 2,
         "numbers": [
-          24,
-          4,
-          7
+          9,
+          25
+        ]
+      },
+      {
+        "score": 2,
+        "numbers": [
+          27,
+          30
         ]
       }
     ],
     "shape": [
-      2,
-      3,
+      4,
       1,
-      3
+      2,
+      2
     ],
     "numbers": [
-      17,
-      28,
-      6,
-      11,
-      25,
-      35,
-      24,
-      4,
-      7
-    ],
-    "sorted_numbers": [
-      4,
+      23,
       6,
       7,
-      11,
-      17,
-      24,
+      14,
+      29,
+      9,
       25,
-      28,
-      35
+      27,
+      30
+    ],
+    "sorted_numbers": [
+      6,
+      7,
+      9,
+      14,
+      23,
+      25,
+      27,
+      29,
+      30
     ]
   },
   "whole_report_number_counts": [
     {
       "number": 25,
-      "count": 13
-    },
-    {
-      "number": 5,
-      "count": 12
+      "count": 14
     },
     {
       "number": 6,
@@ -631,31 +638,35 @@
       "count": 10
     },
     {
-      "number": 17,
-      "count": 10
-    },
-    {
-      "number": 32,
-      "count": 10
-    },
-    {
-      "number": 20,
+      "number": 5,
       "count": 9
     },
     {
-      "number": 22,
+      "number": 14,
       "count": 9
     },
     {
-      "number": 31,
+      "number": 18,
       "count": 9
     },
     {
-      "number": 33,
+      "number": 19,
       "count": 9
     },
     {
-      "number": 4,
+      "number": 30,
+      "count": 9
+    },
+    {
+      "number": 12,
+      "count": 8
+    },
+    {
+      "number": 15,
+      "count": 8
+    },
+    {
+      "number": 23,
       "count": 8
     },
     {
@@ -663,27 +674,31 @@
       "count": 8
     },
     {
-      "number": 34,
-      "count": 8
-    },
-    {
-      "number": 7,
+      "number": 9,
       "count": 7
     },
     {
-      "number": 18,
+      "number": 13,
       "count": 7
     },
     {
-      "number": 30,
+      "number": 17,
       "count": 7
     },
     {
-      "number": 1,
+      "number": 26,
+      "count": 7
+    },
+    {
+      "number": 32,
+      "count": 7
+    },
+    {
+      "number": 2,
       "count": 6
     },
     {
-      "number": 9,
+      "number": 7,
       "count": 6
     },
     {
@@ -691,67 +706,63 @@
       "count": 6
     },
     {
-      "number": 11,
+      "number": 20,
       "count": 6
     },
     {
-      "number": 13,
+      "number": 21,
       "count": 6
     },
     {
-      "number": 15,
+      "number": 24,
       "count": 6
     },
     {
-      "number": 19,
+      "number": 27,
       "count": 6
     },
     {
-      "number": 35,
+      "number": 31,
       "count": 6
     },
     {
-      "number": 2,
+      "number": 33,
+      "count": 6
+    },
+    {
+      "number": 34,
+      "count": 6
+    },
+    {
+      "number": 37,
+      "count": 6
+    },
+    {
+      "number": 1,
+      "count": 5
+    },
+    {
+      "number": 4,
+      "count": 5
+    },
+    {
+      "number": 39,
       "count": 5
     },
     {
       "number": 8,
-      "count": 5
-    },
-    {
-      "number": 12,
-      "count": 5
-    },
-    {
-      "number": 14,
-      "count": 5
-    },
-    {
-      "number": 21,
-      "count": 5
-    },
-    {
-      "number": 23,
-      "count": 5
-    },
-    {
-      "number": 24,
-      "count": 5
-    },
-    {
-      "number": 27,
-      "count": 5
-    },
-    {
-      "number": 28,
-      "count": 5
-    },
-    {
-      "number": 26,
       "count": 4
     },
     {
-      "number": 37,
+      "number": 22,
+      "count": 4
+    },
+    {
+      "number": 28,
+      "count": 4
+    },
+    {
+      "number": 36,
       "count": 4
     },
     {
@@ -763,11 +774,11 @@
       "count": 3
     },
     {
-      "number": 36,
+      "number": 11,
       "count": 3
     },
     {
-      "number": 39,
+      "number": 35,
       "count": 3
     }
   ],
@@ -787,49 +798,43 @@
     "real": [
       16,
       18,
-      20,
       21,
       25,
-      29,
       30,
       31,
       32,
-      33
+      33,
+      34,
+      39
     ]
   },
   "blank_summaries": [
-    {
-      "long": 48,
-      "short": 42,
-      "groups": [
-        {
-          "count": 2,
-          "numbers": [
-            32
-          ]
-        }
-      ]
-    },
     {
       "long": 36,
       "short": 30,
       "groups": [
         {
-          "count": 3,
+          "count": 0,
           "numbers": [
-            25
+            4
           ]
         }
       ]
     },
     {
-      "long": 24,
-      "short": 18,
+      "long": 30,
+      "short": 24,
       "groups": [
         {
           "count": 3,
           "numbers": [
-            6
+            14
+          ]
+        },
+        {
+          "count": 2,
+          "numbers": [
+            9
           ]
         }
       ]
@@ -839,22 +844,10 @@
       "short": 12,
       "groups": [
         {
-          "count": 3,
-          "numbers": [
-            27
-          ]
-        },
-        {
-          "count": 1,
-          "numbers": [
-            29,
-            33
-          ]
-        },
-        {
           "count": 0,
           "numbers": [
-            23
+            18,
+            26
           ]
         }
       ]
@@ -864,26 +857,28 @@
       "short": 6,
       "groups": [
         {
+          "count": 3,
+          "numbers": [
+            6,
+            23,
+            29
+          ]
+        },
+        {
           "count": 2,
           "numbers": [
-            4
+            19,
+            25
           ]
         },
         {
           "count": 1,
           "numbers": [
-            1,
-            5,
-            22,
-            34
-          ]
-        },
-        {
-          "count": 0,
-          "numbers": [
-            9,
+            2,
+            12,
             20,
-            31
+            24,
+            37
           ]
         }
       ]
@@ -895,33 +890,33 @@
         {
           "count": 3,
           "numbers": [
-            27
+            6,
+            23,
+            29
           ]
         },
         {
           "count": 2,
           "numbers": [
-            4
+            19,
+            25
           ]
         },
         {
           "count": 1,
           "numbers": [
-            1,
-            5,
-            22,
-            29,
-            33,
-            34
+            2,
+            12,
+            20,
+            24,
+            37
           ]
         },
         {
           "count": 0,
           "numbers": [
-            9,
-            20,
-            23,
-            31
+            18,
+            26
           ]
         }
       ]
@@ -936,91 +931,83 @@
       },
       {
         "count": 3,
-        "numbers": []
+        "numbers": [
+          7,
+          14
+        ]
       },
       {
         "count": 2,
         "numbers": [
-          7,
-          8,
-          14,
-          15,
+          9,
           32
         ]
       },
       {
         "count": 1,
         "numbers": [
-          1,
+          2,
           5,
-          22,
-          34
+          15,
+          20,
+          37
         ]
       },
       {
         "count": 0,
         "numbers": [
-          2,
-          9,
-          20,
-          37
+          1,
+          8,
+          22,
+          34
         ]
       }
     ]
   },
   "omission_analysis": {
-    "cutoff_date": "2026-11-26",
+    "cutoff_date": "2026-11-27",
     "reference_url": "https://lotto.arclink.com.tw/Lotto39yltj.do",
     "definition": "連續未開出期數；當期開出為0期，依總表官方開獎資料計算",
     "groups": [
       {
         "gap": 3,
         "numbers": [
-          4,
-          7,
-          22,
-          30
+          15,
+          19,
+          23,
+          24
         ]
       },
       {
         "gap": 1,
         "numbers": [
-          6,
-          29,
-          32,
-          34
+          12,
+          13,
+          14,
+          36
         ]
       },
       {
         "gap": 8,
         "numbers": [
-          17,
-          26,
-          38
+          27
         ]
       },
       {
         "gap": 9,
-        "numbers": []
+        "numbers": [
+          17,
+          26,
+          38
+        ]
       }
     ]
   },
   "california_daily": {
-    "report_date": "2026-11-27",
-    "status": "current",
-    "draw": {
-      "draw_date": "2026-11-27",
-      "draw_no": "12073",
-      "numbers": [
-        5,
-        14,
-        17,
-        22,
-        34
-      ],
-      "source_url": "https://www.sc888.net/index.php?id=winningnum&s=/LotteryFan/index"
-    },
-    "checked_at": "2026-11-27T20:02:41.306577+08:00",
+    "report_date": "2026-11-28",
+    "status": "pending",
+    "draw": null,
+    "checked_at": "2026-11-28T05:41:56.917943+08:00",
     "errors": []
   },
   "score_colors": [
