@@ -1,9 +1,19 @@
 import unittest
 
-from scripts.daily539_report_data import remaining_groups, star_pairs, choose_target_date, figure_nine
+from scripts.daily539_report_data import remaining_groups, star_pairs, choose_target_date, figure_nine, omission_groups
 
 
 class DailyReportTests(unittest.TestCase):
+    def test_omissions_count_draws_skip_sunday_and_exclude_future(self):
+        rows = [{'draw_date': f'2026-11-{day:02}', 'numbers': [1, 2, 3, 4, 5]}
+                for day in (16, 14, 13, 12, 11, 10, 9, 7, 6, 5)]
+        for index, number in ((1, 11), (3, 13), (8, 18), (9, 19)):
+            rows[index]['numbers'] = [1, 2, 3, 4, number]
+        rows.append({'draw_date': '2026-11-17', 'numbers': [11, 13, 18, 19, 39]})
+        self.assertEqual(omission_groups(list(reversed(rows)), '2026-11-16'),
+                         [{'gap': 3, 'numbers': [13]}, {'gap': 1, 'numbers': [11]},
+                          {'gap': 8, 'numbers': [18]}, {'gap': 9, 'numbers': [19]}])
+
     def test_figure_nine_confirmed_november_23(self):
         numbers = [14,30,28,17,2,19,23,6,7,12,20,29,32,3,5,8,9]
         scores = [3.2,3.1,3.0] + [2.0]*10 + [1.0]*4

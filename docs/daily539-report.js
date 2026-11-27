@@ -10,8 +10,7 @@
       card.querySelector('[data-report-status]').textContent = `${data.report_date} 總表｜開獎日期 ${data.cutoff.draw_date}（${data.cutoff.draw_no} 期）`;
       card.querySelector('[data-report-note]').textContent =
         (data.report_date < today ? '目前顯示最近成功產生的存檔；今日報表尚待更新。' : '') +
-        `日期選號目標 ${data.target_date}：` + (data.provisional ? '暫算，尚待前一日開獎資料。' : '已扣除截至前一日重複開出的號碼。') +
-        ` AI快報開獎日期 ${data.ai_brief_comparison?.source_draw_date || '待更新'}；加州天天樂 ${data.california_daily?.draw?.draw_date || '當日資料待更新'}。`;
+        '左下第一格：遺漏3、1、8、9期號碼；依總表截止日重算。';
       for (const a of card.querySelectorAll('[data-report-pdf],[data-report-open],[data-report-preview-link]')) a.href = `reports/daily539/latest.pdf?v=${version}`;
       card.querySelector('[data-report-pdf]').download = `今彩539_A4總表_${data.report_date}.pdf`;
       card.querySelector('[data-report-preview]').src = `reports/daily539/latest.png?v=${version}`;

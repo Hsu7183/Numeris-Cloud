@@ -3,7 +3,23 @@ from datetime import date, timedelta
 from collections import Counter
 
 
-def whole_report_counts(data, groups, figure, summaries, brief, california):
+def omission_groups(draws, cutoff_date):
+    """Latest draw has gap zero; count draws, rather than calendar days."""
+    history = sorted((r for r in draws if r['draw_date'] <= cutoff_date),
+                     key=lambda r: r['draw_date'], reverse=True)
+    if not history or history[0]['draw_date'] != cutoff_date:
+        raise ValueError('Omission history must reach the report cutoff')
+    gaps = {}
+    for gap, row in enumerate(history):
+        for number in row['numbers']:
+            gaps.setdefault(number, gap)
+    if len(history) < 10:
+        raise ValueError('At least ten draws are required for omission groups')
+    return [{'gap': gap, 'numbers': sorted(n for n, value in gaps.items() if value == gap)}
+            for gap in (3, 1, 8, 9)]
+
+
+def whole_report_counts(data, groups, figure, summaries, brief, california, omissions=()):
     """Count displayed ball entries, excluding grid labels and this ranking itself."""
     counts = Counter({n: 0 for n in range(1, 40)})
     counts.update(ball['number'] for ball in data['lastWindowSnapshot'])
@@ -21,6 +37,7 @@ def whole_report_counts(data, groups, figure, summaries, brief, california):
     counts.update(figure['numbers'])
     counts.update(n for summary in summaries for group in summary['groups'] for n in group['numbers'])
     counts.update(n for group in brief['groups'] for n in group['numbers'])
+    counts.update(n for group in omissions for n in group['numbers'])
     if california['draw']:
         counts.update(california['draw']['numbers'])
     return [{'number': n, 'count': count}

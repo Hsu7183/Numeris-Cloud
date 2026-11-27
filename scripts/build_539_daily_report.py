@@ -15,7 +15,7 @@ pending=True
 import argparse,subprocess,tempfile,shutil,os
 from datetime import datetime,date,timedelta
 from zoneinfo import ZoneInfo
-from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date,figure_nine,whole_report_counts
+from scripts.daily539_report_data import remaining_groups,star_pairs,choose_target_date,figure_nine,whole_report_counts,omission_groups
 from scripts.daily539_blank_report import calculate_blank_summaries
 from scripts.california_daily import refresh as refresh_california
 ROOT=Path(__file__).resolve().parents[1]
@@ -36,7 +36,8 @@ figure=figure_nine(data['ranking'])
 report_tables=calculate_blank_summaries(ROOT, include_ai=True)
 blank_summaries=report_tables['blank_summaries']
 ai_brief=report_tables['ai_brief']
-report_counts=whole_report_counts(data,groups,figure,blank_summaries,ai_brief,california)
+omissions=omission_groups(data['draws'],data['cutoff']['draw_date'])
+report_counts=whole_report_counts(data,[],figure,blank_summaries,ai_brief,california,omissions)
 provisional=data['cutoff']['draw_date']<(target_date-timedelta(days=1)).isoformat()
 fonts=[os.environ.get('NUMERIS_REPORT_FONT',''),'C:/Windows/Fonts/msjh.ttc','/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc']
 font=next((f for f in fonts if f and Path(f).is_file()),None)
@@ -165,17 +166,20 @@ if combined:
   txt(a+sw/20,sy+25,f'{n:02}',11,score_style(n)[0])
   txt(a+sw/20,sy+39,f'{star}*',7.8,muted)
  if pending:
-  selected=[(g['source_date'][5:].replace('-','/'),g['numbers']) for g in groups]
   px=X+6; py=TOP+hh+16*rh+2; pw=19*cw-12; ph=5*rh-4
-  rect(px,py,pw,ph,'#fffefb','#a5b5a6');rect(px,py,pw,12,'#edf3ef','#a5b5a6')
-  txt(px+6,py+6,target_date.strftime('%m/%d')+' 未再開出號碼｜'+('暫算' if provisional else '已扣至前一日'),8,note,'left')
-  for j,(dt,ns) in enumerate(selected):
-   yy=py+17+j*9.5
-   txt(px+7,yy,dt,7.2,ink,'left')
-   txt(px+49,yy,('、'.join(f'{n:02}' for n in ns) or ('已全數再開出' if groups[j]['available'] else '當日無開獎資料')),8.2,note,'left')
-  line(px,py+52,px+pw,py+52,'#c0cabe',.35)
-  txt(px+6,py+58,f'共{len(union)}碼：'+' '.join(f'{n:02}' for n in union),6.9,note,'left')
-  txt(px+6,py+67,f"截至{data['cutoff']['draw_date'][5:]}；"+('尚待前一日開獎資料，非最終名單。' if provisional else '已扣除來源日之後至截止日重複獎號。'),6.6,'#a65322','left')
+  ox=px; oy=py
+  rect(ox,oy,px+pw-ox,ph,'#ffffff','#000000')
+  txt(ox+5,oy+9,'遺漏統計｜3、1、8、9期',7.5,ink,'left')
+  line(ox,oy+17,px+pw,oy+17)
+  for i,group in enumerate(omissions):
+   yy=oy+22+i*10
+   txt(ox+5,yy,f"{group['gap']}期",8,ink,'left')
+   label='、'.join(f'{n:02}' for n in group['numbers']) or '一'
+   size=8
+   while pdfmetrics.stringWidth(label,'CJK',size)>px+pw-ox-35 and size>5:size-=.25
+   txt(ox+31,yy,label,size,ink,'left')
+  txt(ox+5,oy+ph-12,'定義參考：樂透研究院',5.8,ink,'left')
+  txt(ox+5,oy+ph-4,'截至 '+data['cutoff']['draw_date']+'｜當期開出＝漏0',5.5,ink,'left')
  if pending:
   fx=X+6; fy=TOP+hh+21*rh+3; fw=19*cw-12; fh=55
   rect(fx,fy,fw,fh,'#fffefb','#a5b5a6')
@@ -189,19 +193,19 @@ if combined:
  # AI brief intersection sits in the remaining lower-left table cells.
  ax=X+6; ay=TOP+hh+25*rh+3; aw=19*cw-12; ah=6*rh-6
  rect(ax,ay,aw,ah,'#ffffff','#000000')
- split=ax+52
+ split=ax+45
  line(split,ay,split,ay+ah)
  txt(ax+26,ay+9,'相鄰次數',8)
- txt(split+8,ay+9,'AI快報也有提及',9,ink,'left')
+ txt(split+6,ay+9,'AI快報也有提及',9,ink,'left')
  line(ax,ay+17,ax+aw,ay+17)
  for i,group in enumerate(ai_brief['groups']):
   yy=ay+26+i*11.5
   txt(ax+26,yy,f"{group['count']}次",9)
-  label='、'.join(f'{n:02}' for n in group['numbers']) or '— 0'
+  label='、'.join(f'{n:02}' for n in group['numbers']) or '—'
   color=next(fg for minimum,_,fg,_ in score_bands if group['count']>=minimum)
-  txt(split+8,yy,label,9.5,color,'left')
+  txt(split+6,yy,label,8,color,'left')
   line(ax,yy+6,ax+aw,yy+6)
- brief_note='來源 '+ai_brief['source_draw_date']+'；共同提及不等於命中。'
+ brief_note='來源 '+ai_brief['source_draw_date']+'；共同提及非命中。'
  if ai_brief['source_draw_date']!=data['cutoff']['draw_date']:
   brief_note+='注意：資料日期不同。'
  txt(ax+5,ay+ah-4,brief_note,6,ink,'left')
@@ -294,6 +298,7 @@ metadata['top_summary_numbers']={source:sorted({n for g in data[source] for n in
 metadata['top_repeated_numbers']={source:sorted(n for n,count in Counter(n for g in data[source] for n in g['numbers']).items() if count>1) for source in ['sim','real']}
 metadata['blank_summaries']=blank_summaries
 metadata['ai_brief_comparison']=ai_brief
+metadata['omission_analysis']={'cutoff_date':data['cutoff']['draw_date'],'reference_url':'https://lotto.arclink.com.tw/Lotto39yltj.do','definition':'連續未開出期數；當期開出為0期，依總表官方開獎資料計算','groups':omissions}
 metadata['california_daily']={key:value for key,value in california.items() if key!='draws'}
 metadata['score_colors']=[{'minimum':minimum,'label':label,'foreground':foreground,'background':background} for minimum,label,foreground,background in score_bands]
 (stage/'latest.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

@@ -551,7 +551,7 @@
       "star": 3
     }
   ],
-  "generated_at": "2026-11-27T12:06:38.231394+08:00",
+  "generated_at": "2026-11-27T15:27:00.622296+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -624,22 +624,22 @@
     },
     {
       "number": 6,
-      "count": 13
+      "count": 12
     },
     {
       "number": 16,
       "count": 12
     },
     {
-      "number": 20,
-      "count": 12
+      "number": 17,
+      "count": 11
     },
     {
       "number": 32,
-      "count": 12
+      "count": 11
     },
     {
-      "number": 17,
+      "number": 20,
       "count": 10
     },
     {
@@ -651,23 +651,31 @@
       "count": 10
     },
     {
-      "number": 29,
+      "number": 22,
       "count": 9
     },
     {
-      "number": 34,
-      "count": 9
+      "number": 4,
+      "count": 8
     },
     {
       "number": 18,
       "count": 8
     },
     {
-      "number": 22,
+      "number": 29,
       "count": 8
     },
     {
-      "number": 4,
+      "number": 30,
+      "count": 8
+    },
+    {
+      "number": 34,
+      "count": 8
+    },
+    {
+      "number": 7,
       "count": 7
     },
     {
@@ -683,19 +691,7 @@
       "count": 7
     },
     {
-      "number": 28,
-      "count": 7
-    },
-    {
-      "number": 30,
-      "count": 7
-    },
-    {
       "number": 1,
-      "count": 6
-    },
-    {
-      "number": 7,
       "count": 6
     },
     {
@@ -747,7 +743,19 @@
       "count": 5
     },
     {
+      "number": 28,
+      "count": 5
+    },
+    {
+      "number": 26,
+      "count": 4
+    },
+    {
       "number": 37,
+      "count": 4
+    },
+    {
+      "number": 38,
       "count": 4
     },
     {
@@ -755,15 +763,7 @@
       "count": 3
     },
     {
-      "number": 26,
-      "count": 3
-    },
-    {
       "number": 36,
-      "count": 3
-    },
-    {
-      "number": 38,
       "count": 3
     },
     {
@@ -990,6 +990,43 @@
       }
     ]
   },
+  "omission_analysis": {
+    "cutoff_date": "2026-11-26",
+    "reference_url": "https://lotto.arclink.com.tw/Lotto39yltj.do",
+    "definition": "連續未開出期數；當期開出為0期，依總表官方開獎資料計算",
+    "groups": [
+      {
+        "gap": 3,
+        "numbers": [
+          4,
+          7,
+          22,
+          30
+        ]
+      },
+      {
+        "gap": 1,
+        "numbers": [
+          6,
+          29,
+          32,
+          34
+        ]
+      },
+      {
+        "gap": 8,
+        "numbers": [
+          17,
+          26,
+          38
+        ]
+      },
+      {
+        "gap": 9,
+        "numbers": []
+      }
+    ]
+  },
   "california_daily": {
     "report_date": "2026-11-27",
     "status": "current",
@@ -1005,7 +1042,7 @@
       ],
       "source_url": "https://www.sc888.net/index.php?id=winningnum&s=/LotteryFan/index"
     },
-    "checked_at": "2026-11-27T12:06:33.482240+08:00",
+    "checked_at": "2026-11-27T15:26:52.118943+08:00",
     "errors": []
   },
   "score_colors": [
