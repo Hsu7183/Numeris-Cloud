@@ -551,7 +551,7 @@
       "star": 3
     }
   ],
-  "generated_at": "2026-11-27T06:43:26.451080+08:00",
+  "generated_at": "2026-11-27T08:32:30.198100+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -616,18 +616,18 @@
   "whole_report_number_counts": [
     {
       "number": 25,
-      "count": 16
+      "count": 15
     },
     {
       "number": 6,
       "count": 13
     },
     {
-      "number": 16,
-      "count": 13
+      "number": 5,
+      "count": 12
     },
     {
-      "number": 5,
+      "number": 16,
       "count": 12
     },
     {
@@ -637,10 +637,6 @@
     {
       "number": 32,
       "count": 12
-    },
-    {
-      "number": 29,
-      "count": 10
     },
     {
       "number": 31,
@@ -655,19 +651,15 @@
       "count": 9
     },
     {
-      "number": 13,
-      "count": 8
+      "number": 29,
+      "count": 9
     },
     {
       "number": 18,
       "count": 8
     },
     {
-      "number": 28,
-      "count": 8
-    },
-    {
-      "number": 30,
+      "number": 34,
       "count": 8
     },
     {
@@ -679,7 +671,7 @@
       "count": 7
     },
     {
-      "number": 11,
+      "number": 13,
       "count": 7
     },
     {
@@ -687,19 +679,35 @@
       "count": 7
     },
     {
-      "number": 34,
+      "number": 22,
       "count": 7
+    },
+    {
+      "number": 28,
+      "count": 7
+    },
+    {
+      "number": 30,
+      "count": 7
+    },
+    {
+      "number": 1,
+      "count": 6
     },
     {
       "number": 7,
       "count": 6
     },
     {
-      "number": 22,
+      "number": 9,
       "count": 6
     },
     {
-      "number": 23,
+      "number": 11,
+      "count": 6
+    },
+    {
+      "number": 15,
       "count": 6
     },
     {
@@ -707,11 +715,11 @@
       "count": 6
     },
     {
-      "number": 1,
+      "number": 2,
       "count": 5
     },
     {
-      "number": 9,
+      "number": 8,
       "count": 5
     },
     {
@@ -719,11 +727,11 @@
       "count": 5
     },
     {
-      "number": 15,
+      "number": 21,
       "count": 5
     },
     {
-      "number": 21,
+      "number": 23,
       "count": 5
     },
     {
@@ -735,23 +743,11 @@
       "count": 5
     },
     {
-      "number": 2,
+      "number": 14,
       "count": 4
     },
     {
-      "number": 8,
-      "count": 4
-    },
-    {
-      "number": 36,
-      "count": 4
-    },
-    {
-      "number": 38,
-      "count": 4
-    },
-    {
-      "number": 39,
+      "number": 37,
       "count": 4
     },
     {
@@ -759,15 +755,19 @@
       "count": 3
     },
     {
-      "number": 14,
-      "count": 3
-    },
-    {
       "number": 26,
       "count": 3
     },
     {
-      "number": 37,
+      "number": 36,
+      "count": 3
+    },
+    {
+      "number": 38,
+      "count": 3
+    },
+    {
+      "number": 39,
       "count": 3
     }
   ],
@@ -950,46 +950,42 @@
     }
   ],
   "ai_brief_comparison": {
-    "source_draw_date": "2026-11-25",
+    "source_draw_date": "2026-11-26",
     "groups": [
       {
         "count": 4,
-        "numbers": [
-          28
-        ]
+        "numbers": []
       },
       {
         "count": 3,
-        "numbers": [
-          11,
-          25
-        ]
+        "numbers": []
       },
       {
         "count": 2,
         "numbers": [
           7,
+          8,
+          14,
+          15,
           32
         ]
       },
       {
         "count": 1,
         "numbers": [
+          1,
           5,
-          13,
-          16,
-          29
+          22,
+          34
         ]
       },
       {
         "count": 0,
         "numbers": [
+          2,
+          9,
           20,
-          23,
-          30,
-          36,
-          38,
-          39
+          37
         ]
       }
     ]
@@ -998,7 +994,7 @@
     "report_date": "2026-11-27",
     "status": "pending",
     "draw": null,
-    "checked_at": "2026-11-27T06:43:21.613046+08:00",
+    "checked_at": "2026-11-27T08:32:23.871001+08:00",
     "errors": []
   },
   "score_colors": [
