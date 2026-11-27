@@ -2,10 +2,14 @@ name: 更新大樂透每日A4總表
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["更新大樂透 GitHub Pages 資料"]
+    types: [completed]
   schedule:
-    # 台灣時間每天00:20換日、22:20同步官方資料後重建。
+    # 官方大樂透更新完成即重建；每日00:20換日，22:20與23:20補同步。
     - cron: "20 16 * * *"
     - cron: "20 14 * * *"
+    - cron: "20 15 * * *"
   push:
     branches: [main]
     paths:
@@ -28,6 +32,7 @@ concurrency:
 
 jobs:
   report:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
