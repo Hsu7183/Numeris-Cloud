@@ -38,7 +38,7 @@ const groups = data => ['hot', 'cold', 'overdue', 'hybrid'].map(strategy => ({
 const ranking = calculate(payload);
 const snapshotStats = e.windowStats(real, real.length, W);
 const lastWindowSnapshot = Array.from({length:39}, (_,i) => i+1)
-  .sort((a,b) => snapshotStats.gap[b]-snapshotStats.gap[a] || snapshotStats.freq[b]-snapshotStats.freq[a] || a-b)
+  .sort((a,b) => snapshotStats.freq[b]-snapshotStats.freq[a] || snapshotStats.gap[b]-snapshotStats.gap[a] || a-b)
   .map(number => ({number, frequency:snapshotStats.freq[number], gap:snapshotStats.gap[number]}));
 if (ranking.length !== 39 || new Set(ranking.map(r => r.number)).size !== 39) throw Error('Invalid ranking');
 process.stdout.write(JSON.stringify({cutoff: draws[0], W, seed, simN, realCount: real.length,

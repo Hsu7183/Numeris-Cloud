@@ -27,6 +27,181 @@
   },
   "lastWindowSnapshot": [
     {
+      "number": 32,
+      "frequency": 6,
+      "gap": 1
+    },
+    {
+      "number": 20,
+      "frequency": 5,
+      "gap": 4
+    },
+    {
+      "number": 30,
+      "frequency": 5,
+      "gap": 3
+    },
+    {
+      "number": 7,
+      "frequency": 4,
+      "gap": 3
+    },
+    {
+      "number": 24,
+      "frequency": 4,
+      "gap": 2
+    },
+    {
+      "number": 29,
+      "frequency": 4,
+      "gap": 1
+    },
+    {
+      "number": 34,
+      "frequency": 4,
+      "gap": 1
+    },
+    {
+      "number": 21,
+      "frequency": 4,
+      "gap": 0
+    },
+    {
+      "number": 38,
+      "frequency": 3,
+      "gap": 8
+    },
+    {
+      "number": 37,
+      "frequency": 3,
+      "gap": 6
+    },
+    {
+      "number": 11,
+      "frequency": 3,
+      "gap": 5
+    },
+    {
+      "number": 22,
+      "frequency": 3,
+      "gap": 3
+    },
+    {
+      "number": 19,
+      "frequency": 3,
+      "gap": 2
+    },
+    {
+      "number": 23,
+      "frequency": 3,
+      "gap": 2
+    },
+    {
+      "number": 39,
+      "frequency": 3,
+      "gap": 2
+    },
+    {
+      "number": 14,
+      "frequency": 3,
+      "gap": 0
+    },
+    {
+      "number": 9,
+      "frequency": 2,
+      "gap": 12
+    },
+    {
+      "number": 17,
+      "frequency": 2,
+      "gap": 8
+    },
+    {
+      "number": 26,
+      "frequency": 2,
+      "gap": 8
+    },
+    {
+      "number": 35,
+      "frequency": 2,
+      "gap": 7
+    },
+    {
+      "number": 2,
+      "frequency": 2,
+      "gap": 6
+    },
+    {
+      "number": 10,
+      "frequency": 2,
+      "gap": 6
+    },
+    {
+      "number": 3,
+      "frequency": 2,
+      "gap": 5
+    },
+    {
+      "number": 5,
+      "frequency": 2,
+      "gap": 5
+    },
+    {
+      "number": 28,
+      "frequency": 2,
+      "gap": 4
+    },
+    {
+      "number": 6,
+      "frequency": 2,
+      "gap": 1
+    },
+    {
+      "number": 12,
+      "frequency": 2,
+      "gap": 0
+    },
+    {
+      "number": 33,
+      "frequency": 1,
+      "gap": 15
+    },
+    {
+      "number": 1,
+      "frequency": 1,
+      "gap": 14
+    },
+    {
+      "number": 8,
+      "frequency": 1,
+      "gap": 11
+    },
+    {
+      "number": 27,
+      "frequency": 1,
+      "gap": 7
+    },
+    {
+      "number": 4,
+      "frequency": 1,
+      "gap": 3
+    },
+    {
+      "number": 15,
+      "frequency": 1,
+      "gap": 2
+    },
+    {
+      "number": 13,
+      "frequency": 1,
+      "gap": 0
+    },
+    {
+      "number": 36,
+      "frequency": 1,
+      "gap": 0
+    },
+    {
       "number": 16,
       "frequency": 0,
       "gap": 19
@@ -45,181 +220,6 @@
       "number": 31,
       "frequency": 0,
       "gap": 19
-    },
-    {
-      "number": 33,
-      "frequency": 1,
-      "gap": 15
-    },
-    {
-      "number": 1,
-      "frequency": 1,
-      "gap": 14
-    },
-    {
-      "number": 9,
-      "frequency": 2,
-      "gap": 12
-    },
-    {
-      "number": 8,
-      "frequency": 1,
-      "gap": 11
-    },
-    {
-      "number": 38,
-      "frequency": 3,
-      "gap": 8
-    },
-    {
-      "number": 17,
-      "frequency": 2,
-      "gap": 8
-    },
-    {
-      "number": 26,
-      "frequency": 2,
-      "gap": 8
-    },
-    {
-      "number": 35,
-      "frequency": 2,
-      "gap": 7
-    },
-    {
-      "number": 27,
-      "frequency": 1,
-      "gap": 7
-    },
-    {
-      "number": 37,
-      "frequency": 3,
-      "gap": 6
-    },
-    {
-      "number": 2,
-      "frequency": 2,
-      "gap": 6
-    },
-    {
-      "number": 10,
-      "frequency": 2,
-      "gap": 6
-    },
-    {
-      "number": 11,
-      "frequency": 3,
-      "gap": 5
-    },
-    {
-      "number": 3,
-      "frequency": 2,
-      "gap": 5
-    },
-    {
-      "number": 5,
-      "frequency": 2,
-      "gap": 5
-    },
-    {
-      "number": 20,
-      "frequency": 5,
-      "gap": 4
-    },
-    {
-      "number": 28,
-      "frequency": 2,
-      "gap": 4
-    },
-    {
-      "number": 30,
-      "frequency": 5,
-      "gap": 3
-    },
-    {
-      "number": 7,
-      "frequency": 4,
-      "gap": 3
-    },
-    {
-      "number": 22,
-      "frequency": 3,
-      "gap": 3
-    },
-    {
-      "number": 4,
-      "frequency": 1,
-      "gap": 3
-    },
-    {
-      "number": 24,
-      "frequency": 4,
-      "gap": 2
-    },
-    {
-      "number": 19,
-      "frequency": 3,
-      "gap": 2
-    },
-    {
-      "number": 23,
-      "frequency": 3,
-      "gap": 2
-    },
-    {
-      "number": 39,
-      "frequency": 3,
-      "gap": 2
-    },
-    {
-      "number": 15,
-      "frequency": 1,
-      "gap": 2
-    },
-    {
-      "number": 32,
-      "frequency": 6,
-      "gap": 1
-    },
-    {
-      "number": 29,
-      "frequency": 4,
-      "gap": 1
-    },
-    {
-      "number": 34,
-      "frequency": 4,
-      "gap": 1
-    },
-    {
-      "number": 6,
-      "frequency": 2,
-      "gap": 1
-    },
-    {
-      "number": 21,
-      "frequency": 4,
-      "gap": 0
-    },
-    {
-      "number": 14,
-      "frequency": 3,
-      "gap": 0
-    },
-    {
-      "number": 12,
-      "frequency": 2,
-      "gap": 0
-    },
-    {
-      "number": 13,
-      "frequency": 1,
-      "gap": 0
-    },
-    {
-      "number": 36,
-      "frequency": 1,
-      "gap": 0
     }
   ],
   "ranking": [
@@ -551,7 +551,7 @@
       "star": 3
     }
   ],
-  "generated_at": "2026-11-27T08:32:30.198100+08:00",
+  "generated_at": "2026-11-27T12:02:47.027239+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -619,12 +619,12 @@
       "count": 15
     },
     {
-      "number": 6,
+      "number": 5,
       "count": 13
     },
     {
-      "number": 5,
-      "count": 12
+      "number": 6,
+      "count": 13
     },
     {
       "number": 16,
@@ -639,6 +639,10 @@
       "count": 12
     },
     {
+      "number": 17,
+      "count": 10
+    },
+    {
       "number": 31,
       "count": 10
     },
@@ -647,11 +651,11 @@
       "count": 10
     },
     {
-      "number": 17,
+      "number": 29,
       "count": 9
     },
     {
-      "number": 29,
+      "number": 34,
       "count": 9
     },
     {
@@ -659,7 +663,7 @@
       "count": 8
     },
     {
-      "number": 34,
+      "number": 22,
       "count": 8
     },
     {
@@ -676,10 +680,6 @@
     },
     {
       "number": 19,
-      "count": 7
-    },
-    {
-      "number": 22,
       "count": 7
     },
     {
@@ -727,6 +727,10 @@
       "count": 5
     },
     {
+      "number": 14,
+      "count": 5
+    },
+    {
       "number": 21,
       "count": 5
     },
@@ -741,10 +745,6 @@
     {
       "number": 27,
       "count": 5
-    },
-    {
-      "number": 14,
-      "count": 4
     },
     {
       "number": 37,
@@ -992,9 +992,20 @@
   },
   "california_daily": {
     "report_date": "2026-11-27",
-    "status": "pending",
-    "draw": null,
-    "checked_at": "2026-11-27T08:32:23.871001+08:00",
+    "status": "current",
+    "draw": {
+      "draw_date": "2026-11-27",
+      "draw_no": "12073",
+      "numbers": [
+        5,
+        14,
+        17,
+        22,
+        34
+      ],
+      "source_url": "https://www.sc888.net/index.php?id=winningnum&s=/LotteryFan/index"
+    },
+    "checked_at": "2026-11-27T12:02:38.056639+08:00",
     "errors": []
   },
   "score_colors": [

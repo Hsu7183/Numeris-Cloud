@@ -259,7 +259,7 @@ c.restoreState()
 sx=20; sy=16; sw=PW-40; cellw=sw/39
 rect(sx,sy,sw,55,'#ffffff','#000000')
 txt(sx+5,sy+8,'最後一窗快照｜官網真實資料｜最後18期｜'+data['windowStart']['date']+'～'+data['cutoff']['draw_date'],8,ink,'left')
-txt(sx+sw-5,sy+8,'依漏多→頻多排序；漏19＝整窗未出現',6.5,ink,'right')
+txt(sx+sw-5,sy+8,'依頻多→漏多排序；漏19＝整窗未出現',6.5,ink,'right')
 line(sx,sy+16,sx+sw,sy+16)
 for i,ball in enumerate(data['lastWindowSnapshot']):
  xx=sx+i*cellw
