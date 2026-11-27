@@ -1,4 +1,4 @@
-# 大樂透每日 A4 總表
+# 大樂透開獎日 A4 總表
 
 首頁入口緊接在今彩539每日A4總表下方，完整頁面為 `docs/daily649-report.html`。
 重建指令：`python -m scripts.build_649_daily_report`。

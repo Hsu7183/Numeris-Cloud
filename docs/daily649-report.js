@@ -12,7 +12,7 @@
         (data.report_date < today ? '目前顯示最近成功產生的存檔；今日報表尚待更新。' : '') +
         '49碼、每組6個主號；特別號另列，所有統計不含特別號。';
       for (const a of card.querySelectorAll('[data-report-pdf],[data-report-open],[data-report-preview-link]')) a.href = `reports/lotto649/latest.pdf?v=${version}`;
-      card.querySelector('[data-report-pdf]').download = `大樂透_A4總表_${data.report_date}.pdf`;
+      card.querySelector('[data-report-pdf]').download = `大樂透_開獎日A4總表_${data.report_date}.pdf`;
       card.querySelector('[data-report-preview]').src = `reports/lotto649/latest.png?v=${version}`;
     }
   } catch (error) {
@@ -26,7 +26,7 @@
       const dates = await r.json();
       for (const date of dates) {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
-        const a = document.createElement('a');a.textContent = date+' PDF';a.href = `reports/lotto649/archive/${date}.pdf`;a.download = `大樂透_A4總表_${date}.pdf`;archive.append(a);
+        const a = document.createElement('a');a.textContent = date+' PDF';a.href = `reports/lotto649/archive/${date}.pdf`;a.download = `大樂透_開獎日A4總表_${date}.pdf`;archive.append(a);
       }
     } catch (_) {archive.textContent = '存檔清單暫時無法載入。';}
   }

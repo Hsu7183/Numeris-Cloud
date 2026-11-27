@@ -47,7 +47,7 @@ out=ROOT/'docs/reports/lotto649';out.mkdir(parents=True,exist_ok=True)
 tmp=tempfile.TemporaryDirectory();stage=Path(tmp.name)
 p=stage/'latest.pdf'
 c=canvas.Canvas(str(p),pagesize=landscape(A4));PW,PH=landscape(A4)
-c.setTitle('大樂透 A4每日總表 '+report_date.isoformat())
+c.setTitle('大樂透 開獎日 A4 總表 '+report_date.isoformat())
 # Reserve a top strip for the 39-ball snapshot while keeping one landscape A4.
 c.saveState()
 c.translate(0, PH*(1-.81)-111)
@@ -243,7 +243,7 @@ if combined:
  txt(mx+6,my+48,'主號：'+'　'.join(f'{n:02}' for n in latest['numbers']),11,ink,'left')
  txt(mx+6,my+64,'特別號：'+'、'.join(f'{n:02}' for n in latest['special_numbers']),10,ink,'left')
  txt(mx+6,my+mh-6,'來源：台灣彩券官方資料｜所有遺漏與排名只計6個主號',6,ink,'left')
- txt(L,10,'大樂透｜每日 A4 總表｜01–49 主號統計・特別號另列',7,align='left')
+ txt(L,10,'大樂透｜開獎日 A4 總表｜01–49 主號統計・特別號另列',7,align='left')
  txt(L+TOTAL,10,f"{report_date.isoformat()}　資料截至 {data['cutoff']['draw_date']}",6.5,muted,'right')
 else:
  txt(L,10,'大樂透｜依照片重繪・保留可辨識筆記',7,align='left')

@@ -1,4 +1,4 @@
-name: 更新大樂透每日A4總表
+name: 更新大樂透開獎日A4總表
 
 on:
   workflow_dispatch:
@@ -51,7 +51,7 @@ jobs:
           pip install -r scripts/daily-report-requirements.txt
           pip install . truststore beautifulsoup4
           python -m playwright install --with-deps chromium
-      - name: 同步官方大樂透、AI快報與每日A4總表
+      - name: 同步官方大樂透、AI快報與開獎日A4總表
         run: python -m scripts.update_649_local_report
       - name: 儲存報表
         run: |
