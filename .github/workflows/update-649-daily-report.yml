@@ -1,0 +1,67 @@
+name: 更新大樂透每日A4總表
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 台灣時間每天00:20換日、22:20同步官方資料後重建。
+    - cron: "20 16 * * *"
+    - cron: "20 14 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_649_daily_report.py"
+      - "scripts/calculate_649_daily_report.cjs"
+      - "scripts/daily539_report_data.py"
+      - "scripts/update_649_local_report.py"
+      - "scripts/daily539_blank_report.py"
+      - "scripts/daily-report-requirements.txt"
+      - ".github/workflows/update-649-daily-report.yml"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: 安裝報表字型與套件
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-wqy-zenhei
+          pip install -r scripts/daily-report-requirements.txt
+          pip install . truststore beautifulsoup4
+          python -m playwright install --with-deps chromium
+      - name: 同步官方大樂透、AI快報與每日A4總表
+        run: python -m scripts.update_649_local_report
+      - name: 儲存報表
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/reports/lotto649 docs/data/lotto649.json docs/data/649-history.json docs/data/649-aibrief.json docs/data/649-aibrief-status.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(report): refresh daily Lotto 649 A4 report"
+            git pull --rebase origin main
+            git push
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs
+      - name: Wait for Pages artifact metadata
+        run: sleep 30
+      - uses: actions/deploy-pages@v5

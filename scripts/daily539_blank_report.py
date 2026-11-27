@@ -8,7 +8,12 @@ import json
 from playwright.sync_api import sync_playwright
 
 
-def calculate_blank_summaries(root, include_ai=False):
+def calculate_blank_summaries(root, include_ai=False, game="539"):
+    if game not in ("539", "649"):
+        raise ValueError("Unsupported report game")
+    folder = "lotto649/" if game == "649" else ""
+    ball_count = 49 if game == "649" else 39
+    overlay = folder + f"handwritten-{game}-overlay"
     class QuietHandler(SimpleHTTPRequestHandler):
         def log_message(self, *args):
             pass
@@ -27,12 +32,12 @@ def calculate_blank_summaries(root, include_ai=False):
                 # The report loads 48 historical iframe grids. Limit concurrency
                 # in this headless session to avoid starving their ready timers.
                 def report_overlay(route):
-                    source = (root / 'docs/handwritten-539-overlay.js').read_text(encoding='utf-8')
+                    source = (root / ('docs/' + overlay + '.js')).read_text(encoding='utf-8')
                     source = source.replace('start += 6', 'start += 2').replace('start + 6', 'start + 2')
                     source = source.replace('}, 30000);', '}, 60000);')
                     route.fulfill(status=200, content_type='application/javascript; charset=utf-8', body=source)
-                page.route('**/handwritten-539-overlay.js*', report_overlay)
-                page.goto(f'http://127.0.0.1:{server.server_port}/handwritten-539-overlay.html', wait_until='domcontentloaded')
+                page.route(f'**/handwritten-{game}-overlay.js*', report_overlay)
+                page.goto(f'http://127.0.0.1:{server.server_port}/{overlay}.html', wait_until='domcontentloaded')
                 page.wait_for_function("/已更新至|載入失敗/.test(document.querySelector('#overlay-status').textContent)", timeout=120000)
                 status = page.locator('#overlay-status').inner_text()
                 if not status.startswith('已更新至'):
@@ -46,9 +51,9 @@ def calculate_blank_summaries(root, include_ai=False):
                 })).filter(panel => panel.groups.length)""")
                 if not include_ai:
                     return summaries
-                brief = json.loads((root / 'docs/data/539-aibrief.json').read_text(encoding='utf-8'))
+                brief = json.loads((root / f'docs/data/{game}-aibrief.json').read_text(encoding='utf-8'))
                 mentioned = brief['mentioned_numbers']
-                if not all(type(n) is int and 1 <= n <= 39 for n in mentioned):
+                if not all(type(n) is int and 1 <= n <= ball_count for n in mentioned):
                     raise ValueError('Invalid AI brief ball numbers')
                 groups = page.locator('#adjacent-table tbody tr').evaluate_all("""rows => rows.map(row => ({
                     count: Number(row.querySelector('th').textContent),

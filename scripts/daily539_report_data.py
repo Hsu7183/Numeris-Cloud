@@ -19,9 +19,9 @@ def omission_groups(draws, cutoff_date):
             for gap in (3, 1, 8, 9)]
 
 
-def whole_report_counts(data, groups, figure, summaries, brief, california, omissions=()):
+def whole_report_counts(data, groups, figure, summaries, brief, california, omissions=(), ball_count=39):
     """Count displayed ball entries, excluding grid labels and this ranking itself."""
-    counts = Counter({n: 0 for n in range(1, 40)})
+    counts = Counter({n: 0 for n in range(1, ball_count + 1)})
     counts.update(ball['number'] for ball in data['lastWindowSnapshot'])
     for source in ('sim', 'real'):
         numbers = [n for group in data[source] for n in group['numbers']]
