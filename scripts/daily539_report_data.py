@@ -27,7 +27,6 @@ def whole_report_counts(data, groups, figure, summaries, brief, california, omis
         numbers = [n for group in data[source] for n in group['numbers']]
         counts.update(numbers)
         counts.update(set(numbers))
-        counts.update(n for n, count in Counter(numbers).items() if count > 1)
     counts.update(n for n, _ in star_pairs(data['ranking']))
     for _ in range(2):
         counts.update(row['number'] for row in data['ranking'])

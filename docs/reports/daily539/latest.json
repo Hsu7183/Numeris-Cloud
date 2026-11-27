@@ -551,7 +551,7 @@
       "star": 3
     }
   ],
-  "generated_at": "2026-11-27T15:31:38.897619+08:00",
+  "generated_at": "2026-11-27T16:11:11.994016+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -616,42 +616,42 @@
   "whole_report_number_counts": [
     {
       "number": 25,
-      "count": 15
-    },
-    {
-      "number": 5,
       "count": 13
     },
     {
-      "number": 6,
+      "number": 5,
       "count": 12
+    },
+    {
+      "number": 6,
+      "count": 11
     },
     {
       "number": 16,
-      "count": 12
+      "count": 10
     },
     {
       "number": 17,
-      "count": 11
+      "count": 10
     },
     {
       "number": 32,
-      "count": 11
+      "count": 10
     },
     {
       "number": 20,
-      "count": 10
-    },
-    {
-      "number": 31,
-      "count": 10
-    },
-    {
-      "number": 33,
-      "count": 10
+      "count": 9
     },
     {
       "number": 22,
+      "count": 9
+    },
+    {
+      "number": 31,
+      "count": 9
+    },
+    {
+      "number": 33,
       "count": 9
     },
     {
@@ -659,15 +659,7 @@
       "count": 8
     },
     {
-      "number": 18,
-      "count": 8
-    },
-    {
       "number": 29,
-      "count": 8
-    },
-    {
-      "number": 30,
       "count": 8
     },
     {
@@ -679,15 +671,11 @@
       "count": 7
     },
     {
-      "number": 10,
+      "number": 18,
       "count": 7
     },
     {
-      "number": 13,
-      "count": 7
-    },
-    {
-      "number": 19,
+      "number": 30,
       "count": 7
     },
     {
@@ -699,11 +687,23 @@
       "count": 6
     },
     {
+      "number": 10,
+      "count": 6
+    },
+    {
       "number": 11,
       "count": 6
     },
     {
+      "number": 13,
+      "count": 6
+    },
+    {
       "number": 15,
+      "count": 6
+    },
+    {
+      "number": 19,
       "count": 6
     },
     {
@@ -791,28 +791,6 @@
       21,
       25,
       29,
-      30,
-      31,
-      32,
-      33
-    ]
-  },
-  "top_repeated_numbers": {
-    "sim": [
-      5,
-      6,
-      10,
-      13,
-      16,
-      17,
-      19,
-      25
-    ],
-    "real": [
-      16,
-      18,
-      20,
-      25,
       30,
       31,
       32,
@@ -1042,7 +1020,7 @@
       ],
       "source_url": "https://www.sc888.net/index.php?id=winningnum&s=/LotteryFan/index"
     },
-    "checked_at": "2026-11-27T15:31:33.838091+08:00",
+    "checked_at": "2026-11-27T16:11:02.721909+08:00",
     "errors": []
   },
   "score_colors": [

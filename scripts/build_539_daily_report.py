@@ -52,7 +52,7 @@ c.setTitle('今彩539 A4每日總表 '+report_date.isoformat())
 c.saveState()
 c.translate(0, PH*(1-.81)-111)
 c.scale(1,.81)
-L=20; TOP=22; TOTAL=PW-40; left=32; right=0; cw=(TOTAL-left-right)/39; rh=15.25; hh=45
+L=20; TOP=22; TOTAL=PW-40; left=0; right=0; cw=(TOTAL-left-right)/39; rh=15.25; hh=45
 X=L+left; R=X+cw*39; BOT=TOP+hh+31*rh
 ink='#000000';note='#000000';muted='#000000'
 score_bands=[
@@ -81,7 +81,7 @@ def cx(col):return X+(col-.5)*cw
 rect(L,TOP,TOTAL,BOT-TOP,'#ffffff')
 for i in range(40):
  if i!=20:line(X+i*cw,TOP+15,X+i*cw,BOT,'#9da49b',.35)
-for x in [L,L+16,X,R]:line(x,TOP,x,BOT,'#525c52',.55)
+for x in [X,R]:line(x,TOP,x,BOT,'#525c52',.55)
 for y in [TOP,TOP+15,TOP+30,TOP+hh,BOT]:line(L,y,L+TOTAL,y,'#525c52',.55)
 for row in range(1,31):line(L,TOP+hh+row*rh,L+TOTAL,TOP+hh+row*rh,'#969e92',.3)
 for row in [5,10,14,16,17,20,21,22,24,26,30]:line(L,TOP+hh+row*rh,R,TOP+hh+row*rh,'#4b574b',.75,[3,2])
@@ -92,10 +92,6 @@ for group in range(10):
  a=group*4;b=min(a+4,39);txt(X+(a+b)*cw/2,TOP+7.5,group+1,9)
 for col,label in [(4,'1*'),(5,'2*'),(7,'3*'),(11,'4*'),(17,'5*'),(19,'6*'),(24,'7*'),(26,'8*'),(28,'9*'),(35,'10*')]:txt(cx(col),TOP+23,label,7,muted)
 for col in range(1,40):txt(cx(col),TOP+37.5,col,9)
-for row in range(1,32):
- txt(L+24,cy(row),row if row<=27 else row-27,9)
-labels={1:'20',2:'2',3:'3',4:'4',5:'5',6:'50',7:'2',8:'3',9:'4',10:'5',11:'100',12:'2',13:'3',14:'4',15:'1',16:'滿',17:'2',18:'1~3',19:'3',20:'3',21:'4',22:'1~2',23:'5',24:'2',25:'6',26:'2~3',27:'7',28:'1',29:'8',30:'有'}
-for row,label in labels.items():txt(L+8,cy(row),label,7)
 for row in range(1,32):
  if row in [16,22,26,28,31]:continue
  for col in range(1,40):
@@ -150,12 +146,6 @@ if combined:
    bx=px+col*cellw; by=number_top+row*cellh
    rect(bx,by,cellw,cellh,'#ffffff','#000000')
    txt(bx+cellw/2,by+cellh/2,f'{n:02}',9.5,score_style(n)[0])
-  repeated=sorted(n for n,count in Counter(n for g in data[source] for n in g['numbers']).items() if count>1)
-  repeat_y=py+panelh-25
-  rect(px,repeat_y,panelw,25,'#ffffff','#000000')
-  txt(px+6,repeat_y+6,'重複號碼｜由小到大',6.5,ink,'left')
-  for j,n in enumerate(repeated):
-   txt(px+10+j*(panelw-20)/max(len(repeated),1),repeat_y+17,f'{n:02}',9,score_style(n)[0],'left')
  pairs=star_pairs(data['ranking'])
  sy=TOP+hh+rh*10+5; sx=X+6; sw=R-X-12; sh=rh*4-11
  rect(sx,sy,sw,sh,'#fffefb','#a5b5a6');rect(sx,sy,sw,15,'#edf1eb','#a5b5a6')
@@ -212,7 +202,7 @@ if combined:
  # Compact summaries are painted inside the original table, not below the image.
  bx=X+20*cw+3; by=TOP+hh+16*rh+43; bw=R-bx-6; bh=25*rh-16*rh-46
  rect(bx,by,bw,bh,'#fffefb','#a5b5a6')
- summary_entries=[]
+ summary_columns=[[],[]]
  for summary in blank_summaries:
   label=f"近 {summary['long']} → {summary['short']} 期"
   grouped=summary['long']==18 and summary['short']==6
@@ -220,26 +210,28 @@ if combined:
    entries=[label]+[f"次數 {g['count']}／"+' '.join(f'{n:02}' for n in g['numbers']) for g in summary['groups']]
   else:
    entries=[label+'：'+' '.join(f'{n:02}' for g in summary['groups'] for n in g['numbers'])]
-  summary_entries.append(entries)
- for summary_size in [9.5,9,8.5,8,7.5,7,6.5]:
-  summary_lines=[]
-  for entries in summary_entries:
-   for text in entries:
-    current=''
-    for char in text:
-     if pdfmetrics.stringWidth(current+char,'CJK',summary_size)>bw-12:
-      summary_lines.append(current);current=''
-     current+=char
-    if current:summary_lines.append(current)
-   summary_lines.append(None)
-  required=sum(summary_size+0.5 if v is not None else 1 for v in summary_lines)
-  if required<=bh-8:break
- else:raise ValueError('Blank summaries exceed table area')
- cursor=by+6
- for textline in summary_lines:
-  if textline is None:cursor+=1
-  else:
-   txt(bx+6,cursor,textline,summary_size,ink,'left');cursor+=summary_size+0.5
+  summary_columns[1 if grouped else 0].append(entries)
+ column_width=bw/2
+ for column,summary_entries in enumerate(summary_columns):
+  for summary_size in [9.5,9,8.5,8,7.5,7,6.5]:
+   summary_lines=[]
+   for entries in summary_entries:
+    for text in entries:
+     current=''
+     for char in text:
+      if pdfmetrics.stringWidth(current+char,'CJK',summary_size)>column_width-12:
+       summary_lines.append(current);current=''
+      current+=char
+     if current:summary_lines.append(current)
+    summary_lines.append(None)
+   required=sum(summary_size+0.5 if v is not None else 1 for v in summary_lines)
+   if required<=bh-8:break
+  else:raise ValueError('Blank summaries exceed table column area')
+  cursor=by+6
+  for textline in summary_lines:
+   if textline is None:cursor+=1
+   else:
+    txt(bx+column*column_width+6,cursor,textline,summary_size,ink,'left');cursor+=summary_size+0.5
  # Morning-only sources share the bottom band, after all evening calculations.
  mx=bx; my=ay; mw=bw; mh=ah
  rect(mx,my,mw,mh,'#ffffff','#000000')
@@ -295,7 +287,6 @@ metadata.update(report_date=report_date.isoformat(),target_date=target_date.isof
 metadata['figure_nine']=figure
 metadata['whole_report_number_counts']=report_counts
 metadata['top_summary_numbers']={source:sorted({n for g in data[source] for n in g['numbers']}) for source in ['sim','real']}
-metadata['top_repeated_numbers']={source:sorted(n for n,count in Counter(n for g in data[source] for n in g['numbers']).items() if count>1) for source in ['sim','real']}
 metadata['blank_summaries']=blank_summaries
 metadata['ai_brief_comparison']=ai_brief
 metadata['omission_analysis']={'cutoff_date':data['cutoff']['draw_date'],'reference_url':'https://lotto.arclink.com.tw/Lotto39yltj.do','definition':'連續未開出期數；當期開出為0期，依總表官方開獎資料計算','groups':omissions}
