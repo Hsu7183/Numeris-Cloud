@@ -615,7 +615,7 @@
       "star": 10
     }
   ],
-  "generated_at": "2026-11-28T07:35:19.667918+08:00",
+  "generated_at": "2026-11-28T08:07:19.083753+08:00",
   "figure_nine": {
     "columns": [
       {
@@ -677,6 +677,10 @@
       "count": 12
     },
     {
+      "number": 4,
+      "count": 11
+    },
+    {
       "number": 28,
       "count": 11
     },
@@ -689,10 +693,6 @@
       "count": 11
     },
     {
-      "number": 4,
-      "count": 10
-    },
-    {
       "number": 17,
       "count": 10
     },
@@ -701,15 +701,15 @@
       "count": 10
     },
     {
-      "number": 16,
-      "count": 9
-    },
-    {
       "number": 18,
       "count": 9
     },
     {
       "number": 23,
+      "count": 9
+    },
+    {
+      "number": 24,
       "count": 9
     },
     {
@@ -721,7 +721,7 @@
       "count": 8
     },
     {
-      "number": 24,
+      "number": 16,
       "count": 8
     },
     {
@@ -733,10 +733,6 @@
       "count": 8
     },
     {
-      "number": 3,
-      "count": 7
-    },
-    {
       "number": 11,
       "count": 7
     },
@@ -745,11 +741,15 @@
       "count": 7
     },
     {
-      "number": 33,
+      "number": 27,
       "count": 7
     },
     {
       "number": 2,
+      "count": 6
+    },
+    {
+      "number": 3,
       "count": 6
     },
     {
@@ -773,11 +773,15 @@
       "count": 6
     },
     {
-      "number": 27,
+      "number": 26,
       "count": 6
     },
     {
       "number": 32,
+      "count": 6
+    },
+    {
+      "number": 33,
       "count": 6
     },
     {
@@ -786,10 +790,6 @@
     },
     {
       "number": 35,
-      "count": 6
-    },
-    {
-      "number": 41,
       "count": 6
     },
     {
@@ -805,15 +805,15 @@
       "count": 5
     },
     {
-      "number": 26,
-      "count": 5
-    },
-    {
       "number": 29,
       "count": 5
     },
     {
-      "number": 37,
+      "number": 30,
+      "count": 5
+    },
+    {
+      "number": 41,
       "count": 5
     },
     {
@@ -825,11 +825,15 @@
       "count": 4
     },
     {
-      "number": 15,
+      "number": 8,
       "count": 4
     },
     {
-      "number": 19,
+      "number": 12,
+      "count": 4
+    },
+    {
+      "number": 15,
       "count": 4
     },
     {
@@ -837,7 +841,7 @@
       "count": 4
     },
     {
-      "number": 30,
+      "number": 37,
       "count": 4
     },
     {
@@ -853,19 +857,15 @@
       "count": 4
     },
     {
-      "number": 8,
-      "count": 3
+      "number": 47,
+      "count": 4
     },
     {
-      "number": 12,
+      "number": 19,
       "count": 3
     },
     {
       "number": 46,
-      "count": 3
-    },
-    {
-      "number": 47,
       "count": 3
     }
   ],
@@ -1057,7 +1057,7 @@
     }
   ],
   "ai_brief_comparison": {
-    "source_draw_date": "2026-11-24",
+    "source_draw_date": "2026-11-27",
     "groups": [
       {
         "count": 4,
@@ -1066,33 +1066,35 @@
       {
         "count": 3,
         "numbers": [
-          16
+          27
         ]
       },
       {
         "count": 2,
         "numbers": [
-          3,
           23,
-          33
+          24,
+          26,
+          30
         ]
       },
       {
         "count": 1,
         "numbers": [
           2,
+          4,
+          8,
           17,
-          19,
           25,
-          37,
           38,
-          41
+          47
         ]
       },
       {
         "count": 0,
         "numbers": [
           6,
+          12,
           40
         ]
       }
